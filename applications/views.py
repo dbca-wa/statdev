@@ -28,7 +28,7 @@ class HomePage(LoginRequiredMixin, TemplateView):
         if Application.objects.filter(applicant=self.request.user).exists():
             context['applications_submitted'] = Application.objects.filter(
                 applicant=self.request.user).exclude(assignee=self.request.user)
-        if Referral.objects.filter(referee=self.request.user).exists():
+        if Referral.objects.filter(referee=self.request.user).exists()
             context['referrals'] = Referral.objects.filter(
                 referee=self.request.user, status=Referral.REFERRAL_STATUS_CHOICES.referred)
         # TODO: any restrictions on who can create new applications?
