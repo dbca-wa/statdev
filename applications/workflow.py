@@ -18,7 +18,7 @@ class Flow():
               return json_obj[str(routeid)]
         return None
 
-    def getGroupAccess(self,context,route,group,flow): 
+    def setAccessDefaults(self,context): 
         # Form Actions
         if "may_update" not in context:
             context["may_update"] = "False"
@@ -68,14 +68,45 @@ class Flow():
             context["may_recall_resend"] = "False"
         if "may_assign_emergency" not in context:
             context["may_assign_emergency"] = "False"
-
+        if "may_assign_to_creator" not in context:       
+            context["may_assign_to_creator"] = "False"
+        if "may_referral_delete" not in context:
+            context["may_referral_delete"] = "False"
 
         # Form Components
         if "form_component_update" not in context:
             context["form_component_update_title"] = "Update Application"
+        if "application_assignee_id" not in context:
+            context['application_assignee_id'] = None
+
+        return context
+
+    def getAccessRights(self,request,context,route,flow):
+        context = self.setAccessDefaults(context)
+        context = self.getAllGroupAccess(request,context,route)
+        if context['application_assignee_id'] == request.user.id: 
+            context = self.getAssignToAccess(context,route)
+        return context
+
+    def getAssignToAccess(self,context,route):
+        json_obj = self.json_obj
+        if json_obj[str(route)]:
+           if "assigntoaccess" in json_obj[str(route)]:
+                 assigntoaccess = json_obj[str(route)]['assigntoaccess']
+                 for at in assigntoaccess:
+                     if at in context:
+                        if context[at]:
+                           if context[at] in 'True':
+                              donothing = ''
+                           else:
+                              context[at] = assigntoaccess[at]
+                        else:
+                           context[at] = assigntoaccess[at]
+        return context
 
 
 
+    def getGroupAccess(self,context,route,group):
         json_obj = self.json_obj
         if json_obj[str(route)]:
            if "groupaccess" in json_obj[str(route)]:
@@ -92,7 +123,7 @@ class Flow():
                            context[ga] = groupaccess[ga]
         return context
 
-    def getAllGroupAccess(self,request,context,route,flow):
+    def getAllGroupAccess(self,request,context,route):
         emergency = None
         processor = None
         assessor = None
@@ -118,19 +149,19 @@ class Flow():
       
 
         if processor in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Processor',flow)
+            context = self.getGroupAccess(context,route,'Processor')
         if assessor in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Assessor',flow)
+            context = self.getGroupAccess(context,route,'Assessor')
         if approver in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Approver',flow)
+            context = self.getGroupAccess(context,route,'Approver')
         if referee in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Referee',flow)
+            context = self.getGroupAccess(context,route,'Referee')
         if director in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Director',flow)
+            context = self.getGroupAccess(context,route,'Director')
         if executive in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Executive',flow)
+            context = self.getGroupAccess(context,route,'Executive')
         if emergency in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Emergency',flow)
+            context = self.getGroupAccess(context,route,'Emergency')
 
         return context
 
@@ -224,6 +255,9 @@ class Flow():
                 assign_action = True
         elif action == "exec":
             if context["may_assign_exec"] == "True":
+                assign_action = True
+        elif action == "creator": 
+            if context["may_assign_to_creator"] == "True":
                 assign_action = True
 
         return assign_action

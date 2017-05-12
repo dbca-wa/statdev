@@ -330,6 +330,29 @@ class ReferralRecallForm(Form):
         self.helper.add_input(Submit('cancel', 'Cancel'))
 
 
+class ReferralRemindForm(Form):
+    """Form is to allow a referral to be reminded about the outstanding feedback 
+    """
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('instance')  # Don't need this because this isn't a ModelForm.
+        super(ReferralRemindForm, self).__init__(*args, **kwargs)
+        self.helper = BaseFormHelper(self)
+        self.helper.form_id = 'id_form_referral_remind'
+        self.helper.add_input(Submit('remind', 'Remind', css_class='btn-lg'))
+        self.helper.add_input(Submit('cancel', 'Cancel'))
+
+class ReferralDeleteForm(Form):
+    """Form is to allow a referral to be reminded about the outstanding feedback
+    """
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('instance')  # Don't need this because this isn't a ModelForm.
+        super(ReferralDeleteForm, self).__init__(*args, **kwargs)
+        self.helper = BaseFormHelper(self)
+        self.helper.form_id = 'id_form_referral_delete'
+        self.helper.add_input(Submit('delete', 'Delete', css_class='btn-lg'))
+        self.helper.add_input(Submit('cancel', 'Cancel'))
+
+
 class ConditionCreateForm(ModelForm):
     class Meta:
         model = Condition
@@ -380,15 +403,28 @@ class ApplicationAssignNextAction(ModelForm):
         super(ApplicationAssignNextAction, self).__init__(*args, **kwargs)
 
         self.helper = BaseFormHelper(self)
+		
         self.helper.form_id = 'id_form_assigngroup_application'
         self.helper.attrs = {'novalidate': ''}
-#        self.fields['title'].disabled = True 
-        self.helper.add_input(Submit('assign', 'Assign', css_class='btn-lg'))
-        self.helper.add_input(Submit('cancel', 'Cancel'))
+		
+		
+        self.helper.layout = Layout(
+            HTML('<p>Application Next Action</p>'),
+            'details','docments',
+            FormActions(
+                Submit('assign', 'Assign', css_class='btn-lg'),
+                Submit('cancel', 'Cancel')
+            )
+        )
 
+
+
+#        self.fields['title'].disabled = True 
+#        self.helper.add_input(Submit('assign', 'Assign', css_class='btn-lg'))
+ #       self.helper.add_input(Submit('cancel', 'Cancel'))
 
 class AssignPersonForm(ModelForm):
-    """A form for assigning a processor (admin officer) to an application.
+    """A form for assigning an application to people with a specific group.
     """
 
     class Meta:
