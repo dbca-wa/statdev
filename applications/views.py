@@ -476,11 +476,22 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
         #initial['publication_newspaper'] = PublicationNewspaper.objects.get(application_id=self.object.id)
         if app.document_new_draft:
             initial['document_new_draft'] = app.document_new_draft.upload
+        if app.document_memo:
+            initial['document_memo'] = app.document_memo.upload
+        if app.document_new_draft_v3:
+            initial['document_new_draft_v3'] = app.document_new_draft_v3.upload
         if app.document_draft_signed:
             initial['document_draft_signed'] = app.document_draft_signed.upload
-
         if app.document_draft:
             initial['document_draft'] = app.document_draft.upload
+        if app.document_final_signed:
+            initial['document_final_signed'] = app.document_final_signed.upload
+        if app.document_breifing_note:
+            initial['document_breifing_note'] = app.document_breifing_note.upload
+        
+        if app.document_determination_approved:
+            initial['document_determination_approved'] =  app.document_determination_approved.upload
+
 #        if app.proposed_development_plans:
 #           initial['proposed_development_plans'] = app.proposed_development_plans.upload
 
@@ -579,6 +590,14 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
             self.object.deed = None
         if 'swan_river_trust_board_feedback-clear' in form.data and self.object.swan_river_trust_board_feedback:
             self.object.swan_river_trust_board_feedback = None
+        if 'document_new_draft_v3-clear' in form.data and self.object.document_new_draft_v3:
+            self.object.document_new_draft_v3 = None
+        if 'document_memo-clear' in form.data and self.object.document_memo:
+            self.object.document_memo = None
+        if 'document_final_signed-clear' in form.data and self.object.document_final_signed:
+            self.object.document_final_signed = None
+        if 'document_breifing_note-clear' in form.data and self.object.document_breifing_note:
+            self.object.document_breifing_note = None
 
         # Upload New Files
         if self.request.FILES.get('cert_survey'):  # Uploaded new file.
@@ -708,6 +727,9 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
         if self.request.POST.get('document_draft_signed-clear'):
             self.object.document_draft_signed = None
 
+        if self.request.POST.get('document_determination_approved-clear'):
+            self.object.document_determination_approved = None
+
         if self.request.FILES.get('document_draft'):
             if Attachment_Extension_Check('single',forms_data['document_draft'],None) is False:
                 raise ValidationError('Draft contains and unallowed attachment extension.')
@@ -723,6 +745,22 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
             new_doc.upload = self.request.FILES['document_new_draft']
             new_doc.save()
             self.object.document_new_draft = new_doc
+
+        if self.request.FILES.get('document_new_draft_v3'):
+            if Attachment_Extension_Check('single',forms_data['document_new_draft_v3'],None) is False:
+                raise ValidationError('Draft V3 contains and unallowed attachment extension.')
+            new_doc = Document()
+            new_doc.upload = self.request.FILES['document_new_draft_v3']
+            new_doc.save()
+            self.object.document_new_draft_v3 = new_doc
+
+        if self.request.FILES.get('document_memo'):
+            if Attachment_Extension_Check('single',forms_data['document_memo'],None) is False:
+                raise ValidationError('Memo contains and unallowed attachment extension.')
+            new_doc = Document()
+            new_doc.upload = self.request.FILES['document_memo']
+            new_doc.save()
+            self.object.document_memo = new_doc
 
         if self.request.FILES.get('document_draft_signed'):
             if Attachment_Extension_Check('single',forms_data['document_draft_signed'],None) is False:
@@ -740,6 +778,14 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
             new_doc.upload = self.request.FILES['document_final']
             new_doc.save()
             self.object.document_final = new_doc
+
+        if self.request.FILES.get('document_final_signed'):
+            if Attachment_Extension_Check('single',forms_data['document_final_signed'],None) is False:
+                raise ValidationError('Final Signed contains and unallowed attachment extension.')
+            new_doc = Document()
+            new_doc.upload = self.request.FILES['document_final_signed']
+            new_doc.save()
+            self.object.document_final_signed = new_doc
 
         if self.request.FILES.get('swan_river_trust_board_feedback'):
             if Attachment_Extension_Check('single',forms_data['swan_river_trust_board_feedback'],None) is False:
@@ -774,6 +820,23 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
             new_doc.upload = self.request.FILES['document_determination']
             new_doc.save()
             self.object.document_determination = new_doc
+
+        if self.request.FILES.get('document_determination_approved'):
+            if Attachment_Extension_Check('single',forms_data['document_determination_approved'],None) is False:
+                raise ValidationError('Determination contains and unallowed attachment extension.')
+            new_doc = Document()
+            new_doc.upload = self.request.FILES['document_determination_approved']
+            new_doc.save()
+            self.object.document_determination_approved = new_doc
+
+        if self.request.FILES.get('document_breifing_note'):
+            if Attachment_Extension_Check('single',forms_data['document_breifing_note'],None) is False:
+                raise ValidationError('Briefing Note contains and unallowed attachment extension.')
+
+            new_doc = Document()
+            new_doc.upload = self.request.FILES['document_breifing_note']
+            new_doc.save()
+            self.object.document_breifing_note = new_doc
 
         if self.request.FILES.get('document_completion'):
             if Attachment_Extension_Check('single',forms_data['document_completion'],None) is False:
@@ -1769,6 +1832,8 @@ class WebPublish(LoginRequiredMixin, UpdateView):
             initial['publish_draft_report'] = current_date
         elif publish_type in 'final':
             initial['publish_final_report'] = current_date
+        elif publish_type in 'determination':
+            initial['publish_determination_report'] = current_date
 
         initial['publish_type'] = self.kwargs['publish_type']
         #try:
@@ -1797,6 +1862,8 @@ class WebPublish(LoginRequiredMixin, UpdateView):
             self.object.publish_draft_report = current_date
         elif publish_type in 'final':
             self.object.publish_final_report = current_date
+        elif publish_type in 'determination':
+            self.object.publish_determination_report = current_date
 
         return super(WebPublish, self).form_valid(form)
 
@@ -2112,6 +2179,8 @@ class FeedbackPublicationCreate(LoginRequiredMixin, CreateView):
 
         if self.kwargs['status'] == 'final':
             initial['status'] = 'final'
+        elif self.kwargs['status'] == 'determination':
+            initial['status'] = 'determination'
         else:
             initial['status'] = 'draft'
         return initial
