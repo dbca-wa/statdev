@@ -178,6 +178,10 @@ DATE_INPUT_FORMATS = (
 # Ensure that the media directory exists:
 if not os.path.exists(os.path.join(BASE_DIR, 'media')):
     os.mkdir(os.path.join(BASE_DIR, 'media'))
+
+PRIVATE_MEDIA_ROOT = os.path.join(BASE_DIR, 'private-media')
+PRIVATE_MEDIA_URL = '/private-media/'
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

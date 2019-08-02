@@ -7,10 +7,12 @@ from django.core.urlresolvers import reverse
 from django.utils.encoding import python_2_unicode_compatible
 from model_utils import Choices
 from django.contrib.auth.models import Group
+from django.core.files.storage import FileSystemStorage
 #from approvals.models import Approval
 from ledger.accounts.models import Organisation, Address as LedgerAddress
 #from ledger.payments.models import Invoice
 
+upload_storage = FileSystemStorage(location=settings.PRIVATE_MEDIA_ROOT)
 
 @python_2_unicode_compatible
 class Record(models.Model):
@@ -30,7 +32,7 @@ class Record(models.Model):
         (9, 'completion', ('Completed document')),
     )
 
-    upload = models.FileField(max_length=512, upload_to='uploads/%Y/%m/%d')
+    upload = models.FileField(max_length=512, upload_to='uploads/%Y/%m/%d', storage=upload_storage)
     name = models.CharField(max_length=256)
     category = models.IntegerField(choices=DOC_CATEGORY_CHOICES, null=True, blank=True)
     metadata = JSONField(null=True, blank=True)
