@@ -17,7 +17,11 @@ urlpatterns = [
     url(r'^company-create-link/(?P<pk>\d+)/(?P<step>\d+)/(?P<application_id>\d+)/$',views.CreateLinkCompany.as_view(), name='company_create_link_application'),
     url(r'^company-create-link-steps/(?P<pk>\d+)/(?P<step>\d+)/(?P<po_id>\d+)/$',views.CreateLinkCompany.as_view(), name='company_create_link_steps'),
     url(r'^company-create-link-steps/(?P<pk>\d+)/(?P<step>\d+)/(?P<po_id>\d+)/(?P<application_id>\d+)/$',views.CreateLinkCompany.as_view(), name='company_create_link_steps_application'),
+    
     url(r'^applications/$', views.ApplicationList.as_view(), name='application_list'),
+    url(r'^applications/flows/$', views.ApplicationFlows.as_view(), name='application_flows'),
+    url(r'^applications/flows/diagrams/(?P<pk>\d+)/$', views.ApplicationFlowDiagrams.as_view(), name='application_flow_diagrams'),
+    url(r'^applications/flows/(?P<pk>\d+)/$', views.ApplicationFlowRoutes.as_view(), name='application_flows_routes'),
     url(r'^applications-uploads/$', uploads.ApplicationUploads, name='application_uploads'),
     url(r'^applications/apply/$', views.ApplicationApply.as_view(), name='application_apply'),
     url(r'^applications/create/$', views.ApplicationCreate.as_view(), name='application_create'),

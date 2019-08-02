@@ -1,0 +1,457 @@
+{% extends "base_statdev.html" %}
+
+{% block page_content_inner %}
+    <body>
+
+{% if show == 'show' %}
+<svg style='display: none; 'width="200" height="250" version="1.1" xmlns="http://www.w3.org/2000/svg">
+
+  <rect x="10" y="10" width="30" height="30" stroke="black" fill="transparent" stroke-width="5"/>
+  <rect x="60" y="10" rx="10" ry="10" width="30" height="30" stroke="black" fill="transparent" stroke-width="5"/>
+
+  <circle cx="25" cy="75" r="20" stroke="red" fill="transparent" stroke-width="5"/>
+  <ellipse cx="75" cy="75" rx="20" ry="5" stroke="red" fill="transparent" stroke-width="5"/>
+
+  <line x1="10" x2="50" y1="110" y2="150" stroke="orange" stroke-width="5"/>
+  <polyline points="60 110 65 120 70 115 75 130 80 125 85 140 90 135 95 150 100 145"  stroke="orange" fill="transparent" stroke-width="5"/>
+
+  <polygon points="0,50 100,50 100,150 0,150 100,150 100,50 0,50" stroke="black" fill="transparent" stroke-width="5"/>
+
+  <polygon points="50 0 50 50 0 50 50 50" stroke="black" fill="transparent" stroke-width="5"/>
+
+  <path d="M20,230 Q40,205 50,230 T90,230" fill="none" stroke="blue" stroke-width="5"/>
+<!-- JASON -->
+
+                                      <svg width="300" height="300" style='margin-left: 50px; margin-top: 0px; position: absolute;' > <polygon points="0,50 100,50 100,150 0,150 100,150 100,50 0,50" stroke="black" fill="transparent" stroke-width="5"/></svg>
+                                      <svg width="1250" height="300" style='left: 50px; margin-top: 0px; position: absolute;' > <line x1="0" y1="150" x2="1200" y2="150" stroke="black" stroke-width="5"/></svg>
+                                      <svg width="150" height="300" style='left: -50px; margin-top: 47px;  position: absolute;' > <line x1="100" y1="140" x2="100" y2="100" stroke="black" stroke-width="5"/></svg>
+
+<svg width="200" height="100" style='position: absolute;' ><line x1="50" y1="50" x2="500" y2="50" stroke="black"/></svg>
+
+</svg>
+
+iiiii
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -100 200 200">
+<defs>
+  <marker id='head' orient="auto"
+    markerWidth='2' markerHeight='4'
+    refX='0.1' refY='2'>
+    <!-- triangle pointing right (+x) -->
+    <path d='M0,0 V4 L2,2 Z' fill="black"/>
+  </marker>
+</defs>
+
+<path
+  id='arrow-line'
+  marker-mid='url(#mid)'
+  marker-end='url(#head)'
+  stroke-width='1'
+  fill='none' stroke='black'  
+  d='M0,0 L00,0'
+  />
+
+</svg>​
+L20,20 C40,40 40,40 60,20
+
+<svg xmlns="http://www.w3.org/2000/svg" iiwidth="10" iheight="190" style="" viewBox="0 -50 400 100">
+         <defs>
+         <marker id="head" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">    <!-- triangle pointing right (+x) -->    <path d="M0,0 V4 L2,2 Z" fill="black"></path></marker>
+         </defs>
+         <path id="arrow-line" marker-mid="url(#mid)" marker-end="url(#head)" stroke-width="1" fill="none" stroke="black" d="M0,0 L390,0"></path>
+</svg>
+
+
+<svg xmlns="http://www.w3.org/2000/svg" iiwidth="10" iheight="190" style="" viewBox="0 -50 400 100">
+         <defs>
+         <marker id="start" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">    <!-- triangle pointing right (+x) -->    <path d="M2,0 V4 L0,2 Z" fill="black"></path></marker>
+         </defs>
+         <path id="arrow-line" marker-mid="url(#mid)" marker-start="url(#start)" stroke-width="1" fill="none" stroke="black" d="M0,0 L390,0"></path>
+</svg>
+{% endif %}
+
+
+
+<style>
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+ 
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+</style>
+
+<div class="tooltip">Hover over me
+  <span class="tooltiptext">Tooltip text</span>
+</div>
+<h1>{{ application_type_name }}</h1>
+<div style='position: relative; ifloat: left; width: 100%; border: 1px solid #000;padding:10px; height: 100%; min-height: 700px; overflow:scroll; z-index:1;'>
+
+              {% for r,v in workflow %}
+                               {% if r == 'options' %}
+                               {% else %}
+
+                               <div id='flow_box_{{ v.step_id }}_line' style='position: absolute; z-index: 20' ></div>
+                             
+                               <div id='flow_box_{{ v.step_id }}' style='z-index: 30; width: 150px; height: 100px; top:10px; background:#FFF; padding: 10px; border: 3px solid #000; position:relative; float: left; margin-right: 80px; margin-bottom:70px;'>
+                                      <div id='flow_popup_box_{{ v.step_id }}' style='position: absolute; z-index: 15; border: 1px solid #000000; height: 300px; width:300px; margin-left:130px; background-color: #FFFFFF; display:none;' ><div style='background-color: #FFFFFF;'>iasdfhlkjdsakjhlfdaskjhfkjhadsfaadsiiii</div></div>
+
+                                      <div id='flow_point_top_{{ v.step_id }}' style='z-index: 10;position: absolute;  margin-top: -22px; margin-left: 55px;'>O</div>
+                                      <div id='flow_point_bottom_{{ v.step_id }}' style='z-index: 10;position: absolute;  margin-top: 75px; margin-left: 55px;'>O</div> 
+                                      <div id='flow_point_left_{{ v.step_id }}' style='z-index: 10; position: absolute;  margin-top: 26px; margin-left: -16px;'>O</div>
+				      <div id='flow_point_right_{{ v.step_id }}' style='z-index: 10;position: absolute;  margin-top: 26px; margin-left: 131px;'>O</div>
+                                      Title: {{ v.title }}<br>
+                                      <A HREF='/applications/flows/{{ app_type }}/?route={{ r }}'>Route: {{ r }}</A>
+                               </div>
+                               {% endif %}
+              {% endfor %}
+
+</div>
+
+<script>
+var margleft = 50;
+var margtop = 40;
+var line_count = 0;
+
+{% for r,v in workflow %}
+       {% if r == 'options' %}
+       {% else %}
+          console.log("flow_box_{{ v.step_id }}");
+//          drawFlowLine('','');
+       {% endif %}
+{% endfor %}
+{% for r,v in workflow %}
+
+$('#flow_box_{{ v.step_id }}').mouseenter(function(){
+  // $('#flow_popup_box_{{ v.step_id }}').show(); 
+});
+$('#flow_box_{{ v.step_id }}').mouseleave(function(){
+  $('#flow_popup_box_{{ v.step_id }}').hide();
+});
+
+$('#route_2_1').mouseenter(function(){
+    
+});
+
+{% endfor %}
+
+
+function loadPoints() {
+
+{% for r,v in workflow %}
+$('#flow_box_{{ v.step_id }}_line').html('');
+$('#flow_point_top_{{ v.step_id }}').html('&#11044;');
+$('#flow_point_bottom_{{ v.step_id }}').html('&#11044;');
+$('#flow_point_left_{{ v.step_id }}').html('&#11044;');
+$('#flow_point_right_{{ v.step_id }}').html('&#11044;');
+{% endfor %}
+
+
+{% for r,v in workflow %}
+
+{% if r == 'options' %}{% else %}{% for row in v.actions %}{% for g,h in row.items %}{% if g == 'route_id' %}drawFlowLine('{{ v.step_id }}','{{ h }}');
+{% endif %}{% endfor %}{% endfor %}{% endif %}{% endfor %}
+
+}
+
+loadPoints();
+function drawFlowLine(flow_id1,flow_id2) {
+
+    console.log(flow_id1+':'+flow_id2); 
+    var flow1_box = $('#flow_box_'+flow_id1);
+    var flow2_box = $('#flow_box_'+flow_id2);
+//    var flow1_box_position = flow1_box.position();
+//    var flow2_box_position = flow2_box.position();
+    console.log(flow1_box.length);
+    console.log(flow2_box.length);
+    if (flow1_box.length > 0 && flow2_box.length >0 ) {
+    var flow1_box_position = flow1_box.offset();
+    var flow2_box_position = flow2_box.offset();
+
+
+
+    var flow_id_point_1;
+    var flow_id_point_2;
+    flow_id_point_1 = $('#flow_point_right_'+flow_id1);
+    flow_id_point_2 = $('#flow_point_left_'+flow_id2);
+    console.log(flow1_box.offset());
+    console.log(flow2_box.offset());
+    console.log(flow2_box_position.left+":"+flow1_box_position.left); 
+    if (flow2_box_position.left > flow1_box_position.left) {
+        console.log("GROUP 1 --");
+        flow_id_point_1 = $('#flow_point_right_'+flow_id1);
+        flow_id_point_2 = $('#flow_point_left_'+flow_id2);
+
+         if (flow2_box_position.top > flow1_box_position.top) {
+                flow_id_point_1 = $('#flow_point_bottom_'+flow_id1);
+                flow_id_point_2 = $('#flow_point_top_'+flow_id2);
+                console.log(flow_id_point_1+':'+flow_id_point_2);
+         }
+         if (flow1_box_position.top > flow2_box_position.top) {
+                flow_id_point_1 = $('#flow_point_top_'+flow_id1);
+                flow_id_point_2 = $('#flow_point_bottom_'+flow_id2);
+                console.log(flow_id_point_1+':'+flow_id_point_2);
+         }
+         
+
+    }
+    if ( flow1_box_position.left == flow2_box_position.left ) {
+           console.log('top line');
+           if (flow2_box_position.top > flow1_box_position.top) {
+                console.log('top line 2');
+                flow_id_point_1 = $('#flow_point_bottom_'+flow_id1);
+                flow_id_point_2 = $('#flow_point_top_'+flow_id2);
+                console.log(flow_id_point_1+':'+flow_id_point_2);
+           } else {
+
+                console.log('top line 3');
+                flow_id_point_1 = $('#flow_point_top_'+flow_id1);
+                flow_id_point_2 = $('#flow_point_bottom_'+flow_id2);
+                console.log(flow_id_point_1+':'+flow_id_point_2);
+
+
+           }
+
+    }
+
+    if (flow1_box_position.left  > flow2_box_position.left) {
+        console.log("GROUP 2");
+        flow_id_point_1 = $('#flow_point_left_'+flow_id1);
+        flow_id_point_2 = $('#flow_point_right_'+flow_id2);
+        if (flow2_box_position.top > flow1_box_position.top) {
+                console.log("BOTTOM 1");
+                flow_id_point_1 = $('#flow_point_bottom_'+flow_id1);
+                flow_id_point_2 = $('#flow_point_top_'+flow_id2);
+                console.log(flow_id_point_1+':'+flow_id_point_2);
+         }
+ 
+        if (flow1_box_position.top > flow2_box_position.top) {
+                if (flow1_box_position.top > flow2_box_position.top) {
+                    console.log("BOTTOM 2");
+                flow_id_point_1 = $('#flow_point_top_'+flow_id1);
+                flow_id_point_2 = $('#flow_point_bottom_'+flow_id2);
+
+                } else {
+                      console.log("BOTTOM 3");
+                flow_id_point_1 = $('#flow_point_bottom_'+flow_id1);
+                flow_id_point_2 = $('#flow_point_top_'+flow_id2);
+		}
+                console.log(flow_id_point_1+':'+flow_id_point_2);
+         }
+ 
+
+//                flow_id_point_1 = $('#flow_point_bottom_'+flow_id1);
+ //               flow_id_point_2 = $('#flow_point_top_'+flow_id2);
+//                console.log(flow_id_point_1+':'+flow_id_point_2);
+//
+//	 }
+    }
+//    console.log(flow_id_point_1+':'+flow_id_point_2);
+    var flow1 = flow_id_point_1;
+    var flow2 = flow_id_point_2;
+    if (flow1 && flow2) {
+    line_count = line_count + 1;
+//   console.log(flow1);
+//   console.log(flow2);
+//    var flow1_rect = flow1.position();
+    var flow1_rect = flow1.offset();
+    console.log(flow1_rect);
+    console.log(flow1_rect.top, flow1_rect.right, flow1_rect.bottom, flow1_rect.left);
+//    var flow2_rect = flow2.position();
+    var flow2_rect = flow2.offset();
+    console.log(flow2_rect);
+    console.log(flow2_rect.top, flow2_rect.right, flow2_rect.bottom, flow2_rect.left); 
+    // .html('<svg width="380" height="150" style="margin-top: 50px; margin-left: 130px"><line x1="20" y1="10" x2="300" y2="250" stroke="black"/></svg>');
+    margleft = margleft +3;
+    margtop =  margtop + 3;
+    var length_between_points = flow2_rect.left - flow1_rect.left;
+    var length_between_top_points = flow2_rect.top - flow1_rect.top;
+    if (length_between_points > 0 ) {
+    } else {
+	length_between_points = flow1_rect.left - flow2_rect.left;
+    }
+    if (length_between_top_points > 0 ) { 
+    } else {
+        length_between_top_points = flow1_rect.top - flow2_rect.top;
+    }
+ 
+  
+
+
+    if (flow1_rect.left > flow2_rect.left && flow2_rect.top > flow1_rect.top) {
+         console.log('GROUP 1');
+         console.log(flow1_rect.left + ":" + flow2_rect.left);
+         if (flow1_box_position.left == flow2_box_position.left) { 
+                console.log("YES");
+		flow_id_point_1.append('<svg title="Group 1.1: '+flow_id1+' to '+flow_id2+'" style="position:absolute; width: 100px; height: 150px; z-index:15; margin-top: -103px; " xmlns="http://www.w3.org/2000/svg" iiwidth="10" iheight="190" viewBox="0 -50 200 100">         <defs>         <marker id="start" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">    <!-- triangle pointing left (+x) -->    <path d="M2,0 V4 L0,2 Z" fill="black"></path></marker>  </defs><path id="arrow-line" marker-mid="url(#mid)" marker-start="url(#start)" stroke-width="5" fill="none" stroke="black" d="M120,120 L120,0"></path></svg>');
+
+         } else {
+                console.log("NO");
+                console.log(flow_id_point_2);
+                if (length_between_top_points > 230 ) { 
+                        flow_id_point_2.append('<svg title="Group 1.2: '+flow_id1+' to '+flow_id2+'" style="position:absolute; width: '+(length_between_points)+'px; height: '+(length_between_top_points * 2 + 8)+'px; z-index:15; margin-top: -245px; " xmlns="http://www.w3.org/2000/svg" iiwidth="10" iheight="190" viewBox="0 -50 '+(length_between_points * 2)+' 100">         <defs>         <marker id="start2" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">    <!-- triangle pointing left (+x) -->    <path d="M2,0 V4 L0,2 Z" fill="black"></path></marker>  </defs><path id="arrow-line" marker-mid="url(#mid)" marker-start="url(#start2)" stroke-width="5" fill="none" stroke="black" d="M0,0 L'+(length_between_points * 2 -25)+',-460"></path></svg>');
+                } else { 
+                 	flow_id_point_2.append('<svg title="Group 1.2: '+flow_id1+' to '+flow_id2+'" style="position:absolute; width: '+(length_between_points)+'px; height: '+(length_between_top_points * 2 + 8)+'px; z-index:15; margin-top: -70px; " xmlns="http://www.w3.org/2000/svg" iiwidth="10" iheight="190" viewBox="0 -50 '+(length_between_points * 2)+' 100">         <defs>         <marker id="start2" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">    <!-- triangle pointing left (+x) -->    <path d="M2,0 V4 L0,2 Z" fill="black"></path></marker>  </defs><path id="arrow-line" marker-mid="url(#mid)" marker-start="url(#start2)" stroke-width="5" fill="none" stroke="black" d="M0,0 L'+(length_between_points * 2 -25)+',-140"></path></svg>');
+                }
+               
+	}
+     } else if (flow1_rect.left == flow2_rect.left && flow2_rect.top > flow1_rect.top && flow1_box_position.left == flow2_box_position.left) {
+
+//                flow_id_point_1.append('<div id="route_tooltip_'+flow_id1+'_'+flow_id2+'" style="display:none;position:absolute;border: 1px solid #000000;z-index: 1000;margin-top: -60px; margin-left: -110px; background-color: #000;color:#FFF; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;" ><div style="display: inline-block; padding: 10px; width: 120px;"><center>Route:'+flow_id1+' to '+flow_id2+'</center></div></div>');
+                console.log("LLTOP");
+                console.log(length_between_top_points);
+                if (length_between_top_points > 150) {
+		         flow_id_point_1.append('<svg id="route_'+flow_id1+'_'+flow_id2+'" title="Group 22: '+flow_id1+' to '+flow_id2+'" style="position:absolute; width: 100px; height: '+(length_between_top_points * 2 )+'px; z-index:15; margin-top: -55px; margin-left: -70px; " xmlns="http://www.w3.org/2000/svg" iiwidth="10" iheight="190" viewBox="0 -50 200 100">         <defs>         <marker id="start22" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">    <!-- triangle pointing left (+x) -->    <path d="M2,0 V4 L0,2 Z" fill="black"></path></marker>  </defs><path id="arrow-line" marker-mid="url(#mid)" marker-start="url(#start22)" stroke-width="5" fill="none" stroke="black" d="M120,120 L120,-'+(length_between_top_points * 2 - 145 )+'"></path></svg>');
+
+		} else {
+	                flow_id_point_1.append('<svg id="route_'+flow_id1+'_'+flow_id2+'" title="Group 22: '+flow_id1+' to '+flow_id2+'" style="position:absolute; width: 100px; height: 150px; z-index:15; margin-top: -55px; margin-left: -70px; " xmlns="http://www.w3.org/2000/svg" iiwidth="10" iheight="190" viewBox="0 -50 200 100">         <defs>         <marker id="start22" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">    <!-- triangle pointing left (+x) -->    <path d="M2,0 V4 L0,2 Z" fill="black"></path></marker>  </defs><path id="arrow-line" marker-mid="url(#mid)" marker-start="url(#start22)" stroke-width="5" fill="none" stroke="black" d="M120,120 L120,0"></path></svg>');
+		}
+
+
+//$('#route_'+flow_id1+'_'+flow_id2).mouseenter(function(){
+//  $('#route_tooltip_'+flow_id1+'_'+flow_id2).show();
+//});
+//$('#route_'+flow_id1+'_'+flow_id2).mouseleave(function(){
+//  $('#route_tooltip_'+flow_id1+'_'+flow_id2).hide();
+//});
+
+
+     } else if (flow1_rect.top == flow2_rect.top && flow1_rect.left > flow2_rect.left) {
+   //      flow_id_point_2.append('<div id="route_tooltip_'+flow_id1+'_'+flow_id2+'" style="display:none;position:absolute;border: 1px solid #000000;z-index: 1000;margin-top: -60px; margin-left: -110px; background-color: #000;color:#FFF; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;" ><div style="display: inline-block; padding: 10px; width: 120px;"><center>Route:'+flow_id1+' to '+flow_id2+'</center></div></div>');
+         flow_id_point_2.append('<svg id="route_'+flow_id1+'_'+flow_id2+'" title="Group 2: '+flow_id1+' to '+flow_id2+'" style="position:absolute; width: '+(length_between_points)+'px; height: 50px; z-index:15; margin-top: -25px;" xmlns="http://www.w3.org/2000/svg" iiwidth="10" iheight="190" viewBox="0 -50 '+(length_between_points * 2)+' 100"> <defs>         <marker id="start" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">    <!-- triangle pointing left (+x) -->    <path d="M2,0 V4 L0,2 Z" fill="red"></path></marker>  </defs><path id="arrow-line" marker-mid="url(#mid)" marker-start="url(#start)" stroke-width="5" fill="none" stroke="red" d="M0,0 L'+(length_between_points * 2 -25)+',0"></path></svg>');
+    
+//$('#route_'+flow_id1+'_'+flow_id2).mouseenter(function(){
+//  $('#route_tooltip_'+flow_id1+'_'+flow_id2).show();
+//});
+//$('#route_'+flow_id1+'_'+flow_id2).mouseleave(function(){
+//  $('#route_tooltip_'+flow_id1+'_'+flow_id2).hide();
+//});
+
+
+    } else if (flow1_rect.top > flow2_rect.top) {
+        if (flow1_rect.left == flow2_rect.left) { 
+
+//                  flow_id_point_1.append('<div id="route_tooltip_'+flow_id1+'_'+flow_id2+'" style="display:none;position:absolute;border: 1px solid #000000;z-index: 1000;margin-top: -60px; margin-left: -110px; background-color: #000;color:#FFF; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;" ><div style="display: inline-block; padding: 10px; width: 120px;"><center>Route:'+flow_id1+' to '+flow_id2+'</center></div></div>');
+                  flow_id_point_1.append('<svg id="route_'+flow_id1+'_'+flow_id2+'" title="Group 3.1: '+flow_id1+' to '+flow_id2+'" style="position:absolute; width: 100px; height: 110px; z-index:15; margin-top: -104px; margin-left: -60px; " xmlns="http://www.w3.org/2000/svg" iiwidth="10" iheight="190" viewBox="0 -50 200 100">         <defs>         <marker id="head31" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">    <!-- triangle pointing right (+x) -->    <path d="M0,0 V4 L2,2 Z" fill="red"></path></marker>  </defs><path id="arrow-line" marker-mid="url(#mid)" marker-end="url(#head31)" stroke-width="5" fill="none" stroke="red" d="M120,120 L120,0"></path></svg>');
+                  
+                                  
+//                  $('#route_'+flow_id1+'_'+flow_id2).mouseenter(function(){
+//                    $('#route_tooltip_'+flow_id1+'_'+flow_id2).show();
+//                  });
+//                  $('#route_'+flow_id1+'_'+flow_id2).mouseleave(function(){
+//                    $('#route_tooltip_'+flow_id1+'_'+flow_id2).hide();
+//                  });
+//                  
+
+
+	} else {
+
+//                  flow_id_point_1.append('<div id="route_tooltip_'+flow_id1+'_'+flow_id2+'" style="display:none;position:absolute;border: 1px solid #000000;z-index: 1000;margin-top: -60px; margin-left: -110px; background-color: #000;color:#FFF; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;" ><div style="display: inline-block; padding: 10px; width: 120px;"><center>Route:'+flow_id1+' to '+flow_id2+'</center></div></div>');
+                  if (flow1_rect.left > flow2_rect.left) {
+                  flow_id_point_2.append('<svg title="Group 3.2: '+flow_id1+' to '+flow_id2+'" style="position:absolute; width: '+(length_between_points)+'px; height: 155px; z-index:15; margin-top: -64px; " xmlns="http://www.w3.org/2000/svg" iiwidth="10" iheight="190" viewBox="0 -50 '+(length_between_points * 2)+' 100">         <defs>  <marker id="start32" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">    <!-- triangle pointing left (+x) -->    <path d="M2,0 V4 L0,2 Z" fill="red"></path></marker> <!-- triangle pointing right (+x) -->    <path d="M0,0 V4 L2,2 Z" fill="red"></path></marker>  </defs><path id="arrow-line" marker-mid="url(#mid)" marker-start="url(#start32)" stroke-width="5" fill="none" stroke="red" d="M0,0 L'+(length_between_points * 2 -25)+',130"></path></svg>');
+
+
+                  } else { 
+                  flow_id_point_1.append('<svg title="Group 3.3: '+flow_id1+' to '+flow_id2+'" style="position:absolute; width: '+(length_between_points)+'px; height: 155px; z-index:15; margin-top: -66px; " xmlns="http://www.w3.org/2000/svg" iiwidth="10" iheight="190" viewBox="0 -50 '+(length_between_points * 2)+' 100">         <defs>         <marker id="start33" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">    <!-- triangle pointing right (+x) -->    <path d="M0,0 V4 L2,2 Z" fill="red"></path></marker>  </defs><path id="arrow-line" marker-mid="url(#mid)" marker-end="url(#start33)" stroke-width="5" fill="none" stroke="red" d="M0,0 L'+(length_between_points * 2 -25)+',-140"></path></svg>');
+		  }
+//                  $('#route_'+flow_id1+'_'+flow_id2).mouseenter(function(){
+//                    $('#route_tooltip_'+flow_id1+'_'+flow_id2).show();
+//                  });
+//                  $('#route_'+flow_id1+'_'+flow_id2).mouseleave(function(){
+//                    $('#route_tooltip_'+flow_id1+'_'+flow_id2).hide();
+//                  });
+
+        }
+   } else if (flow2_rect.top > flow1_rect.top && flow2_rect.left > flow1_rect.left) { 
+         // 230px and viewBox 460
+         flow_id_point_1.append('<svg title="Group 4: '+flow_id1+' to '+flow_id2+'" style="position:absolute; width: '+(length_between_points + 5)+'px; height: 140px; z-index:15; margin-top: -60px;" xmlns="http://www.w3.org/2000/svg" iiwidth="10" iheight="190" viewBox="0 -50 '+(length_between_points * 2 + 15)+' 100">         <defs>         <marker id="head" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">    <!-- triangle pointing right (+x) -->    <path d="M0,0 V4 L2,2 Z" fill="black"></path></marker>  </defs><path id="arrow-line" marker-mid="url(#mid)" marker-end="url(#head)" stroke-width="5" fill="none" stroke="black" d="M0,0 L'+(length_between_points * 2 -25)+',125"></path></svg>');
+
+ 
+   } else {
+            flow_id_point_1.append('<svg title="Group 10: '+flow_id1+' to '+flow_id2+'" style="position:absolute; width: '+(length_between_points)+'px; height: 50px; z-index:15; margin-top: -5px; " xmlns="http://www.w3.org/2000/svg" iiwidth="10" iheight="190" viewBox="0 -50 '+(length_between_points * 2)+' 100">         <defs>         <marker id="head" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">    <!-- triangle pointing right (+x) -->    <path d="M0,0 V4 L2,2 Z" fill="black"></path></marker>  </defs><path id="arrow-line" marker-mid="url(#mid)" marker-end="url(#head)" stroke-width="5" fill="none" stroke="black" d="M0,0 L'+(length_between_points * 2 -25)+',0"></path></svg>'); 
+   }
+   }
+   }
+   console.log("END"+flow_id1+flow_id2);
+////    $('#'+flow_id1+'_line').html('<svg width="200" height="100" ><line x1="'+flow1_rect.top+'" y1="'+flow1_rect.left+'" x2="'+flow2_rect.top+'" y2="'+flow2_rect.left+'" stroke="black"/></svg>');
+}
+
+function OLDdrawFlowLine(flow_id1,flow_id2) {
+    console.log(flow_id1+':'+flow_id2);
+    var flow1 = $('#'+flow_id1);
+    var flow2 = $('#'+flow_id2);
+    line_count = line_count + 1;
+    var flow1_rect = flow1.position();
+    console.log(flow1_rect.top, flow1_rect.right, flow1_rect.bottom, flow1_rect.left);
+    var flow2_rect = flow2.position();
+    console.log(flow2_rect.top, flow2_rect.right, flow2_rect.bottom, flow2_rect.left);
+    // .html('<svg width="380" height="150" style="margin-top: 50px; margin-left: 130px"><line x1="20" y1="10" x2="300" y2="250" stroke="black"/></svg>');
+    margleft = margleft +3;
+    margtop =  margtop + 3;
+
+    if (flow1_rect.left > flow2_rect.left && flow2_rect.top > flow1_rect.top) {
+//        $('#'+flow_id1+'_line').append('<svg title="Group 1: '+flow_id1+' to '+flow_id2+'" width="'+flow1_rect.left+'" height="'+flow2_rect.top+'" style="margin-top: '+margtop+'px; margin-left: '+margleft+'px; position: absolute;"><line x1="'+flow1_rect.left+'" y1="'+flow1_rect.top+'" x2="'+flow2_rect.left+'" y2="'+flow2_rect.top+'" stroke="black"/></svg>');
+        $('#'+flow_id2+'_line').append("<svg xmlns='http://www.w3.org/2000/svg' width='"+flow2_rect.left+"' height='"+flow1_rect.top+"' style='margin-top: "+margtop+"px; margin-left: "+margleft+"px; position: absolute;' viewBox='-50 -"+flow2_rect.top+" "+flow2_rect.left+" "+flow2_rect.left+"'><defs>  <marker id='head' orient='auto' markerWidth='12' markerHeight='14' refX='0.1' refY='2'>    <!-- triangle pointing right (+x) -->    <path d='M0,0 V4 L2,2 Z' fill='black'/></marker></defs><path  id='arrow-line'  marker-mid='url(#mid)'  marker-end='url(#head)'  stroke-width='3'  fill='none' stroke='black'  d='M0,0 L"+(parseFloat(flow2_rect.left)-30)+",0'  /></svg>");
+                      ////$('#flow_box_5_line').html('<svg width="930" height="240" style="margin-top: 50px; margin-left: 60px; position: absolute;"><line x1="930" y1="20" x2="190" y2="230" stroke="black"/></svg>');
+    } else if (flow1_rect.top > flow2_rect.top) {
+//         $('#'+flow_id1+'_line').append('<svg title="Group 2: '+flow_id1+' to '+flow_id2+'" width="'+flow2_rect.left+'" height="'+flow1_rect.top+'" style="margin-top: '+margtop+'px; margin-left: '+margleft+'px; position: absolute;"><line x1="'+flow1_rect.left+'" y1="'+flow1_rect.top+'" x2="'+flow2_rect.left+'" y2="'+flow2_rect.top+'" stroke="black"/>iii</svg>');
+        $('#'+flow_id2+'_line').append("<svg xmlns='http://www.w3.org/2000/svg' width='"+flow2_rect.left+"' height='"+flow1_rect.top+"' style='margin-top: "+margtop+"px; margin-left: "+margleft+"px; position: absolute;' viewBox='-50 -"+flow2_rect.top+" "+flow2_rect.left+" "+flow2_rect.left+"'><defs>  <marker id='head' orient='auto' markerWidth='12' markerHeight='14' refX='0.1' refY='2'>    <!-- triangle pointing right (+x) -->    <path d='M0,0 V4 L2,2 Z' fill='black'/></marker></defs><path  id='arrow-line'  marker-mid='url(#mid)'  marker-end='url(#head)'  stroke-width='3'  fill='none' stroke='black'  d='M0,0 L"+(parseFloat(flow2_rect.left)-30)+",0'  /></svg>");
+
+    } else {
+        $('#'+flow_id1+'_line').append("<svg xmlns='http://www.w3.org/2000/svg' width='"+flow2_rect.left+"' height='"+flow1_rect.top+"' style='margin-top: "+margtop+"px; margin-left: "+margleft+"px; position: absolute;' viewBox='-50 -"+flow2_rect.top+" "+flow2_rect.left+" "+flow2_rect.left+"'><defs>  <marker id='head' orient='auto' markerWidth='12' markerHeight='14' refX='0.1' refY='2'>    <!-- triangle pointing right (+x) -->    <path d='M0,0 V4 L2,2 Z' fill='black'/></marker></defs><path  id='arrow-line'  marker-mid='url(#mid)'  marker-end='url(#head)'  stroke-width='3'  fill='none' stroke='black'  d='M0,0 L"+(parseFloat(flow2_rect.left)-30)+",0'  /></svg>");
+       
+// #       $('#'+flow_id1+'_line').append('<svg id="line_svg_'+line_count+'" title="Group 3: '+flow_id1+' to '+flow_id2+'" width="'+flow2_rect.left+'" height="'+flow2_rect.top+'" style="margin-top: '+margtop+'px; margin-left: '+margleft+'px; position: absolute;"><line x1="'+flow1_rect.left+'" y1="'+flow1_rect.top+'" x2="'+flow2_rect.left+'" y2="'+flow2_rect.top+'" stroke="black"/></svg>');
+
+        //$('#'+flow_id1+'_line').
+////      $('#'+flow_id1+'_line').append('<div width="'+flow2_rect.left+'" height="'+flow2_rect.top+'" style="z-index: 5; width: 100%; margin-top: '+margtop+'px; margin-left: '+margleft+'px;"> <span style=" width: 100%; margin-left: 50%; text-align:center; ">>></span> </div>');
+   }
+
+////    $('#'+flow_id1+'_line').html('<svg width="200" height="100" ><line x1="'+flow1_rect.top+'" y1="'+flow1_rect.left+'" x2="'+flow2_rect.top+'" y2="'+flow2_rect.left+'" stroke="black"/></svg>');
+}
+
+$( window ).resize(function() {
+margleft = 50;
+margtop = 40;
+loadPoints();
+
+});
+
+</script>
+
+<style>
+.arrow { 
+content: ">>"
+
+
+}
+</style>
+
+        <div>
+
+
+        <!--- END -->
+
+
+    </div>
+</div>
+
+{% endblock %}

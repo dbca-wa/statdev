@@ -59,7 +59,15 @@
                 "route": "3.2",
                 "routegroup":"lodge",
                 "required" : []
+            },
+            {
+                "title": "Lodge Application",
+                "route": "1.2",
+                "routegroup":"lodge",
+                "required" : []
             }
+
+
         ],
         "formcomponent": {
             "update": {

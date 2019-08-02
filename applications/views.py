@@ -858,6 +858,184 @@ class ApplicationApplicantCompanyChange(LoginRequiredMixin,DetailView):
         context['company_id'] = self.object.pk
 
         return context
+class ApplicationFlows(LoginRequiredMixin,TemplateView):
+    #model = Application
+    template_name = 'applications/application_flows.html'
+    def get(self, request, *args, **kwargs):
+        context_processor = template_context(self.request)
+        staff = context_processor['staff']
+        if staff == True:
+           donothing =""
+        else:
+           messages.error(self.request, 'Forbidden from viewing this page.')
+           return HttpResponseRedirect("/")
+        return super(ApplicationFlows, self).get(request, *args, **kwargs)
+
+#    def get_queryset(self):
+#        qs = super(ApplicationFlows, self).get_queryset()
+#
+#        # Did we pass in a search string? If so, filter the queryset and return
+#        # it.
+#        if 'q' in self.request.GET and self.request.GET['q']:
+#            query_str = self.request.GET['q']
+#            # Replace single-quotes with double-quotes
+#            query_str = query_str.replace("'", r'"')
+#            # Filter by pk, title, applicant__email, organisation__name,
+#            # assignee__email
+#            query = get_query(
+#                query_str, ['pk', 'title', 'applicant__email', 'organisation__name', 'assignee__email'])
+#            qs = qs.filter(query).distinct()
+#        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super(ApplicationFlows, self).get_context_data(**kwargs)
+        context['query_string'] = ''
+        context['application_types'] = Application.APP_TYPE_CHOICES._identifier_map
+        context['application_choices'] = Application.APP_TYPE_CHOICES
+        
+        processor = Group.objects.get(name='Processor')
+
+        for b in Application.APP_TYPE_CHOICES._identifier_map:
+           print(b)
+           print(Application.APP_TYPE_CHOICES._identifier_map[b])
+    
+
+        # Rule: admin officers may self-assign applications.
+        if processor in self.request.user.groups.all() or self.request.user.is_superuser:
+            context['may_assign_processor'] = True
+        return context
+
+class ApplicationFlowRoutes(LoginRequiredMixin,TemplateView):
+
+    #model = Application
+    template_name = 'applications/application_flow_routes.html'
+    def get(self, request, *args, **kwargs):
+        context_processor = template_context(self.request)
+        staff = context_processor['staff']
+        if staff == True:
+           donothing = ""
+        else:
+           messages.error(self.request, 'Forbidden from viewing this page.')
+           return HttpResponseRedirect("/")
+        return super(ApplicationFlowRoutes, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ApplicationFlowRoutes, self).get_context_data(**kwargs)
+        context['query_string'] = ''
+        context['application_types'] = Application.APP_TYPE_CHOICES._identifier_map
+        context['application_choices'] = Application.APP_TYPE_CHOICES
+        route = self.request.GET.get('route',1)
+        context['route'] = route
+        #processor = Group.objects.get(name='Processor')
+        pk = kwargs['pk']
+        print (pk)
+        app_type = None
+        for b in Application.APP_TYPE_CHOICES._identifier_map:
+            if Application.APP_TYPE_CHOICES._identifier_map[b] == int(pk): 
+                app_type = b
+                print(b)
+
+        if app_type:
+            flow = Flow()
+            flow.get(app_type)
+            #print (kwargs)
+            #print (flow.json_obj)
+            #context['workflow'] = flow.json_obj
+            workflow_steps = flow.json_obj
+            if 'options' in workflow_steps:
+                del workflow_steps['options']
+            context['workflow'] = sorted(workflow_steps.items(), key=lambda dct: float(dct[0]))
+
+            context['workflow_route'] = flow.getAllRouteConf(app_type,route)
+            if 'condition_based_actions' in context['workflow_route']:
+                context['workflow_route']['condition_based_actions'] = context['workflow_route']['condition-based-actions']
+            else: 
+                context['workflow_route']['condition_based_actions'] = ''
+            print (context['workflow_route']['condition_based_actions'])
+
+#        for b in Application.APP_TYPE_CHOICES._identifier_map:
+#           print(b)
+#           print(Application.APP_TYPE_CHOICES._identifier_map[b])
+
+
+        # Rule: admin officers may self-assign applications.
+        #if self.request.user.groups.all() or self.request.user.is_superuser:
+        #    context['may_assign_processor'] = True
+        return context
+
+class ApplicationFlowDiagrams(LoginRequiredMixin,TemplateView):
+
+    #model = Application
+    template_name = 'applications/application_flow_diagrams.html'
+    def get(self, request, *args, **kwargs):
+        context_processor = template_context(self.request)
+        staff = context_processor['staff']
+        if staff == True:
+           donothing = ""
+        else:
+           messages.error(self.request, 'Forbidden from viewing this page.')
+           return HttpResponseRedirect("/")
+        return super(ApplicationFlowDiagrams, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ApplicationFlowDiagrams, self).get_context_data(**kwargs)
+        context['query_string'] = ''
+        context['application_types'] = Application.APP_TYPE_CHOICES._identifier_map
+        context['application_choices'] = Application.APP_TYPE_CHOICES
+        print ('DIA')
+        route = self.request.GET.get('route',1)
+        context['route'] = route
+        print (vars(Application.APP_TYPE_CHOICES))
+        #processor = Group.objects.get(name='Processor')
+        pk = kwargs['pk']
+        print (pk)
+        context['app_type'] = pk
+        context['application_type_name'] = Application.APP_TYPE_CHOICES._display_map[int(pk)]
+
+        app_type = None
+        for b in Application.APP_TYPE_CHOICES._identifier_map:
+            if Application.APP_TYPE_CHOICES._identifier_map[b] == int(pk):
+                app_type = b
+                print(b)
+
+        if app_type:
+            print ("APP TYPE")
+            flow = Flow()
+            flow.get(app_type)
+            #print (kwargs)
+            #print (flow.json_obj)
+            workflow_steps = flow.json_obj
+            print (workflow_steps["1"]["title"])
+            for i in workflow_steps.keys():
+                 if i == "options":
+                     pass
+                 else:
+                     #print (i)
+                     #print(workflow_steps[i]["title"])
+                     
+                     workflow_steps[i]['step_id'] = str(i).replace(".","_")
+                     #print (workflow_steps[i]['step_id']) 
+                     for a in workflow_steps[i]['actions']:
+                          print (a)
+                          a['route_id'] = str(a['route']).replace(".","_")
+                          print (a) 
+            if 'options' in workflow_steps:
+                del workflow_steps['options']
+            context['workflow'] = sorted(workflow_steps.items(), key=lambda dct: float(dct[0]))
+            #context['workflow'][1][0] = '2-22'
+            #print (context['workflow'][1][0])
+               #b = i[0].replace(".","-")
+               #print (b)
+               
+ 
+            print (context['workflow'])
+            context['workflow_route'] = flow.getAllRouteConf(app_type,route)
+            if 'condition_based_actions' in context['workflow_route']:
+                context['workflow_route']['condition_based_actions'] = context['workflow_route']['condition-based-actions']
+            else:
+                context['workflow_route']['condition_based_actions'] = ''
+            #print (context['workflow'])
+        return context
 
 class ApplicationList(LoginRequiredMixin,ListView):
     model = Application
