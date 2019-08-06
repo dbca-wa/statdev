@@ -1,10 +1,9 @@
-Django==1.10.6
+Django<1.11.0
 git+https://github.com/dbca-wa/dpaw-utils.git@0.3a16#egg=dpaw-utils
-#git+https://github.com/parksandwildlife/dpaw-utils.git@0.3a16#egg=dpaw-utils
-git+https://github.com/django-oscar/django-oscar.git@17a1f6b#egg=django-oscar
+git+https://github.com/django-oscar/django-oscar.git@17a1f6b17aba19e3c0b095e90acc654d463e0cf9#egg=django-oscar
+git+https://github.com/xzzy/ledger#egg=ledger
 social-auth-app-django==1.0.1
 django-model-utils==2.6.1
-#webtemplate-dpaw==0.4.7
 webtemplate-dbca==0.6.0
 django-countries==3.4.1
 django-crispy-forms==1.6.1
@@ -16,3 +15,13 @@ django-multiupload==0.5.2
 django-q==0.7.18
 social-auth-core==1.0.1
 fpdf==1.7.2
+
+django-tables2==1.11.0
+django-extra-views==0.9.0
+djangorestframework==3.5.0
+djangorestframework-gis==0.11
+djangorestframework-csv==2.0.0
+pycountry==17.1.8
+django-countries==3.4.1
+django-cron==0.5.0
+py4j==0.10.2.1
