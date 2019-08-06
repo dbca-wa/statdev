@@ -1,7 +1,7 @@
 Django<1.11.0
 git+https://github.com/dbca-wa/dpaw-utils.git@0.3a16#egg=dpaw-utils
 git+https://github.com/django-oscar/django-oscar.git@17a1f6b17aba19e3c0b095e90acc654d463e0cf9#egg=django-oscar
-git+https://github.com/xzzy/ledger#egg=ledger
+git+https://github.com/dbca-wa/ledger#egg=ledger
 social-auth-app-django==1.0.1
 django-model-utils==2.6.1
 webtemplate-dbca==0.6.0
