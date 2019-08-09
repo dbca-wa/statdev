@@ -77,6 +77,9 @@ function bindForm(form_id,input_id,upload_type) {
 						});
 				console.log("FILES ATTACHED 2");
 				form_data.append('csrfmiddlewaretoken', $("input[name=csrfmiddlewaretoken]").val());
+                                form_data.append('file_group', $("#file_group").val());
+                                form_data.append('file_group_ref_id', $("#file_group_ref_id").val());
+                              
 				$.ajax({
 						//	url : post_url,
 url : '/applications-uploads/',
@@ -267,7 +270,8 @@ showFiles: function(input_id,upload_type) {
 				   for (var file in input_array) {
 					   htmlvalue += '<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">';
                                             
-					   htmlvalue += filecount+'. <A HREF="/media/'+input_array[file].path+'">';
+					   //htmlvalue += filecount+'. <A HREF="/media/'+input_array[file].path+'">';
+                                           htmlvalue += filecount+'. <A HREF="/private-media/view/'+input_array[file].doc_id+'-file'+input_array[file].extension+'">';
                                            if (input_array[file].name.length > 2) {
                                                htmlvalue += input_array[file].name;
                                            }  else  {
@@ -286,7 +290,8 @@ showFiles: function(input_id,upload_type) {
 				   input_array = JSON.parse(input_id_obj);
 
 				   htmlvalue += '<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">';
-                                   htmlvalue += '<A HREF="/media/'+input_array.path+'">';
+                                   //htmlvalue += '<A HREF="/media/'+input_array.path+'">';
+                                   htmlvalue += '<A HREF="/private-media/view/'+input_array.doc_id+'-file'+input_array.extension+'">';
                                            if (input_array.name.length > 2) {
                                                htmlvalue += input_array.name;
                                            }  else  {

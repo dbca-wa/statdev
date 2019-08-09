@@ -32,7 +32,7 @@
                             </div>
                             <div class="col-lg-12">
                                 {% if object.river_lease_scan_of_application %}
-                                <A HREF='/media/{{ object.river_lease_scan_of_application.upload.name }}'>{{ river_lease_scan_of_application_short }}</A>
+                                <A HREF='{{ object.river_lease_scan_of_application.file_url }}'>{{ river_lease_scan_of_application_short }}</A>
                                 {% else %}
                                 No Attachment Added
                                 {% endif %}

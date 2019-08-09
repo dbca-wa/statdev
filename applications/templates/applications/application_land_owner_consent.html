@@ -16,9 +16,8 @@
                             </div>
                             <div class="col-lg-4">
                                 {% if land_owner_consent_list %}
-
                                 {% for doc in land_owner_consent_list %}
-                                	<div class="col-sm-12 col-md-12 col-lg-12"><A HREF='/media/{{ doc.path }}'>{{ doc.path_short }}</A></div>
+                                	<div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}'>{{ doc.path_short }}</A></div>
                                 {% endfor %}
                                 {% else %}
                                    No Attachments Added

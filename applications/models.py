@@ -32,11 +32,36 @@ class Record(models.Model):
         (9, 'completion', ('Completed document')),
     )
 
+
+    FILE_GROUP = Choices(
+        (1, 'permit', ('Permit')),
+        (2, 'licence', ('Licence/permit')),
+        (3, 'part5', ('Part 5')),
+        (4, 'emergency', ('Emergency works')),
+        (5, 'part5cr', ('Part 5 - Amendment Request')),
+        (6, 'part5amend', ('Part 5 - Amendment Application')),
+        (7, 'test', ('Test - Application')),
+        (8, 'permitamend', ('Amend Permit')),
+        (9, 'licenceamend', ('Amend Licence')),
+        (10, 'permitrenew', ('Renew Permit')),
+        (11, 'licencerenew', ('Renew Licence')),
+        (2001, 'person', ('Person')),
+        (2002, 'organisation', ('Organistion')),
+    )
+
+
     upload = models.FileField(max_length=512, upload_to='uploads/%Y/%m/%d', storage=upload_storage)
     name = models.CharField(max_length=256)
     category = models.IntegerField(choices=DOC_CATEGORY_CHOICES, null=True, blank=True)
     metadata = JSONField(null=True, blank=True)
     text_content = models.TextField(null=True, blank=True, editable=False)  # Text for indexing
+    file_group = models.IntegerField(choices=FILE_GROUP, null=True, blank=True)
+    file_group_ref_id = models.IntegerField(null=True, blank=True) 
+    extension = models.CharField(max_length=5, null=True, blank=True)
+
+
+    def file_url(self): 
+         return settings.PRIVATE_MEDIA_URL+str(self.pk)+'-file'+self.extension
 
     def __str__(self):
         if self.category:

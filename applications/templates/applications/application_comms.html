@@ -31,7 +31,7 @@
                     <td>
 			{% if communication.records.exists %}
                         {% for doc in communication.records.all %}
-                            <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='/media/{{ doc.upload }}'>{{ doc.name }}</A></div>
+                            <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}'>{{ doc.name }}</A></div>
                         {% endfor %}
                         {% endif %}
                         </td>

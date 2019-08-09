@@ -207,7 +207,7 @@
                             </div>
                             <div class="col-lg-12">
                                 {% if object.river_lease_scan_of_application %}
-                                <A HREF='/media/{{ object.river_lease_scan_of_application.upload.name }}'>{{ river_lease_scan_of_application_short }}</A>
+                                <A HREF='{{ object.river_lease_scan_of_application.file_url }}'>{{ river_lease_scan_of_application_short }}</A>
                                 {% else %}
                                 No Attachment Added
                                 {% endif %}
@@ -307,7 +307,7 @@
                                 {% if proposed_development_plans_list %}
 
                                 {% for doc in proposed_development_plans_list %}
-                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='/media/{{ doc.path }}'>{{ doc.path_short }}</A></div>
+                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}'>{{ doc.path_short }}</A></div>
                                 {% endfor %}
                                 {% else %}
                                 No Attachments
@@ -339,7 +339,7 @@
                                 {% if land_owner_consent_list %}
 
                                 {% for doc in land_owner_consent_list %}
-                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='/media/{{ doc.path }}'>{{ doc.path_short }}</A></div>
+                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}'>{{ doc.path_short }}</A></div>
                                 {% endfor %}
                                 {% else %}
                                 No Attachments Added
@@ -367,7 +367,7 @@
                                 Print <a href=''>this deed</a>, sign it and attach it to this application<BR>
                             </div>
                             <div class="col-lg-12">
-                                <A HREF='/media/{{ object.deed.upload.name }}'>{{ deed_short }}</A>
+                                <A HREF='{{ object.deed.file_url }}'>{{ deed_short }}</A>
                             </div>
                         </div>
                     </div>
@@ -579,10 +579,10 @@
                                 </div>
                                 <div class="col-lg-9">
                                     {% if object.document_new_draft %}
-                                            <A HREF='/media/{{ object.document_new_draft.upload }}' target="_draft_report_part_5" >Assessment Report Version 2.PDF</A>
+                                            <A HREF='{{ object.document_new_draft.file_url }}' target="_draft_report_part_5" >Assessment Report Version 2.PDF</A>
                                     {% else %}
                                     {% if object.document_draft %}
-                                    <A HREF='/media/{{ object.document_draft.upload }}' target="_draft_report_part_5" >Assessment Report.PDF</A>
+                                    <A HREF='{{ object.document_draft.file_url }}' target="_draft_report_part_5" >Assessment Report.PDF</A>
                                     {% else %}
                                     No Attachment
                                     {% endif %}
@@ -598,7 +598,7 @@
                                 </div>
                                 <div class="col-lg-9">
                                     {% if object.swan_river_trust_board_feedback %}
-                                    <A HREF='/media/{{ object.swan_river_trust_board_feedback.upload }}'>Feedback.PDF</A>
+                                    <A HREF='{{ object.swan_river_trust_board_feedback.file_url }}'>Feedback.PDF</A>
                                     {% else %}
                                     No Attachment
                                     {% endif %}
@@ -617,7 +617,7 @@
                                     </div>
                                     <div class="col-lg-9">
                                         {% if object.document_new_draft %}
-                                        <A HREF='/media/{{ object.document_new_draft.upload }}'>Assessment Report Version 2.PDF</A>
+                                        <A HREF='{{ object.document_new_draft.file_url }}'>Assessment Report Version 2.PDF</A>
                                         {% else %}
                                         <A HREF="{% url 'application_update' object.pk %}">{% if may_update == "True" %}Attach File{% else %}No Attachment{% endif %}</A>
                                         {% endif %}
@@ -657,7 +657,7 @@
                             </div>
                             <div class="col-lg-9">
                                 {% if object.document_draft_signed.upload.name %}
-                                <A HREF='/media/{{ object.document_draft_signed.upload.name }}'>Signed Document.pdf</A>
+                                <A HREF='{{ object.document_draft_signed.file_url }}'>Signed Document.pdf</A>
                                 {% else %}
                                 {% if may_update == "True" %}
                                 <A HREF="{% url 'application_update' object.pk %}">Attach File</A>
@@ -709,7 +709,7 @@
                                 </div>
                                 <div class="col-lg-9">
                                     {% if object.document_new_draft_v3 %}
-                                    <A HREF='/media/{{ object.document_new_draft_v3.upload }}'>Assessment Report Version 3.PDF</A>
+                                    <A HREF='{{ object.document_new_draft_v3.file_url }}'>Assessment Report Version 3.PDF</A>
                                     {% else %}
                                     <A HREF="{% url 'application_update' object.pk %}">{% if may_update == "True" %}Attach File{% else %}No Attachment{% endif %}</A>
                                     {% endif %}
@@ -723,7 +723,7 @@
                                 </div>
                                 <div class="col-lg-9">
                                     {% if object.document_memo %}
-                                        <A HREF='/media/{{ object.document_memo.upload }}'>Memo.PDF</A>
+                                        <A HREF='{{ object.document_memo.file_url }}'>Memo.PDF</A>
                                     {% else %}
                                         <A HREF="{% url 'application_update' object.pk %}">{% if may_update == "True" %}Attach File{% else %}No Attachment{% endif %}</A>
                                     {% endif %}
@@ -753,7 +753,7 @@
                                 </div>
                                 <div class="col-lg-9">
                                     {% if object.document_determination %}
-                                       <A HREF='/media/{{ object.document_determination.upload }}'>Determination.PDF</A>
+                                       <A HREF='{{ object.document_determination.file_url }}'>Determination.PDF</A>
                                     {% else %}
                                         <A HREF="{% url 'application_update' object.pk %}">{% if may_update == "True" %}Attach File{% else %}No Attachment{% endif %}</A>
                                     {% endif %}
@@ -767,7 +767,7 @@
                                 </div>
                                 <div class="col-lg-9">
 									{% if object.document_briefing_note %}
-                                       <A HREF='/media/{{ object.document_briefing_note.upload }}'>Briefing.PDF</A>
+                                       <A HREF='{{ object.document_briefing_note.file_url }}'>Briefing.PDF</A>
                                     {% else %}
                                         <A HREF="{% url 'application_update' object.pk %}">{% if may_update == "True" %}Attach File{% else %}No Attachment{% endif %}</A>
                                     {% endif %}
@@ -780,7 +780,7 @@
                                 </div>
                                 <div class="col-lg-9">
 									{% if object.document_final_signed %}
-                                    <A HREF='/media/{{ object.document_final_signed.upload.name }}'>Signed Document.pdf</A>
+                                    <A HREF='{{ object.document_final_signed.file_url }}'>Signed Document.pdf</A>
 
                                     {% else %}
                                             No Attachment

@@ -228,6 +228,7 @@ class AjaxFileUploader(FileInput):
                   if fi:
                       fi['short_name'] =SafeText(fi['path'])[19:]
                       fi['doc_id'] = fi['fileid']
+                      fi['extension'] = fi['extension']
                       substitutions['clearfiles'] += "<div class='col-sm-8'><A HREF='/media/"+fi['path']+"'>"
                       if fi['name']:
                          substitutions['clearfiles'] += SafeText(fi['name'])
@@ -248,6 +249,7 @@ class AjaxFileUploader(FileInput):
                value1['path'] = value.upload.name
                value1['name'] = value.name
                value1['doc_id'] = value.id
+               value1['extension'] = value.extension
            value = value1 
 
         
@@ -267,6 +269,7 @@ class AjaxFileUploader(FileInput):
               count = 1
            
               for fi in value:
+                 print (fi)
                  if 'short_name' in fi:
 #                    substitutions['ajax_uploader'] += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">'
 #                    substitutions['ajax_uploader'] += '</div>';
@@ -274,7 +277,8 @@ class AjaxFileUploader(FileInput):
 
                      substitutions['ajax_uploader'] += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">'
                      substitutions['ajax_uploader'] += '<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">'
-                     substitutions['ajax_uploader'] += str(count)+'. <A HREF="/media/'+fi['path']+'">'
+                     #substitutions['ajax_uploader'] += str(count)+'. <A HREF="/media/'+fi['path']+'">'
+                     substitutions['ajax_uploader'] += str(count)+'. <A HREF="/private-media/view/'+str(fi['doc_id'])+'-file'+str(fi['extension'])+'">'
 
                      if 'name' in fi:
                            substitutions['ajax_uploader'] += fi['name']
@@ -294,7 +298,8 @@ class AjaxFileUploader(FileInput):
                      #substitutions['ajax_uploader'] += '<li>1. <A HREF="/media/'+value['path']+'">'+value['short_name']+'</A></li>'
 
                      substitutions['ajax_uploader'] += '<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">'
-                     substitutions['ajax_uploader'] += '<A HREF="/media/'+value['path']+'">'
+                     #substitutions['ajax_uploader'] += '<A HREF="/media/'+value['path']+'">'
+                     substitutions['ajax_uploader'] += '<A HREF="/private-media/view/'+str(value['doc_id'])+'-file'+str(value['extension'])+'">'
                     
                      if 'name' in value:
                          substitutions['ajax_uploader'] += value['name']

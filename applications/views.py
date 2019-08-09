@@ -41,6 +41,7 @@ from statdev.context_processors import template_context
 import json
 import os.path
 from applications.views_pdf import PDFtool
+import mimetypes
 
 
 class HomePage(TemplateView):
@@ -2892,6 +2893,7 @@ class ReferralConditions(UpdateView):
             fileitem = {}
             fileitem['fileid'] = b1.id
             fileitem['path'] = b1.upload.name
+            fileitem['extension']  = b1.extension
             multifilelist.append(fileitem)
 
         initial['records'] = multifilelist
@@ -3626,6 +3628,7 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
             fileitem['fileid'] = b1.id
             fileitem['path'] = b1.upload.name
             fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
             multifilelist.append(fileitem)
         initial['land_owner_consent'] = multifilelist
 
@@ -3636,6 +3639,7 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
             fileitem['fileid'] = b1.id
             fileitem['path'] = b1.upload.name
             fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
             multifilelist.append(fileitem)
         initial['proposed_development_plans'] = multifilelist
 
@@ -3646,6 +3650,7 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
             fileitem['fileid'] = b1.id
             fileitem['path'] = b1.upload.name
             fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
             multifilelist.append(fileitem)
         initial['other_relevant_documents'] = multifilelist
 
@@ -3656,6 +3661,7 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
             fileitem['fileid'] = b1.id
             fileitem['path'] = b1.upload.name
             fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
             multifilelist.append(fileitem)
         initial['brochures_itineries_adverts'] = multifilelist
 
@@ -4421,10 +4427,22 @@ class ApplicationLodge(LoginRequiredMixin, UpdateView):
                                 error_messages = True
                                 #return HttpResponseRedirect(app.get_absolute_url()+'update/')
                             appattr = getattr(app, fielditem)
-                            if isinstance(appattr, unicode) or isinstance(appattr, str):
-                                if len(appattr) == 0:
-                                    messages.error(self.request, 'Required Field ' + fielditem + ' is empty,  Please Complete')
-                                    error_messages = True
+                            python3 = False
+                            try:
+                                 unicode('test')
+                            except:
+                                 python3 = True
+                                 pass
+                            if python3 is True:
+                                if isinstance(appattr, str):
+                                    if len(appattr) == 0:
+                                        messages.error(self.request, 'Required Field ' + fielditem + ' is empty,  Please Complete')
+                                        error_messages = True
+                            else: 
+                                if isinstance(appattr, unicode) or isinstance(appattr, str):
+                                    if len(appattr) == 0:
+                                        messages.error(self.request, 'Required Field ' + fielditem + ' is empty,  Please Complete')
+                                        error_messages = True
                     if error_messages is True:
                         return HttpResponseRedirect(app.get_absolute_url()+'update/')
                     donothing = ""
@@ -4473,10 +4491,22 @@ class ApplicationLodge(LoginRequiredMixin, UpdateView):
                         error_messages = True
                         #return HttpResponseRedirect(app.get_absolute_url()+'update/')
                     appattr = getattr(app, fielditem)
-                    if isinstance(appattr, unicode) or isinstance(appattr, str):
-                        if len(appattr) == 0:
-                            messages.error(self.request, 'Required Field ' + fielditem + ' is empty,  Please Complete')
-                            error_messages = True
+                    python3 = False
+                    try:
+                         unicode('test')
+                    except:
+                         python3 = True
+
+                    if python3 is True:
+                        if isinstance(appattr, str):
+                            if len(appattr) == 0:
+                                messages.error(self.request, 'Required Field ' + fielditem + ' is empty,  Please Complete')
+                                error_messages = True
+                    else:
+                        if isinstance(appattr, unicode) or isinstance(appattr, str):
+                            if len(appattr) == 0:
+                                messages.error(self.request, 'Required Field ' + fielditem + ' is empty,  Please Complete')
+                                error_messages = True
             if error_messages is True:
                  return HttpResponseRedirect(app.get_absolute_url()+'update/')
 
@@ -6289,6 +6319,7 @@ class ComplianceComplete(LoginRequiredMixin,UpdateView):
             fileitem = {}
             fileitem['fileid'] = b1.id
             fileitem['path'] = b1.upload.name
+            fileitem['extension']  = b1.extension
             multifilelist.append(fileitem)
         initial['records'] = multifilelist
         return initial
@@ -6568,6 +6599,7 @@ class NewsPaperPublicationUpdate(LoginRequiredMixin, UpdateView):
                 fileitem = {}
                 fileitem['fileid'] = b1.id
                 fileitem['path'] = b1.upload.name
+                fileitem['extension']  = b1.extension
                 multifilelist.append(fileitem)
         initial['records'] = multifilelist
         return initial
@@ -6940,6 +6972,7 @@ class FeedbackPublicationUpdate(LoginRequiredMixin, UpdateView):
                 fileitem = {}
                 fileitem['fileid'] = b1.id
                 fileitem['path'] = b1.upload.name
+                fileitem['extension']  = b1.extension
                 multifilelist.append(fileitem)
         initial['records'] = multifilelist
         return initial
@@ -7538,6 +7571,7 @@ class VesselUpdate(LoginRequiredMixin, UpdateView):
             fileitem = {}
             fileitem['fileid'] = b1.id
             fileitem['path'] = b1.upload.name
+            fileitem['extension']  = b1.extension
             multifilelist.append(fileitem)
         initial['registration'] = multifilelist
 
@@ -9163,4 +9197,39 @@ def getPDFapplication(request,application_id):
           pdf_data = pdf_file.read()
           pdf_file.close()
           return HttpResponse(pdf_data, content_type='application/pdf')
+
+
+def getAppFile(request,file_id,extension):
+
+  #if request.user.is_superuser:
+  file_record = Record.objects.get(id=file_id)
+  app_id = file_record.file_group_ref_id 
+
+  app = Application.objects.get(id=app_id)
+
+
+  file_record = Record.objects.get(id=file_id)
+  file_name_path = file_record.upload.path
+  if os.path.isfile(file_name_path) is True:
+          the_file = open(file_name_path, 'rb')
+          the_data = the_file.read()
+          the_file.close()
+          return HttpResponse(the_data, content_type=mimetypes.types_map['.'+str(extension)])
+
+
+
+#      filename = 'pdfs/applications/'+str(app.id)+'-application.pdf'
+#      if os.path.isfile(filename) is False:
+##      if app.id:
+#          pdftool = PDFtool()
+#          if app.app_type == 4:
+#              pdftool.generate_emergency_works(app)
+#
+#      if os.path.isfile(filename) is True:
+#          pdf_file = open(filename, 'rb')
+#          pdf_data = pdf_file.read()
+#          pdf_file.close()
+#          return HttpResponse(pdf_data, content_type='application/pdf')
+
+
 

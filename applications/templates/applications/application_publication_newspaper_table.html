@@ -14,7 +14,7 @@
                                             {% if newspub.documents_short == None %}
                                             {% else %}
                                             {% for doc in newspub.documents_short %}
-                                            <div class="col-sm-12"><A href='/media/{{ doc.path }}'>{{ doc.path_short }}</a></div>
+                                            <div class="col-sm-12"><A href='{{ doc.file_url }}'>{{ doc.path_short }}</a></div>
                                             {% endfor %}
                                             {% endif %}
                                             <td>

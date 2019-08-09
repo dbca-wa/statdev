@@ -47,7 +47,7 @@ INSTALLED_APPS += [
     'rest_framework_gis',
 #    'ajax_upload'
 ]
-MIDDLEWARE = [
+MIDDLEWARE_CLASSES += [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,6 +58,7 @@ MIDDLEWARE = [
     'reversion.middleware.RevisionMiddleware',
     'dpaw_utils.middleware.SSOLoginMiddleware',
 ]
+
 ROOT_URLCONF = 'statdev.urls'
 TEMPLATES = [
     {
@@ -186,7 +187,7 @@ if not os.path.exists(os.path.join(BASE_DIR, 'media')):
     os.mkdir(os.path.join(BASE_DIR, 'media'))
 
 PRIVATE_MEDIA_ROOT = os.path.join(BASE_DIR, 'private-media')
-PRIVATE_MEDIA_URL = '/private-media/'
+PRIVATE_MEDIA_URL = '/private-media/view/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
