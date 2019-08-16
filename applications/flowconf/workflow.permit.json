@@ -111,19 +111,6 @@
                 "may_generate_pdf": "False",
                 "hide_form_buttons": "False"
 
-            },
-            "Statdev Approver": {
-                "may_update": "True",
-                "may_lodge":"True",
-                "may_refer":"False",
-                "may_assign":"False",
-                "may_assign_customer": "False",
-                "may_assign_processor": "False",
-                "may_create_condition":"False",
-                "may_submit_approval": "False",
-                "may_issue": "False",
-                "may_generate_pdf": "False",
-                "hide_form_buttons": "False"
             }
 
         },

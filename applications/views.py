@@ -2230,7 +2230,7 @@ class ApplicationApplyUpdate(LoginRequiredMixin, UpdateView):
             nextstep = 'apptype'
         app = Application.objects.get(pk=self.object.pk)
         if action == 'apptype':
-            if self.request.user.groups.filter(name__in=['Statdev Processor']).exists():
+            if self.request.user.groups.filter(name__in=['Statdev Processor']).exists() or self.request.user.groups.filter(name__in=['Statdev Assessor']).exists():
                 success_url = reverse('applicant_change', args=(self.object.pk,))
             else:
                 success_url = reverse('application_update', args=(self.object.pk,))
@@ -5061,8 +5061,8 @@ class ApplicationAssignApplicantCompany(LoginRequiredMixin, UpdateView):
     def get(self, request, *args, **kwargs):
         app = self.get_object()
         context_processor = template_context(self.request)
-        admin_staff = context_processor['admin_staff']
-        if admin_staff == True:
+        staff_access = context_processor['admin_assessor_staff']
+        if staff_access == True:
            donothing =""
         else:
            messages.error(self.request, 'Forbidden from viewing this page.')
@@ -5081,8 +5081,8 @@ class ApplicationAssignApplicantCompany(LoginRequiredMixin, UpdateView):
 
     def post(self, request, *args, **kwargs):
         context_processor = template_context(self.request)
-        admin_staff = context_processor['admin_staff']
-        if admin_staff == True:
+        staff_access = context_processor['admin_assessor_staff']
+        if staff_access == True:
            donothing =""
         else:
            messages.error(self.request, 'Forbidden from viewing this page.')
@@ -5127,8 +5127,9 @@ class ApplicationAssignApplicant(LoginRequiredMixin, UpdateView):
     def get(self, request, *args, **kwargs):
         app = self.get_object()
         context_processor = template_context(self.request)
-        admin_staff = context_processor['admin_staff']
-        if admin_staff == True:
+
+        staff_access = context_processor['admin_assessor_staff']
+        if staff_access == True:
            donothing =""
         else:
            messages.error(self.request, 'Forbidden from viewing this page.')
@@ -5149,8 +5150,8 @@ class ApplicationAssignApplicant(LoginRequiredMixin, UpdateView):
     def post(self, request, *args, **kwargs):
 
         context_processor = template_context(self.request)
-        admin_staff = context_processor['admin_staff']
-        if admin_staff == True:
+        staff_access = context_processor['admin_assessor_staff']
+        if staff_access == True:
            donothing =""
         else:
            messages.error(self.request, 'Forbidden from viewing this page.')

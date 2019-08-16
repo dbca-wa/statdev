@@ -73,6 +73,24 @@
                 "show_form_buttons": "True"
         },
         "groupaccess": {
+
+            "Assessor": {
+                "may_update": "True",
+                "may_lodge":"True",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_assign_to_creator": "False",
+                "may_change_application_applicant" :"True",
+                "may_view_action_log": "True",
+                "show_form_buttons": "True"
+            },
+
             "Processor": {
                 "may_update": "True",
                 "may_lodge":"True",
