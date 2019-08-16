@@ -776,7 +776,7 @@ class PDFtool(FPDF):
          pdf.cell(11, 5, 'DATE:',0,0,'L')      
          pdf.cell(60, 5, '20 Feb 2018',0,1,'L')
          
-         pdf.output(BASE_DIRE+'/pdfs/approvals/'+str(app.id)+'-approval.pdf', 'F')
+         pdf.output(BASE_DIR+'/pdfs/approvals/'+str(app.id)+'-approval.pdf', 'F')
 
     def generate_permitold(self,app):
          BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

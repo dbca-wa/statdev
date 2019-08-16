@@ -29,7 +29,7 @@ from applications.views_sub import Application_Part5, Application_Emergency, App
 from applications.email import sendHtmlEmail, emailGroup, emailApplicationReferrals
 from applications.validationchecks import Attachment_Extension_Check, is_json
 from applications.utils import get_query, random_generator
-from ledger.accounts.models import EmailUser, Address, Organisation, Document
+from ledger.accounts.models import EmailUser, Address, Organisation, Document, OrganisationAddress
 from approvals.models import Approval
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -42,7 +42,7 @@ import json
 import os.path
 from applications.views_pdf import PDFtool
 import mimetypes
-
+from django.middleware.csrf import get_token
 
 class HomePage(TemplateView):
     # preperation to replace old homepage with screen designs..
@@ -58,6 +58,7 @@ class HomePage(TemplateView):
 
         template = get_template(self.template_name)
         context = RequestContext(self.request, context)
+        context['csrf_token_value'] = get_token(self.request)
         return HttpResponse(template.render(context))
 
     def get_context_data(self, **kwargs):
@@ -650,7 +651,9 @@ class CreateLinkCompany(LoginRequiredMixin,CreateView):
 
         if step == '3':
             if pending_org.postal_address is None or pending_org.billing_address is None:
-                postal_address = Address.objects.create(line1=forms_data['postal_line1'],
+                print ("FORMS")
+                print (forms_data)
+                postal_address = OrganisationAddress.objects.create(line1=forms_data['postal_line1'],
                                                         line2=forms_data['postal_line2'],
                                                         line3=forms_data['postal_line3'],
                                                         locality=forms_data['postal_locality'],
@@ -658,7 +661,7 @@ class CreateLinkCompany(LoginRequiredMixin,CreateView):
                                                         country=forms_data['postal_country'],
                                                         postcode=forms_data['postal_postcode']
                         )
-                billing_address = Address.objects.create(line1=forms_data['billing_line1'],
+                billing_address = OrganisationAddress.objects.create(line1=forms_data['billing_line1'],
                                                         line2=forms_data['billing_line2'],
                                                         line3=forms_data['billing_line3'],
                                                         locality=forms_data['billing_locality'],
@@ -2583,6 +2586,8 @@ class ApplicationCommsCreate(LoginRequiredMixin,CreateView):
     def get_context_data(self, **kwargs):
         context = super(ApplicationCommsCreate, self).get_context_data(**kwargs)
         context['page_heading'] = 'Create new communication'
+        context['file_group'] =  '2003'
+        context['file_group_ref_id'] =  self.kwargs['pk']
         return context
 
     def get_initial(self):
@@ -2667,6 +2672,8 @@ class AccountCommsCreate(LoginRequiredMixin,CreateView):
     def get_context_data(self, **kwargs):
         context = super(AccountCommsCreate, self).get_context_data(**kwargs)
         context['page_heading'] = 'Create new account communication' 
+        context['file_group'] =  '2004'
+        context['file_group_ref_id'] =  self.kwargs['pk']
         return context
 
     def get_initial(self):
@@ -3665,53 +3672,245 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
             multifilelist.append(fileitem)
         initial['brochures_itineries_adverts'] = multifilelist
 
+        a1 = app.location_route_access.all()
+        multifilelist = []
+        for b1 in a1:
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['location_route_access'] = multifilelist
+
+        a1 = app.document_new_draft.all()
+        multifilelist = []
+        for b1 in a1:  
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['document_new_draft'] = multifilelist
+
+
+        a1 = app.document_memo.all()
+        multifilelist = []
+        for b1 in a1:
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['document_memo'] = multifilelist
+
+        a1 = app.document_new_draft_v3.all()
+        multifilelist = []
+        for b1 in a1:  
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['document_new_draft_v3'] = multifilelist
+
+        a1 = app.document_draft_signed.all()
+        multifilelist = []
+        for b1 in a1:
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['document_draft_signed'] = multifilelist
+
+        a1 = app.document_draft.all()
+        multifilelist = []
+        for b1 in a1:  
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['document_draft'] = multifilelist
+
+        a1 = app.document_final_signed.all()
+        multifilelist = []
+        for b1 in a1:
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['document_final_signed'] = multifilelist
+
+        a1 = app.document_briefing_note.all()
+        multifilelist = []
+        for b1 in a1:  
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['document_briefing_note'] = multifilelist
+
+        a1 = app.document_determination_approved.all()
+        multifilelist = []
+        for b1 in a1:
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['document_determination_approved'] = multifilelist
+
+        a1 = app.proposed_development_plans.all()
+        multifilelist = []
+        for b1 in a1:  
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['proposed_development_plans'] = multifilelist
+
+        a1 = app.deed.all()
+        multifilelist = []
+        for b1 in a1:
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['deed'] = multifilelist
+
+        a1 = app.swan_river_trust_board_feedback.all()
+        multifilelist = []
+        for b1 in a1:
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['swan_river_trust_board_feedback'] = multifilelist
+
+        a1 = app.document_final.all()
+        multifilelist = []
+        for b1 in a1:  
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['document_final'] = multifilelist
+
+        a1 = app.document_determination.all()
+        multifilelist = []
+        for b1 in a1:  
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['document_determination'] = multifilelist
+
+
+        a1 = app.document_completion.all()
+        multifilelist = []
+        for b1 in a1:   
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['document_completion'] = multifilelist
+
+        a1 = app.cert_survey.all()
+        multifilelist = []
+        for b1 in a1:
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['cert_survey'] = multifilelist
+
+        a1 = app.cert_public_liability_insurance.all()
+        multifilelist = []
+        for b1 in a1:  
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['cert_public_liability_insurance'] = multifilelist
+
+        a1 = app.risk_mgmt_plan.all()
+        multifilelist = []
+        for b1 in a1:
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['risk_mgmt_plan'] = multifilelist
+
+        a1 = app.safety_mgmt_procedures.all()
+        multifilelist = []
+        for b1 in a1:  
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['safety_mgmt_procedures'] = multifilelist
+
+        a1 = app.river_lease_scan_of_application.all()
+        multifilelist = []
+        for b1 in a1:
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['river_lease_scan_of_application'] = multifilelist
+
+        a1 = app.supporting_info_demonstrate_compliance_trust_policies.all()
+        multifilelist = []
+        for b1 in a1:  
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['supporting_info_demonstrate_compliance_trust_policies'] = multifilelist
+
+
+
+
         #initial['publication_newspaper'] = PublicationNewspaper.objects.get(application_id=self.object.id)
 
-        if app.location_route_access:
-            initial['location_route_access'] = app.location_route_access
-        if app.document_new_draft:
-            initial['document_new_draft'] = app.document_new_draft
-        if app.document_memo:
-            initial['document_memo'] = app.document_memo
-        if app.document_new_draft_v3:
-            initial['document_new_draft_v3'] = app.document_new_draft_v3
-        if app.document_draft_signed:
-            initial['document_draft_signed'] = app.document_draft_signed
-        if app.document_draft:
-            initial['document_draft'] = app.document_draft
-        if app.document_final_signed:
-            initial['document_final_signed'] = app.document_final_signed
-        if app.document_briefing_note:
-            initial['document_briefing_note'] = app.document_briefing_note
-        if app.document_determination_approved:
-            initial['document_determination_approved'] = app.document_determination_approved
-
-#       if app.proposed_development_plans:
-#          initial['proposed_development_plans'] = app.proposed_development_plans.upload
-        if app.deed:
-            initial['deed'] = app.deed
-        if app.swan_river_trust_board_feedback:
-            initial['swan_river_trust_board_feedback'] = app.swan_river_trust_board_feedback
-        if app.document_final:
-            initial['document_final'] = app.document_final
-        if app.document_determination:
-            initial['document_determination'] = app.document_determination
-        if app.document_completion:
-            initial['document_completion'] = app.document_completion
-
-        # Record FK fields:
-        if app.cert_survey:
-            initial['cert_survey'] = app.cert_survey
-        if app.cert_public_liability_insurance:
-            initial['cert_public_liability_insurance'] = app.cert_public_liability_insurance
-        if app.risk_mgmt_plan:
-            initial['risk_mgmt_plan'] = app.risk_mgmt_plan
-        if app.safety_mgmt_procedures:
-            initial['safety_mgmt_procedures'] = app.safety_mgmt_procedures
-        if app.river_lease_scan_of_application:
-            initial['river_lease_scan_of_application'] = app.river_lease_scan_of_application
-        if app.supporting_info_demonstrate_compliance_trust_policies:
-            initial['supporting_info_demonstrate_compliance_trust_policies'] = app.supporting_info_demonstrate_compliance_trust_policies
+        ####### Record FK fields:
 
         try:
             LocObj = Location.objects.get(application_id=self.object.id)
@@ -3766,6 +3965,7 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
                 return HttpResponseRedirect(reverse('application_list'))
             return HttpResponseRedirect(self.get_object().get_absolute_url())
         return super(ApplicationUpdate, self).post(request, *args, **kwargs)
+
 
     def form_valid(self, form):
         """Override form_valid to set the state to draft is this is a new application.
@@ -3998,18 +4198,191 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
                  doc = Record.objects.get(id=i['doc_id'])
                  self.object.proposed_development_plans.add(doc)
 
-        if 'document_draft_json' in self.request.POST:
-           self.object.document_draft = None
-           if is_json(self.request.POST['document_draft_json']) is True:
-                json_data = json.loads(self.request.POST['document_draft_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.document_draft = new_doc
+        if 'supporting_info_demonstrate_compliance_trust_policies_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['supporting_info_demonstrate_compliance_trust_policies_json'])
+             self.object.supporting_info_demonstrate_compliance_trust_policies.remove()
+             for d in self.object.supporting_info_demonstrate_compliance_trust_policies.all():
+                 self.object.supporting_info_demonstrate_compliance_trust_policies.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.supporting_info_demonstrate_compliance_trust_policies.add(doc)
+
+
+        if 'location_route_access_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['location_route_access_json'])
+             self.object.location_route_access.remove()
+             for d in self.object.location_route_access.all():
+                 self.object.location_route_access.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.location_route_access.add(doc)
+
+
+
+        if 'document_final_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['document_final_json'])
+             self.object.document_final.remove()
+             for d in self.object.document_final.all():
+                 self.object.document_final.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.document_final.add(doc)
+
+
+        if 'safety_mgmt_procedures_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['safety_mgmt_procedures_json'])
+             self.object.safety_mgmt_procedures.remove()
+             for d in self.object.safety_mgmt_procedures.all():
+                 self.object.safety_mgmt_procedures.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.safety_mgmt_procedures.add(doc)
+
+
+
+        if 'risk_mgmt_plan_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['risk_mgmt_plan_json'])
+             self.object.risk_mgmt_plan.remove()
+             for d in self.object.risk_mgmt_plan.all():
+                 self.object.risk_mgmt_plan.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.risk_mgmt_plan.add(doc)
+
+        if 'cert_public_liability_insurance_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['cert_public_liability_insurance_json'])
+             self.object.cert_public_liability_insurance.remove()
+             for d in self.object.cert_public_liability_insurance.all():
+                 self.object.cert_public_liability_insurance.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.cert_public_liability_insurance.add(doc)
+
+        if 'cert_survey_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['cert_survey_json'])
+             self.object.cert_survey.remove()
+             for d in self.object.cert_survey.all():
+                 self.object.cert_survey.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.cert_survey.add(doc)
+
+        if 'document_determination_approved_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['document_determination_approved_json'])
+             self.object.document_determination_approved.remove()
+             for d in self.object.document_determination_approved.all():
+                 self.object.document_determination_approved.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.document_determination_approved.add(doc)
+
+        if 'document_determination_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['document_determination_json'])
+             self.object.document_determination.remove()
+             for d in self.object.document_determination.all():
+                 self.object.document_determination.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.document_determination.add(doc)
+
+        if 'document_briefing_note_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['document_briefing_note_json'])
+             self.object.document_briefing_note.remove()
+             for d in self.object.document_briefing_note.all():
+                 self.object.document_briefing_note.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.document_briefing_note.add(doc)
+
+
+        if 'document_new_draft_v3_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['document_new_draft_v3_json'])
+             self.object.document_new_draft_v3.remove()
+             for d in self.object.document_new_draft_v3.all():
+                 self.object.document_new_draft_v3.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.document_new_draft_v3.add(doc)
+
+        if 'document_memo_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['document_memo_json'])
+             self.object.document_memo.remove()
+             for d in self.object.document_memo.all():
+                 self.object.document_memo.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.document_memo.add(doc)
+
+
+        if 'deed_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['deed_json'])
+             self.object.deed.remove()
+             for d in self.object.deed.all():
+                 self.object.deed.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.deed.add(doc)
+
+        if 'swan_river_trust_board_feedback_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['swan_river_trust_board_feedback_json'])
+             self.object.swan_river_trust_board_feedback.remove()
+             for d in self.object.swan_river_trust_board_feedback.all():
+                 self.object.swan_river_trust_board_feedback.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.swan_river_trust_board_feedback.add(doc)
 
         if 'river_lease_scan_of_application_json' in self.request.POST:
-           if is_json(self.request.POST['river_lease_scan_of_application_json']) is True:
-                json_data = json.loads(self.request.POST['river_lease_scan_of_application_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.river_lease_scan_of_application = new_doc
+             json_data = json.loads(self.request.POST['river_lease_scan_of_application_json'])
+             self.object.river_lease_scan_of_application.remove()
+             for d in self.object.river_lease_scan_of_application.all():
+                 self.object.river_lease_scan_of_application.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.river_lease_scan_of_application.add(doc)
+
+
+        if 'document_draft_signed_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['document_draft_signed_json'])
+             self.object.document_draft_signed.remove()
+             for d in self.object.document_draft_signed.all():
+                 self.object.document_draft_signed.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.document_draft_signed.add(doc)
+
+
+        if 'document_final_signed_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['document_final_signed_json'])
+             self.object.document_final_signed.remove()
+             for d in self.object.document_final_signed.all():
+                 self.object.document_final_signed.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.document_final_signed.add(doc)
+
+        if 'document_draft_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['document_draft_json'])
+             self.object.document_draft.remove()
+             for d in self.object.document_draft.all():
+                 self.object.document_draft.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.document_draft.add(doc)
+
+        # Single attachment
+        #if 'document_draft_json' in self.request.POST:
+        #   self.object.document_draft = None
+        #   if is_json(self.request.POST['document_draft_json']) is True:
+        #        json_data = json.loads(self.request.POST['document_draft_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.document_draft = new_doc
+
+        #if 'river_lease_scan_of_application_json' in self.request.POST:
+        #   if is_json(self.request.POST['river_lease_scan_of_application_json']) is True:
+        #        json_data = json.loads(self.request.POST['river_lease_scan_of_application_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.river_lease_scan_of_application = new_doc
 
 
 #        if 'document_draft_json' in self.request.POST:
@@ -4120,132 +4493,131 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
 #            new_doc.save()
 #            self.object.deed = new_doc
 
-        if 'document_final_json' in self.request.POST:
-           self.object.document_final = None
-           if is_json(self.request.POST['document_final_json']) is True:
-                json_data = json.loads(self.request.POST['document_final_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.document_final = new_doc
+        #if 'document_final_json' in self.request.POST:
+        #   self.object.document_final = None
+        #   if is_json(self.request.POST['document_final_json']) is True:
+        #        json_data = json.loads(self.request.POST['document_final_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.document_final = new_doc
 
-        if 'location_route_access_json' in self.request.POST:
-           self.object.location_route_access = None
-           if is_json(self.request.POST['location_route_access_json']) is True:
-                json_data = json.loads(self.request.POST['location_route_access_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.location_route_access = new_doc
+        #if 'location_route_access_json' in self.request.POST:
+        #   self.object.location_route_access = None
+        #   if is_json(self.request.POST['location_route_access_json']) is True:
+        #        json_data = json.loads(self.request.POST['location_route_access_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.location_route_access = new_doc
 
-        if 'safety_mgmt_procedures_json' in self.request.POST:
-           self.object.safety_mgmt_procedures = None
-           if is_json(self.request.POST['safety_mgmt_procedures_json']) is True:
-                json_data = json.loads(self.request.POST['safety_mgmt_procedures_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.safety_mgmt_procedures = new_doc
+        #if 'safety_mgmt_procedures_json' in self.request.POST:
+        #   self.object.safety_mgmt_procedures = None
+        #   if is_json(self.request.POST['safety_mgmt_procedures_json']) is True:
+        #        json_data = json.loads(self.request.POST['safety_mgmt_procedures_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.safety_mgmt_procedures = new_doc
 
-        if 'risk_mgmt_plan_json' in self.request.POST:
-           self.object.risk_mgmt_plan = None
-           if is_json(self.request.POST['risk_mgmt_plan_json']) is True:
-                json_data = json.loads(self.request.POST['risk_mgmt_plan_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.risk_mgmt_plan = new_doc
+        #if 'risk_mgmt_plan_json' in self.request.POST:
+        #   self.object.risk_mgmt_plan = None
+        #   if is_json(self.request.POST['risk_mgmt_plan_json']) is True:
+        #        json_data = json.loads(self.request.POST['risk_mgmt_plan_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.risk_mgmt_plan = new_doc
 
-        if 'cert_public_liability_insurance_json' in self.request.POST:
-           self.object.cert_public_liability_insurance = None
-           if is_json(self.request.POST['cert_public_liability_insurance_json']) is True:
-                json_data = json.loads(self.request.POST['cert_public_liability_insurance_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.cert_public_liability_insurance = new_doc
+        #if 'cert_public_liability_insurance_json' in self.request.POST:
+        #   self.object.cert_public_liability_insurance = None
+        #   if is_json(self.request.POST['cert_public_liability_insurance_json']) is True:
+        #        json_data = json.loads(self.request.POST['cert_public_liability_insurance_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.cert_public_liability_insurance = new_doc
 
-        if 'cert_survey_json' in self.request.POST:
-           self.object.cert_survey = None
-           if is_json(self.request.POST['cert_survey_json']) is True:
-                json_data = json.loads(self.request.POST['cert_survey_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.cert_survey = new_doc
+        #if 'cert_survey_json' in self.request.POST:
+        #   self.object.cert_survey = None
+        #   if is_json(self.request.POST['cert_survey_json']) is True:
+        #        json_data = json.loads(self.request.POST['cert_survey_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.cert_survey = new_doc
 
-        if 'supporting_info_demonstrate_compliance_trust_policies_json' in self.request.POST:
-           self.object.supporting_info_demonstrate_compliance_trust_policies = None
-           if is_json(self.request.POST['supporting_info_demonstrate_compliance_trust_policies_json']) is True:
-                json_data = json.loads(self.request.POST['supporting_info_demonstrate_compliance_trust_policies_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.supporting_info_demonstrate_compliance_trust_policies = new_doc
+        ##if 'supporting_info_demonstrate_compliance_trust_policies_json' in self.request.POST:
+        #   self.object.supporting_info_demonstrate_compliance_trust_policies = None
+        #   if is_json(self.request.POST['supporting_info_demonstrate_compliance_trust_policies_json']) is True:
+        #        json_data = json.loads(self.request.POST['supporting_info_demonstrate_compliance_trust_policies_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.supporting_info_demonstrate_compliance_trust_policies = new_doc
+        #if 'document_determination_approved_json' in self.request.POST:
+        #   self.object.document_determination_approved = None
+        #   if is_json(self.request.POST['document_determination_approved_json']) is True:
+        #        json_data = json.loads(self.request.POST['document_determination_approved_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.document_determination_approved = new_doc
 
-        if 'document_determination_approved_json' in self.request.POST:
-           self.object.document_determination_approved = None
-           if is_json(self.request.POST['document_determination_approved_json']) is True:
-                json_data = json.loads(self.request.POST['document_determination_approved_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.document_determination_approved = new_doc
+        #if 'document_determination_json' in self.request.POST:
+        #   self.object.document_determination = None
+        #   if is_json(self.request.POST['document_determination_json']) is True:
+        #        json_data = json.loads(self.request.POST['document_determination_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.document_determination = new_doc
 
-        if 'document_determination_json' in self.request.POST:
-           self.object.document_determination = None
-           if is_json(self.request.POST['document_determination_json']) is True:
-                json_data = json.loads(self.request.POST['document_determination_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.document_determination = new_doc
+        #if 'document_briefing_note_json' in self.request.POST:
+        #   self.object.document_briefing_note = None
+        #   if is_json(self.request.POST['document_briefing_note_json']) is True:
+        #        json_data = json.loads(self.request.POST['document_briefing_note_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.document_briefing_note = new_doc
 
-        if 'document_briefing_note_json' in self.request.POST:
-           self.object.document_briefing_note = None
-           if is_json(self.request.POST['document_briefing_note_json']) is True:
-                json_data = json.loads(self.request.POST['document_briefing_note_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.document_briefing_note = new_doc
+        #if 'document_briefing_note_json' in self.request.POST:
+        #   self.object.document_briefing_note = None
+        #   if is_json(self.request.POST['document_briefing_note_json']) is True:
+        #        json_data = json.loads(self.request.POST['document_briefing_note_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.document_briefing_note = new_doc
 
-        if 'document_briefing_note_json' in self.request.POST:
-           self.object.document_briefing_note = None
-           if is_json(self.request.POST['document_briefing_note_json']) is True:
-                json_data = json.loads(self.request.POST['document_briefing_note_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.document_briefing_note = new_doc
-
-        if 'document_new_draft_v3_json' in self.request.POST:
-           self.object.document_new_draft_v3 = None
-           if is_json(self.request.POST['document_new_draft_v3_json']) is True:
-                json_data = json.loads(self.request.POST['document_new_draft_v3_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.document_new_draft_v3 = new_doc
+        #if 'document_new_draft_v3_json' in self.request.POST:
+        #   self.object.document_new_draft_v3 = None
+        #   if is_json(self.request.POST['document_new_draft_v3_json']) is True:
+        #        json_data = json.loads(self.request.POST['document_new_draft_v3_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.document_new_draft_v3 = new_doc
 
 
-        if 'document_memo_json' in self.request.POST:
-           self.object.document_memo = None
-           if is_json(self.request.POST['document_memo_json']) is True:
-                json_data = json.loads(self.request.POST['document_memo_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.document_memo = new_doc
+        #if 'document_memo_json' in self.request.POST:
+        #   self.object.document_memo = None
+        #   if is_json(self.request.POST['document_memo_json']) is True:
+        #        json_data = json.loads(self.request.POST['document_memo_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.document_memo = new_doc
 
-        if 'deed_json' in self.request.POST:
-           self.object.deed = None
-           if is_json(self.request.POST['deed_json']) is True:
-                json_data = json.loads(self.request.POST['deed_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.deed = new_doc
+        #if 'deed_json' in self.request.POST:
+        #   self.object.deed = None
+        #   if is_json(self.request.POST['deed_json']) is True:
+        #        json_data = json.loads(self.request.POST['deed_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.deed = new_doc
         
-        if 'swan_river_trust_board_feedback_json' in self.request.POST:
-           self.object.swan_river_trust_board_feedback = None
-           if is_json(self.request.POST['swan_river_trust_board_feedback_json']) is True:
-                json_data = json.loads(self.request.POST['swan_river_trust_board_feedback_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.swan_river_trust_board_feedback = new_doc
+        #if 'swan_river_trust_board_feedback_json' in self.request.POST:
+        #   self.object.swan_river_trust_board_feedback = None
+        #   if is_json(self.request.POST['swan_river_trust_board_feedback_json']) is True:
+        #        json_data = json.loads(self.request.POST['swan_river_trust_board_feedback_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.swan_river_trust_board_feedback = new_doc
 
-        if 'river_lease_scan_of_application_json' in self.request.POST:
-           self.object.river_lease_scan_of_application = None
-           if is_json(self.request.POST['river_lease_scan_of_application_json']) is True:
-                json_data = json.loads(self.request.POST['river_lease_scan_of_application_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.river_lease_scan_of_application = new_doc
+        #if 'river_lease_scan_of_application_json' in self.request.POST:
+        #   self.object.river_lease_scan_of_application = None
+        #   if is_json(self.request.POST['river_lease_scan_of_application_json']) is True:
+        #        json_data = json.loads(self.request.POST['river_lease_scan_of_application_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.river_lease_scan_of_application = new_doc
 
-        if 'document_draft_signed_json' in self.request.POST:
-           self.object.document_draft_signed = None
-           if is_json(self.request.POST['document_draft_signed_json']) is True:
-                json_data = json.loads(self.request.POST['document_draft_signed_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.document_draft_signed = new_doc
+        #if 'document_draft_signed_json' in self.request.POST:
+        #   self.object.document_draft_signed = None
+        #   if is_json(self.request.POST['document_draft_signed_json']) is True:
+        #        json_data = json.loads(self.request.POST['document_draft_signed_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.document_draft_signed = new_doc
 
-        if 'document_final_signed_json' in self.request.POST:
-           self.object.document_final_signed = None
-           if is_json(self.request.POST['document_final_signed_json']) is True:
-                json_data = json.loads(self.request.POST['document_final_signed_json'])
-                new_doc = Record.objects.get(id=json_data['doc_id'])
-                self.object.document_final_signed = new_doc
+        #if 'document_final_signed_json' in self.request.POST:
+        #   self.object.document_final_signed = None
+        #   if is_json(self.request.POST['document_final_signed_json']) is True:
+        #        json_data = json.loads(self.request.POST['document_final_signed_json'])
+        #        new_doc = Record.objects.get(id=json_data['doc_id'])
+        #        self.object.document_final_signed = new_doc
 
 
 # document_final_signed
@@ -4256,14 +4628,14 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
 #            new_doc.upload = self.request.FILES['river_lease_scan_of_application']
 #            new_doc.save()
 #            self.object.river_lease_scan_of_application = new_doc
-        if self.request.FILES.get('document_determination'):
-            if Attachment_Extension_Check('single', forms_data['document_determination'], None) is False:
-                raise ValidationError('Determination contains and unallowed attachment extension.')
+        ########if self.request.FILES.get('document_determination'):
+        ########    if Attachment_Extension_Check('single', forms_data['document_determination'], None) is False:
+        ########        raise ValidationError('Determination contains and unallowed attachment extension.')
 
-            new_doc = Record()
-            new_doc.upload = self.request.FILES['document_determination']
-            new_doc.save()
-            self.object.document_determination = new_doc
+        ########    new_doc = Record()
+        ########    new_doc.upload = self.request.FILES['document_determination']
+        ########    new_doc.save()
+        ########    self.object.document_determination = new_doc
 
 #        if self.request.FILES.get('document_determination_approved'):
 #            if Attachment_Extension_Check('single', forms_data['document_determination_approved'], None) is False:
@@ -4273,23 +4645,23 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
 #            new_doc.save()
 #            self.object.document_determination_approved = new_doc
 
-        if self.request.FILES.get('document_briefing_note'):
-            if Attachment_Extension_Check('single', forms_data['document_briefing_note'], None) is False:
-                raise ValidationError('Briefing Note contains and unallowed attachment extension.')
+        #########if self.request.FILES.get('document_briefing_note'):
+        #########    if Attachment_Extension_Check('single', forms_data['document_briefing_note'], None) is False:
+        #########        raise ValidationError('Briefing Note contains and unallowed attachment extension.')
 
-            new_doc = Record()
-            new_doc.upload = self.request.FILES['document_briefing_note']
-            new_doc.save()
-            self.object.document_briefing_note = new_doc
+        #########    new_doc = Record()
+        #########    new_doc.upload = self.request.FILES['document_briefing_note']
+        #########    new_doc.save()
+        #########    self.object.document_briefing_note = new_doc
 
-        if self.request.FILES.get('document_completion'):
-            if Attachment_Extension_Check('single', forms_data['document_completion'], None) is False:
-                raise ValidationError('Completion Docuemnt contains and unallowed attachment extension.')
+        #########if self.request.FILES.get('document_completion'):
+        #########    if Attachment_Extension_Check('single', forms_data['document_completion'], None) is False:
+        #########        raise ValidationError('Completion Docuemnt contains and unallowed attachment extension.')
 
-            new_doc = Record()
-            new_doc.upload = self.request.FILES['document_completion']
-            new_doc.save()
-            self.object.document_completion = new_doc
+        #########    new_doc = Record()
+        #########    new_doc.upload = self.request.FILES['document_completion']
+        #########    new_doc.save()
+        #########    self.object.document_completion = new_doc
 
         #if self.request.FILES.get('supporting_info_demonstrate_compliance_trust_policies'):
         #    if Attachment_Extension_Check('single', forms_data['supporting_info_demonstrate_compliance_trust_policies'], None) is False:
@@ -6188,17 +6560,34 @@ class ReferralDelete(LoginRequiredMixin, UpdateView):
         referral = self.get_object()
         context_processor = template_context(self.request)
         admin_staff = context_processor['admin_staff']
+        app = referral.application
+        print ('STEP 1')
+        app_type_short_name = None
+        for i in Application.APP_TYPE_CHOICES._identifier_map:
+             if Application.APP_TYPE_CHOICES._identifier_map[i] == referral.application.app_type:
+                  app_type_short_name = i
 
-        if admin_staff == True:
-           pass
+        print ('STEP 2')
+          
+        flow = Flow()
+        flow.get(app_type_short_name)
+        flowcontext = {}
+        flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, app_type_short_name)
+        print ('test')
+        print (flowcontext)
+        if flowcontext["may_referral_delete"] != "True":
+             return super(ReferralDelete, self).get(request, *args, **kwargs)
         else:
-           messages.error(self.request, 'Forbidden from viewing this page.')
-           return HttpResponseRedirect("/")
+             if admin_staff == True:
+                return super(ReferralDelete, self).get(request, *args, **kwargs)
+             else:
+                messages.error(self.request, 'Forbidden from viewing this page.')
+                return HttpResponseRedirect("/")
 
-        if referral.status != Referral.REFERRAL_STATUS_CHOICES.with_admin:
-            messages.error(self.request, 'This referral is already completed!')
-            return HttpResponseRedirect(referral.application.get_absolute_url())
-        return super(ReferralDelete, self).get(request, *args, **kwargs)
+ #       if referral.status != Referral.REFERRAL_STATUS_CHOICES.with_admin:
+ #           messages.error(self.request, 'This referral is already completed!')
+ #           return HttpResponseRedirect(referral.application.get_absolute_url())
+ #       return super(ReferralDelete, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(ReferralDelete, self).get_context_data(**kwargs)

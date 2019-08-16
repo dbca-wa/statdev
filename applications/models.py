@@ -9,7 +9,7 @@ from model_utils import Choices
 from django.contrib.auth.models import Group
 from django.core.files.storage import FileSystemStorage
 #from approvals.models import Approval
-from ledger.accounts.models import Organisation, Address as LedgerAddress
+from ledger.accounts.models import Organisation, Address as LedgerAddress, OrganisationAddress
 #from ledger.payments.models import Invoice
 
 upload_storage = FileSystemStorage(location=settings.PRIVATE_MEDIA_ROOT)
@@ -47,6 +47,9 @@ class Record(models.Model):
         (11, 'licencerenew', ('Renew Licence')),
         (2001, 'person', ('Person')),
         (2002, 'organisation', ('Organistion')),
+        (2003, 'application_comms', ('Application Communication Logs')),    
+        (2004, 'account_comms', ('Account Communication Logs')),
+        
     )
 
 
@@ -58,7 +61,7 @@ class Record(models.Model):
     file_group = models.IntegerField(choices=FILE_GROUP, null=True, blank=True)
     file_group_ref_id = models.IntegerField(null=True, blank=True) 
     extension = models.CharField(max_length=5, null=True, blank=True)
-
+    created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def file_url(self): 
          return settings.PRIVATE_MEDIA_URL+str(self.pk)+'-file'+self.extension
@@ -196,7 +199,7 @@ class Application(models.Model):
     max_participants = models.IntegerField(null=True, blank=True)
     proposed_location = models.SmallIntegerField(choices=APP_LOCATION_CHOICES, null=True, blank=True)
     address = models.TextField(null=True, blank=True)
-    location_route_access = models.ForeignKey(Record, null=True, blank=True, related_name='location_route_access')
+    location_route_access = models.ManyToManyField(Record, blank=True, related_name='location_route_access')
     jetties = models.TextField(null=True, blank=True)
     jetty_dot_approval = models.NullBooleanField(default=None)
     jetty_dot_approval_expiry = models.DateField(null=True, blank=True)
@@ -211,30 +214,30 @@ class Application(models.Model):
     berth_location = models.TextField(null=True, blank=True)
     anchorage = models.TextField(null=True, blank=True)
     operating_details = models.TextField(null=True, blank=True)
-    cert_survey = models.ForeignKey(Record, blank=True, null=True, related_name='cert_survey')
-    cert_public_liability_insurance = models.ForeignKey(Record, blank=True, null=True, related_name='cert_public_liability_insurace')
-    risk_mgmt_plan = models.ForeignKey(Record, blank=True, null=True, related_name='risk_mgmt_plan')
-    safety_mgmt_procedures = models.ForeignKey(Record, blank=True, null=True, related_name='safety_mgmt_plan')
+    cert_survey = models.ManyToManyField(Record, blank=True, related_name='cert_survey')
+    cert_public_liability_insurance = models.ManyToManyField(Record, blank=True, related_name='cert_public_liability_insurace')
+    risk_mgmt_plan = models.ManyToManyField(Record, blank=True, related_name='risk_mgmt_plan')
+    safety_mgmt_procedures = models.ManyToManyField(Record, blank=True, related_name='safety_mgmt_plan')
     brochures_itineries_adverts = models.ManyToManyField(Record, blank=True, related_name='brochures_itineries_adverts')
     other_relevant_documents = models.ManyToManyField(Record, blank=True, related_name='other_relevant_documents')
     land_owner_consent = models.ManyToManyField(Record, blank=True, related_name='land_owner_consent')
-    deed = models.ForeignKey(Record, blank=True, null=True, related_name='deed')
+    deed = models.ManyToManyField(Record, blank=True, related_name='deed')
     submitted_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.PROTECT, related_name='Submitted_by')
     river_lease_require_river_lease = models.NullBooleanField(default=None, null=True, blank=True)
-    river_lease_scan_of_application = models.ForeignKey(Record, null=True, blank=True, related_name='river_lease_scan_of_application')
+    river_lease_scan_of_application = models.ManyToManyField(Record, blank=True, related_name='river_lease_scan_of_application')
     river_lease_reserve_licence = models.NullBooleanField(default=None, null=True, blank=True)
     river_lease_application_number = models.CharField(max_length=30, null=True, blank=True)
     proposed_development_current_use_of_land = models.TextField(null=True, blank=True)
     proposed_development_plans = models.ManyToManyField(Record, blank=True, related_name='proposed_development_plans')
     proposed_development_description = models.TextField(null=True, blank=True)
-    document_draft = models.ForeignKey(Record, null=True, blank=True, related_name='document_draft')
-    document_new_draft = models.ForeignKey(Record, null=True, blank=True, related_name='document_newdraft')
-    document_new_draft_v3 = models.ForeignKey(Record, null=True, blank=True, related_name='document_newdraftv3')
-    document_draft_signed = models.ForeignKey(Record, null=True, blank=True, related_name='document_draft_signed')
-    document_final = models.ForeignKey(Record, null=True, blank=True, related_name='document_final')
-    document_final_signed = models.ForeignKey(Record, null=True, blank=True, related_name='document_final_signed')
-    document_determination = models.ForeignKey(Record, null=True, blank=True, related_name='document_determination')
-    document_completion = models.ForeignKey(Record, null=True, blank=True, related_name='document_completion')
+    document_draft = models.ManyToManyField(Record, blank=True, related_name='document_draft')
+    document_new_draft = models.ManyToManyField(Record, blank=True, related_name='document_newdraft')
+    document_new_draft_v3 = models.ManyToManyField(Record, blank=True, related_name='document_newdraftv3')
+    document_draft_signed = models.ManyToManyField(Record, blank=True, related_name='document_draft_signed')
+    document_final = models.ManyToManyField(Record, blank=True, related_name='document_final')
+    document_final_signed = models.ManyToManyField(Record, blank=True, related_name='document_final_signed')
+    document_determination = models.ManyToManyField(Record, blank=True, related_name='document_determination')
+    document_completion = models.ManyToManyField(Record, blank=True, related_name='document_completion')
     publish_documents = models.DateField(null=True, blank=True)
     publish_draft_report = models.DateField(null=True, blank=True)
     publish_final_report = models.DateField(null=True, blank=True)
@@ -242,13 +245,13 @@ class Application(models.Model):
     routeid = models.CharField(null=True, blank=True, default=1, max_length=4)
     assessment_start_date = models.DateField(null=True, blank=True)
     group = models.ForeignKey(Group, null=True, blank=True, related_name='application_group_assignment')
-    swan_river_trust_board_feedback = models.ForeignKey(Record, null=True, blank=True, related_name='document_swan_river_board_feedback')
-    document_memo = models.ForeignKey(Record, null=True, blank=True, related_name='document_memo')
-    document_briefing_note = models.ForeignKey(Record, null=True, blank=True, related_name='document_briefing_note')
-    document_determination_approved = models.ForeignKey(Record, null=True, blank=True, related_name='document_determination_approved')
+    swan_river_trust_board_feedback = models.ManyToManyField(Record, blank=True, related_name='document_swan_river_board_feedback')
+    document_memo = models.ManyToManyField(Record, blank=True, related_name='document_memo')
+    document_briefing_note = models.ManyToManyField(Record, blank=True, related_name='document_briefing_note')
+    document_determination_approved = models.ManyToManyField(Record, blank=True, related_name='document_determination_approved')
     approval_id = models.IntegerField(null=True, blank=True)
     assessed_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.PROTECT, related_name='assessed_by')
-    supporting_info_demonstrate_compliance_trust_policies = models.ForeignKey(Record, null=True, blank=True, related_name='supporting_info_demonstrate_compliance_trust_policies')
+    supporting_info_demonstrate_compliance_trust_policies = models.ManyToManyField(Record, blank=True, related_name='supporting_info_demonstrate_compliance_trust_policies')
     type_of_crafts = models.ForeignKey(Craft, null=True, blank=True, related_name='craft') 
     number_of_crafts  = models.IntegerField(null=True, blank=True)
     route_status = models.CharField(null=True, blank=True, default='Draft', max_length=256)
@@ -630,8 +633,9 @@ class OrganisationPending(models.Model):
     abn = models.CharField(max_length=50, null=True, blank=True, verbose_name='ABN')
     status = models.IntegerField(choices=STATUS_CHOICES, default=STATUS_CHOICES.pending)
     identification = models.ForeignKey(Record, null=True, blank=True, on_delete=models.SET_NULL)
-    postal_address = models.ForeignKey(LedgerAddress, related_name='org_pending_postal_address', blank=True, null=True, on_delete=models.SET_NULL)
-    billing_address = models.ForeignKey(LedgerAddress, related_name='org_pending_billing_address', blank=True, null=True, on_delete=models.SET_NULL)
+    #identification = models.ManyToManyField(Record, blank=True, related_name='Identification Documents')
+    postal_address = models.ForeignKey(OrganisationAddress, related_name='org_pending_postal_address', blank=True, null=True, on_delete=models.SET_NULL)
+    billing_address = models.ForeignKey(OrganisationAddress, related_name='org_pending_billing_address', blank=True, null=True, on_delete=models.SET_NULL)
     email_user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.PROTECT, null=True)
     assignee = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.PROTECT, related_name='org_pending_assignee')
     company_exists = models.BooleanField(default=False)

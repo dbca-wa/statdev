@@ -243,6 +243,7 @@
 
                         <div class="panel-collapse collapse in" id="linked_person_collapse" role="tabpanel" aria-labelledby="linked_person_heading">
                             <div class="panel-body">
+                                {{ staff }}
                                 {% if staff == False %}
                                 <a class="btn btn-primary pull-right" href="{% url "company_create_link" object.pk "1" %}">New Company</a>
                                 {% endif %}

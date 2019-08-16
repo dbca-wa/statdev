@@ -1,6 +1,10 @@
 {% extends "base_statdev.html" %}
 
 {% block page_content_inner %}
+
+<input type='hidden' value='2003' id='file_group' name='file_group'>
+<input type='hidden' value='{{ application_id }}' id='file_group_ref_id' name='file_group_ref_id'>
+
 <div class="container-fluid">
     <div class="row">
         <h1>Communication for {{ object.application.get_app_type_display }} - {{ object.pk }}</h1>
