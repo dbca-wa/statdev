@@ -188,7 +188,7 @@ class Flow():
         director = None
         executive = None
 
-        if Group.objects.filter(name='Stadev Processor').exists():
+        if Group.objects.filter(name='Statdev Processor').exists():
             processor = Group.objects.get(name='Statdev Processor')
         if Group.objects.filter(name='Statdev Assessor').exists():
             assessor = Group.objects.get(name='Statdev Assessor')
@@ -202,7 +202,6 @@ class Flow():
             executive = Group.objects.get(name='Statdev Executive')
         if Group.objects.filter(name='Statdev Emergency').exists():
             emergency = Group.objects.get(name='Statdev Emergency')
-
 
         if processor in request.user.groups.all():
             context = self.getGroupAccess(context,route,'Statdev Processor')
