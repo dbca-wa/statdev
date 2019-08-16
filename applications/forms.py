@@ -307,9 +307,9 @@ class ApplicationApplyUpdateForm(ModelForm):
     app_type = ChoiceField(choices=Application.APP_TYPE_CHOICES,
             widget=RadioSelectWithCaptions(
                 attrs={'class':'radio-inline'}, 
-                caption={'caption-2':'Apply for a licence and permit to undertake an activity within the river reserve, and on land within the Riverpark etc.', 
-                         'caption-1':'Apply for permit to carry out works, actor activities within the Riverpark', 
-                         'caption-3':'Apply for development approval in accordance with Part 5 of the <b>Swan and Canning Rivers Management Act</B>' } 
+                caption={'caption-2':'Apply for a licence and permit to undertake an activity within the Swan Canning Riverpark etc.', 
+                         'caption-1':'Apply for permit to carry out works or, activities within the Riverpark', 
+                         'caption-3':'Apply for development approval in accordance with Part 5 of the <i>Swan and Canning Rivers Management Act 2006</i>' } 
                 ))
     #organisation = ModelChoiceField(queryset=None, empty_label=None, widget=RadioSelect(attrs={'class':'radio-inline'}))
 
