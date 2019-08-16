@@ -160,7 +160,7 @@ class HomePageOLD(LoginRequiredMixin, TemplateView):
         # TODO: any restrictions on who can create new applications?
         context['may_create'] = True
         # Processor users only: show unassigned applications.
-        processor = Group.objects.get(name='Processor')
+        processor = Group.objects.get(name='Statdev Processor')
         if processor in self.request.user.groups.all() or self.request.user.is_superuser:
             if Application.objects.filter(assignee__isnull=True, state=Application.APP_STATE_CHOICES.with_admin).exists():
                 applications_unassigned = Application.objects.filter(
@@ -775,7 +775,7 @@ class CreateLinkCompany(LoginRequiredMixin,CreateView):
                       action='Organisation is pending approval')
                  action.save()
 
-           if self.request.user.groups.filter(name__in=['Processor']).exists():
+           if self.request.user.groups.filter(name__in=['Statdev Processor']).exists():
                if app_id is None:
                    return HttpResponseRedirect(reverse('home_page'))
                else:
@@ -897,7 +897,7 @@ class ApplicationFlows(LoginRequiredMixin,TemplateView):
         context['application_types'] = Application.APP_TYPE_CHOICES._identifier_map
         context['application_choices'] = Application.APP_TYPE_CHOICES
         
-        processor = Group.objects.get(name='Processor')
+        processor = Group.objects.get(name='Statdev Processor')
 
         for b in Application.APP_TYPE_CHOICES._identifier_map:
            print(b)
@@ -1159,7 +1159,7 @@ class ApplicationList(LoginRequiredMixin,ListView):
             context['app_list'].append(row)
         # TODO: any restrictions on who can create new applications?
         context['may_create'] = True
-        processor = Group.objects.get(name='Processor')
+        processor = Group.objects.get(name='Statdev Processor')
         # Rule: admin officers may self-assign applications.
         if processor in self.request.user.groups.all() or self.request.user.is_superuser:
             context['may_assign_processor'] = True
@@ -1255,7 +1255,7 @@ class EmergencyWorksList(ListView):
             context['app_list'].append(row)
         # TODO: any restrictions on who can create new applications?
         context['may_create'] = True
-        processor = Group.objects.get(name='Processor')
+        processor = Group.objects.get(name='Statdev Processor')
         # Rule: admin officers may self-assign applications.
         if processor in self.request.user.groups.all() or self.request.user.is_superuser:
             context['may_assign_processor'] = True
@@ -1353,7 +1353,7 @@ class ComplianceList(ListView):
 #            context['app_list'].append(row)
         # TODO: any restrictions on who can create new applications?
         context['may_create'] = True
-        processor = Group.objects.get(name='Processor')
+        processor = Group.objects.get(name='Statdev Processor')
         # Rule: admin officers may self-assign applications.
         if processor in self.request.user.groups.all() or self.request.user.is_superuser:
             context['may_assign_processor'] = True
@@ -1396,7 +1396,7 @@ class OrganisationAccessRequest(ListView):
         qs = super(OrganisationAccessRequest, self).get_queryset()
         # Did we pass in a search string? If so, filter the queryset and return
         # it.
-        if self.request.user.groups.filter(name__in=['Processor']).exists():
+        if self.request.user.groups.filter(name__in=['Statdev Processor']).exists():
            
             if 'q' in self.request.GET and self.request.GET['q']:
                 query_str = self.request.GET['q']
@@ -2029,7 +2029,7 @@ class ApplicationCreateEW(LoginRequiredMixin, CreateView):
         self.object.submit_date = date.today()
         self.object.state = self.object.APP_STATE_CHOICES.draft
         self.object.app_type = 4
-        processor = Group.objects.get(name='Processor')
+        processor = Group.objects.get(name='Statdev Processor')
         self.object.group = processor
         self.object.save()
         success_url = reverse('application_update', args=(self.object.pk,))
@@ -2141,7 +2141,7 @@ class ApplicationApply(LoginRequiredMixin, CreateView):
     template_name = 'applications/application_apply_form.html'
 
     def get(self, request, *args, **kwargs):
-        if self.request.user.groups.filter(name__in=['Processor']).exists():
+        if self.request.user.groups.filter(name__in=['Statdev Processor']).exists():
             app = Application.objects.create(submitted_by=self.request.user
                                              ,submit_date=date.today()
                                              ,state=Application.APP_STATE_CHOICES.new
@@ -2230,7 +2230,7 @@ class ApplicationApplyUpdate(LoginRequiredMixin, UpdateView):
             nextstep = 'apptype'
         app = Application.objects.get(pk=self.object.pk)
         if action == 'apptype':
-            if self.request.user.groups.filter(name__in=['Processor']).exists():
+            if self.request.user.groups.filter(name__in=['Statdev Processor']).exists():
                 success_url = reverse('applicant_change', args=(self.object.pk,))
             else:
                 success_url = reverse('application_update', args=(self.object.pk,))
@@ -2248,29 +2248,6 @@ class ApplicationDetail(DetailView):
 
         context['may_update'] = "False"
         context['allow_admin_side_menu'] = "False"
-
-#       processor = Group.objects.get(name='Processor')
-#       groups = Group.objects.filter(name=['Processor','Approver','Assessor','Executive'])
-#       usergroups = User.objects.filter(groups__name__in=['Processor','Approver','Assessor','Executive'])
-#       print self.request.user.groups.all()
-#       print self.request.user.groups.filter(name__in=['Processor', 'Assessor']).exists()
-#       if self.request.user.groups.all() in ['Processor']:
-#       print self.request.user.groups.filter(name__in=['Processor', 'Assessor']).exists()
-#       if self.request.user.groups.filter(name__in=['Processor', 'Assessor']).exists() == True:
-           #             context['allow_admin_side_menu'] = "True"
-#            print context['allow_admin_side_menu']
-#        if groups in self.request.user.groups.all():
-#            print "YES"
-#        print app.app_type
-#        print Application.APP_TYPE_CHOICES[app.app_type]
-#        print dict(Application.APP_TYPE_CHOICES).get('3')
-        # May Assign to Person,  Business rules are restricted to the people in the group who can reassign amoung each other only within the same group.
-#        usergroups = self.request.user.groups.all()
-
-#        if app.routeid > 1:
-#            context['may_assign_to_person'] = 'True'
-#        else:
-#        context['may_assign_to_person'] = 'False'
 
         # if app.group is not None:
         emailcontext = {'user': 'Jason'}
@@ -2352,84 +2329,6 @@ class ApplicationDetail(DetailView):
                 context['workflow_actions'] = []
 
         context['may_update_vessels_list'] = "False"
-        # elif app.app_type == app.APP_TYPE_CHOICES.emergencyold:
-        #    self.template_name = 'applications/application_detail_emergency.html'
-        #
-        #    if app.organisation:
-        #        context['address'] = app.organisation.postal_address
-        #    elif app.applicant:
-        #        context['address'] = app.applicant.emailuserprofile.postal_address
-
-#        processor = Group.objects.get(name='Processor')
-#        assessor = Group.objects.get(name='Assessor')
-#        approver = Group.objects.get(name='Approver')
-#        referee = Group.objects.get(name='Referee')
-#        emergency = Group.objects.get(name='Emergency')
-
-#        if app.state in [app.APP_STATE_CHOICES.new, app.APP_STATE_CHOICES.draft]:
-            # Rule: if the application status is 'draft', it can be updated.
-            # Rule: if the application status is 'draft', it can be lodged.
-            # Rule: if the application is an Emergency Works and status is 'draft'
-            #   conditions can be added
-#            if app.app_type == app.APP_TYPE_CHOICES.emergency:
-#                if app.assignee == self.request.user:
-#                    context['may_update'] = True
-#                    context['may_issue'] = True
-#                    context['may_create_condition'] = True
-#                    context['may_update_condition'] = True
-#                    context['may_assign_emergency'] = True
-#                elif emergency in self.request.user.groups.all() or self.request.user.is_superuser:
-#                    context['may_assign_emergency'] = True
-#            elif app.applicant == self.request.user or self.request.user.is_superuser:
-#                context['may_update'] = True
-#                context['may_lodge'] = True
-#        if processor in self.request.user.groups.all() or self.request.user.is_superuser:
-#            # Rule: if the application status is 'with admin', it can be sent
-#            # back to the customer.
-#            if app.state == app.APP_STATE_CHOICES.with_admin:
-#                context['may_assign_customer'] = True
-            # Rule: if the application status is 'with admin' or 'with referee', it can
-            # be referred, have conditions added, and referrals can be
-            # recalled/resent.
-#            if app.state in [app.APP_STATE_CHOICES.with_admin, app.APP_STATE_CHOICES.with_referee]:
-#                context['may_refer'] = True
-#                context['may_create_condition'] = True
-#                context['may_recall_resend'] = True
-#                context['may_assign_processor'] = True
-#                # Rule: if there are no "outstanding" referrals, it can be
-#                # assigned to an assessor.
-#                if not Referral.objects.filter(application=app, status=Referral.REFERRAL_STATUS_CHOICES.referred).exists():
-#                    context['may_assign_assessor'] = True
-#        if assessor in self.request.user.groups.all() or self.request.user.is_superuser:
-#            # Rule: if the application status is 'with assessor', it can have conditions added
-#            # or updated, and can be sent for approval.
-#            if app.state == app.APP_STATE_CHOICES.with_assessor:
-#                context['may_create_condition'] = True
-#                context['may_update_condition'] = True
-#                context['may_accept_condition'] = True
-#                context['may_submit_approval'] = True
-# if approver in self.request.user.groups.all() or self.request.user.is_superuser:
-#            # Rule: if the application status is 'with manager', it can be issued or
-#            # assigned back to an assessor.
-#            if app.state == app.APP_STATE_CHOICES.with_manager:
-#                context['may_assign_assessor'] = True
-#                context['may_issue'] = True
-# if referee in self.request.user.groups.all():
-#            # Rule: if the application has a current referral to the request
-#            # user, they can create and update conditions.
-#            if Referral.objects.filter(application=app, status=Referral.REFERRAL_STATUS_CHOICES.referred).exists():
-#               context['may_create_condition'] = True
-#                context['may_update_condition'] = True
-#        if app.state == app.APP_STATE_CHOICES.issued:
-#            context['may_generate_pdf'] = True
-#        if app.state == app.APP_STATE_CHOICES.issued and app.condition_set.exists():
-#            # Rule: only the delegate of the organisation (or submitter) can
-#            # request compliance.
-#            if app.organisation:
-#                if self.request.user.emailuserprofile in app.organisation.delegates.all():
-#                    context['may_request_compliance'] = True
-#            elif self.request.user == app.applicant:
-#                context['may_request_compliance'] = True
         return context
 
 
@@ -3444,10 +3343,6 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
         if app.routeid is None:
             app.routeid = 1
 
-  #      processor = Group.objects.get(name='Processor')
-  #          assessor = Group.objects.get(name='Assessor')
-  #          approver = Group.objects.get(name='Approver')
-  #          referee = Group.objects.get(name='Referee')
         flow = Flow()
         workflowtype = flow.getWorkFlowTypeFromApp(app)
         flow.get(workflowtype)
@@ -3982,187 +3877,6 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
             new_loc = Location()
             new_loc.application_id = self.object.id
 
-        # TODO: Potentially refactor to separate process_documents method
-        # Record upload fields.
-#        if 'land_owner_consent_json' in self.request.POST:
-#             d = json.loads(self.request.POST['land_owner_consent_json'])
-#             for i in d:
-#                 print i
-#                 print i['doc_id']
-
-#        land_owner_consent = application.land_owner_consent.all()
-#        for la_co in land_owner_consent:
-#            if 'land_owner_consent-clear_multifileid-' + str(la_co.id) in form.data:
-#                application.land_owner_consent.remove(la_co)
-
-#        proposed_development_plans = application.proposed_development_plans.all()
-#        for filelist in proposed_development_plans:
-#            if 'proposed_development_plans-clear_multifileid-' + str(filelist.id) in form.data:
-#                application.proposed_development_plans.remove(filelist)
-
-#        other_relevant_documents = application.other_relevant_documents.all()
-#        for filelist in other_relevant_documents:
-#            if 'other_relevant_documents-clear_multifileid-' + str(filelist.id) in form.data:
-#                application.other_relevant_documents.remove(filelist)
-
-        # if 'land_owner_consent-clear_multifileid' in forms_data:
-        # Check for clear checkbox (remove files)
-        # Clear' was checked.
-#        if 'cert_survey-clear' in form.data and self.object.cert_survey:
-#            self.object.cert_survey = None
-#        if 'river_lease_scan_of_application-clear' in form.data:
-#            self.object.river_lease_scan_of_application = None
-#        if 'cert_public_liability_insurance-clear' in form.data and self.object.cert_public_liability_insurance:
-#            self.object.cert_public_liability_insurance = None
-#        if 'risk_mgmt_plan-clear' in form.data and self.object.risk_mgmt_plan:
-#            self.object.risk_mgmt_plan = None
-#        if 'safety_mgmt_procedures-clear' in form.data and self.object.safety_mgmt_procedures:
-#            self.object.safety_mgmt_procedures = None
-#        if 'deed-clear' in form.data and self.object.deed:
-#            self.object.deed = None
-#        if 'swan_river_trust_board_feedback-clear' in form.data and self.object.swan_river_trust_board_feedback:
-#            self.object.swan_river_trust_board_feedback = None
-#        if 'document_new_draft_v3-clear' in form.data and self.object.document_new_draft_v3:
-#            self.object.document_new_draft_v3 = None
-#        if 'document_memo-clear' in form.data and self.object.document_memo:
-#            self.object.document_memo = None
-        #if 'document_final_signed-clear' in form.data and self.object.document_final_signed:
-#            self.object.document_final_signed = None
-#        if 'document_briefing_note-clear' in form.data and self.object.document_briefing_note:
- #           self.object.document_briefing_note = None
-        #if 'supporting_info_demonstrate_compliance_trust_policies-clear' in form.data and self.object.supporting_info_demonstrate_compliance_trust_policies:
-         #   self.object.supporting_info_demonstrate_compliance_trust_policies = None
-
-        # Upload New Files
-#        if self.request.FILES.get('cert_survey'):  # Uploaded new file.
-#            if self.object.cert_survey:
-#                doc = self.object.cert_survey
-#            else:
-#                doc = Record()
-#            if Attachment_Extension_Check('single', forms_data['cert_survey'], None) is False:
-#                raise ValidationError('Certficate Survey contains and unallowed attachment extension.')
-#
-#            doc.upload = forms_data['cert_survey']
-#            doc.name = forms_data['cert_survey'].name
-#            doc.save()
-#            self.object.cert_survey = doc
-#        if self.request.FILES.get('cert_public_liability_insurance'):
-#            if self.object.cert_public_liability_insurance:
-#                doc = self.object.cert_public_liability_insurance
-#            else:
-#                doc = Record()
-#
-#            if Attachment_Extension_Check('single', forms_data['cert_public_liability_insurance'], None) is False:
-#                raise ValidationError('Certficate of Public Liability Insurance contains and unallowed attachment extension.')
-#
-#            doc.upload = forms_data['cert_public_liability_insurance']
-#            doc.name = forms_data['cert_public_liability_insurance'].name
-#            doc.save()
-#            self.object.cert_public_liability_insurance = doc
-#        if self.request.FILES.get('risk_mgmt_plan'):
-#            if self.object.risk_mgmt_plan:
-#                doc = self.object.risk_mgmt_plan
-#            else:
-#                doc = Record()
-#
-#            if Attachment_Extension_Check('single', forms_data['risk_mgmt_plan'], None) is False:
-#                raise ValidationError('Risk Management Plan contains and unallowed attachment extension.')
-#
-#            doc.upload = forms_data['risk_mgmt_plan']
-#            doc.name = forms_data['risk_mgmt_plan'].name
-#            doc.save()
-#            self.object.risk_mgmt_plan = doc
-#        if self.request.FILES.get('safety_mgmt_procedures'):
-#            if self.object.safety_mgmt_procedures:
-#                doc = self.object.safety_mgmt_procedures
-#            else:
-#                doc = Record()
-#            if Attachment_Extension_Check('single', forms_data['safety_mgmt_procedures'], None) is False:
-#                raise ValidationError('Safety Procedures contains and unallowed attachment extension.')
-#
-#            doc.upload = forms_data['safety_mgmt_procedures']
-#            doc.name = forms_data['safety_mgmt_procedures'].name
-#            doc.save()
-#            self.object.safety_mgmt_procedures = doc
-        
-        # if self.request.FILES.get('deed'):
-        #    if self.object.deed:
-        #        doc = self.object.deed
-        #    else:
-        #        doc = Record()
-#
-#            if Attachment_Extension_Check('single',forms_data['deed'],None) is False:
- #               raise ValidationError('Deed contains and unallowed attachment extension.')
-#
- #           doc.upload = forms_data['deed']
-  #          doc.name = forms_data['deed'].name
-   #         doc.save()
-    #        self.object.deed = doc
-#        if self.request.FILES.get('river_lease_scan_of_application'):
-#            if self.object.river_lease_scan_of_application:
-#                doc = self.object.river_lease_scan_of_application
-#            else:
-#                doc = Record()
-#            if Attachment_Extension_Check('single',forms_data['river_lease_scan_of_application'],None) is False:
-#                raise ValidationError('River Lease contains an unallowed attachment extension.')
-#
-#            doc.upload = forms_data['river_lease_scan_of_application']
-#            doc.name = forms_data['river_lease_scan_of_application'].name
-#            doc.save()
-#            self.object.river_lease_scan_of_application = doc
-
-#        if self.request.FILES.get('other_relevant_documents'):
-            # Remove existing documents.
- #           for d in self.object.other_relevant_documents.all():
-  #              self.object.other_relevant_documents.remove(d)
-            # Add new uploads.
-#            if Attachment_Extension_Check('multi', self.request.FILES.getlist('other_relevant_documents'), None) is False:
-#                raise ValidationError('Other relevant documents contains and unallowed attachment extension.')
-#
-#            for f in self.request.FILES.getlist('other_relevant_documents'):
-#                doc = Record()
-#                doc.upload = f
-#                doc.name = f.name
-#                doc.save()
-#                self.object.other_relevant_documents.add(doc)
-
-#        brochures_itineries_adverts = application.brochures_itineries_adverts.all()
-#        for filelist in brochures_itineries_adverts:
-#            if 'brochures_itineries_adverts-clear_multifileid-' + str(filelist.id) in form.data:
-#                 self.object.brochures_itineries_adverts.remove(filelist)
-
-
-#        if self.request.FILES.get('brochures_itineries_adverts'):
-            #  print self.request.FILES.getlist('brochures_itineries_adverts')
-            # Remove existing documents.
-#            for d in self.object.brochures_itineries_adverts.all():
- #               self.object.brochures_itineries_adverts.remove(d)
-            # Add new uploads.
- #           if Attachment_Extension_Check('multi', self.request.FILES.getlist('brochures_itineries_adverts'), None) is False:
- #               raise ValidationError('Brochures Itineries contains and unallowed attachment extension.')
-#
-#            for f in self.request.FILES.getlist('brochures_itineries_adverts'):
-#                doc = Record()
-#                doc.upload = f
-#                doc.name = f.name
-#                doc.save()
-#                self.object.brochures_itineries_adverts.add(doc)
-
-#        if self.request.FILES.get('land_owner_consent'):
-            # Remove existing documents.
-            # for d in self.object.land_owner_consent.all():
-            #    self.object.land_owner_consent.remove(d)
-            # Add new uploads.
-#            if Attachment_Extension_Check('multi', self.request.FILES.getlist('land_owner_consent'), None) is False:
-#                raise ValidationError('Land Owner Consent contains and unallowed attachment extension.')
-#
-#            for f in self.request.FILES.getlist('land_owner_consent'):
-#                doc = Record()
- #               doc.upload = f
-       #         doc.name = f.name
- ##               doc.save()
- #               self.object.land_owner_consent.add(doc)
-
         if 'other_relevant_documents_json' in self.request.POST:
              json_data = json.loads(self.request.POST['other_relevant_documents_json'])
              for d in self.object.other_relevant_documents.all():
@@ -4370,308 +4084,6 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
                  doc = Record.objects.get(id=i['doc_id'])
                  self.object.document_draft.add(doc)
 
-        # Single attachment
-        #if 'document_draft_json' in self.request.POST:
-        #   self.object.document_draft = None
-        #   if is_json(self.request.POST['document_draft_json']) is True:
-        #        json_data = json.loads(self.request.POST['document_draft_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.document_draft = new_doc
-
-        #if 'river_lease_scan_of_application_json' in self.request.POST:
-        #   if is_json(self.request.POST['river_lease_scan_of_application_json']) is True:
-        #        json_data = json.loads(self.request.POST['river_lease_scan_of_application_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.river_lease_scan_of_application = new_doc
-
-
-#        if 'document_draft_json' in self.request.POST:
- #            json_data = json.loads(self.request.POST['document_draft_json'])
- #            for i in json_data:
- #                doc = Record.objects.get(id=i['doc_id'])
-  #               self.object.proposed_development_plans.add(doc)
-
-
-#        if self.request.FILES.get('proposed_development_plans'):
-#            if Attachment_Extension_Check('multi', self.request.FILES.getlist('proposed_development_plans'), None) is False:
-#                raise ValidationError('Proposed Development Plans contains and unallowed attachment extension.')
-#
-#            for f in self.request.FILES.getlist('proposed_development_plans'):
-#                doc = Record()
-#                doc.upload = f
-#                doc.save()
-#                self.object.proposed_development_plans.add(doc)
-
-#        if self.request.POST.get('document_draft-clear'):
-            #application = Application.objects.get(id=self.object.id)
-            #document = Record.objects.get(pk=application.document_draft.id)
-            # document.delete() // protect error occurs
-#            self.object.document_draft = None
-
- #       if self.request.POST.get('document_new_draft-clear'):
-            #application = Application.objects.get(id=self.object.id)
-#            self.object.document_new_draft = None
-
-#        if self.request.POST.get('document_draft_signed-clear'):
-#            self.object.document_draft_signed = None
-
-#        if self.request.POST.get('document_determination_approved-clear'):
-#            self.object.document_determination_approved = None
-
-#        if self.request.FILES.get('document_draft'):
-#            if Attachment_Extension_Check('single', forms_data['document_draft'], None) is False:
-#                raise ValidationError('Draft contains and unallowed attachment extension.')
-#            new_doc = Record()
-#            new_doc.upload = self.request.FILES['document_draft']
-#            new_doc.save()
-#            self.object.document_draft = new_doc
-
-#        if self.request.FILES.get('document_new_draft'):
-#            if Attachment_Extension_Check('single', forms_data['document_new_draft'], None) is False:
-#                raise ValidationError('New Draft contains and unallowed attachment extension.')
-#            new_doc = Record()
-#            new_doc.upload = self.request.FILES['document_new_draft']
-#            new_doc.save()
-#            self.object.document_new_draft = new_doc
-
-#        if self.request.FILES.get('document_new_draft_v3'):
-#            if Attachment_Extension_Check('single', forms_data['document_new_draft_v3'], None) is False:
-#                raise ValidationError('Draft V3 contains and unallowed attachment extension.')
-#            new_doc = Record()
-#            new_doc.upload = self.request.FILES['document_new_draft_v3']
-#            new_doc.save()
-#            self.object.document_new_draft_v3 = new_doc
-
-#       if self.request.FILES.get('document_memo'):
-#            if Attachment_Extension_Check('single', forms_data['document_memo'], None) is False:
-#                raise ValidationError('Memo contains and unallowed attachment extension.')
-#            new_doc = Record()
-#            new_doc.upload = self.request.FILES['document_memo']
-#            new_doc.save()
-#            self.object.document_memo = new_doc
-
-#       if self.request.FILES.get('document_draft_signed'):
-#            if Attachment_Extension_Check('single', forms_data['document_draft_signed'], None) is False:
-#                raise ValidationError('New Draft contains and unallowed attachment extension.')
-#            new_doc = Record()
-#            new_doc.upload = self.request.FILES['document_draft_signed']
-#            new_doc.save()
-#            self.object.document_draft_signed = new_doc
-
-#        if self.request.FILES.get('document_final'):
-#            if Attachment_Extension_Check('single', forms_data['document_final'], None) is False:
-#               raise ValidationError('Final contains and unallowed attachment extension.')
-
-#            new_doc = Record()
-#            new_doc.upload = self.request.FILES['document_final']
-#            new_doc.save()
-#            self.object.document_final = new_doc
-
-#        if self.request.FILES.get('document_final_signed'):
-#            if Attachment_Extension_Check('single', forms_data['document_final_signed'], None) is False:
-#                raise ValidationError('Final Signed contains and unallowed attachment extension.')
-##            new_doc = Record()
-#            new_doc.upload = self.request.FILES['document_final_signed']
-#            new_doc.save()
-#            self.object.document_final_signed = new_doc
-
-        #if self.request.FILES.get('swan_river_trust_board_feedback'):
-        #    if Attachment_Extension_Check('single', forms_data['swan_river_trust_board_feedback'], None) is False:
-        #        raise ValidationError('Swan River Trust Board Feedback contains and unallowed attachment extension.')
-#
-#            new_doc = Record()
-#            new_doc.upload = self.request.FILES['swan_river_trust_board_feedback']
-#            new_doc.save()
-#            self.object.swan_river_trust_board_feedback = new_doc
-
-#        if self.request.FILES.get('deed'):
-#            if Attachment_Extension_Check('single', forms_data['deed'], None) is False:
-#                raise ValidationError('Deed contains and unallowed attachment extension.')
-#
-#            new_doc = Record()
-#            new_doc.upload = self.request.FILES['deed']
-#            new_doc.save()
-#            self.object.deed = new_doc
-
-        #if 'document_final_json' in self.request.POST:
-        #   self.object.document_final = None
-        #   if is_json(self.request.POST['document_final_json']) is True:
-        #        json_data = json.loads(self.request.POST['document_final_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.document_final = new_doc
-
-        #if 'location_route_access_json' in self.request.POST:
-        #   self.object.location_route_access = None
-        #   if is_json(self.request.POST['location_route_access_json']) is True:
-        #        json_data = json.loads(self.request.POST['location_route_access_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.location_route_access = new_doc
-
-        #if 'safety_mgmt_procedures_json' in self.request.POST:
-        #   self.object.safety_mgmt_procedures = None
-        #   if is_json(self.request.POST['safety_mgmt_procedures_json']) is True:
-        #        json_data = json.loads(self.request.POST['safety_mgmt_procedures_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.safety_mgmt_procedures = new_doc
-
-        #if 'risk_mgmt_plan_json' in self.request.POST:
-        #   self.object.risk_mgmt_plan = None
-        #   if is_json(self.request.POST['risk_mgmt_plan_json']) is True:
-        #        json_data = json.loads(self.request.POST['risk_mgmt_plan_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.risk_mgmt_plan = new_doc
-
-        #if 'cert_public_liability_insurance_json' in self.request.POST:
-        #   self.object.cert_public_liability_insurance = None
-        #   if is_json(self.request.POST['cert_public_liability_insurance_json']) is True:
-        #        json_data = json.loads(self.request.POST['cert_public_liability_insurance_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.cert_public_liability_insurance = new_doc
-
-        #if 'cert_survey_json' in self.request.POST:
-        #   self.object.cert_survey = None
-        #   if is_json(self.request.POST['cert_survey_json']) is True:
-        #        json_data = json.loads(self.request.POST['cert_survey_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.cert_survey = new_doc
-
-        ##if 'supporting_info_demonstrate_compliance_trust_policies_json' in self.request.POST:
-        #   self.object.supporting_info_demonstrate_compliance_trust_policies = None
-        #   if is_json(self.request.POST['supporting_info_demonstrate_compliance_trust_policies_json']) is True:
-        #        json_data = json.loads(self.request.POST['supporting_info_demonstrate_compliance_trust_policies_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.supporting_info_demonstrate_compliance_trust_policies = new_doc
-        #if 'document_determination_approved_json' in self.request.POST:
-        #   self.object.document_determination_approved = None
-        #   if is_json(self.request.POST['document_determination_approved_json']) is True:
-        #        json_data = json.loads(self.request.POST['document_determination_approved_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.document_determination_approved = new_doc
-
-        #if 'document_determination_json' in self.request.POST:
-        #   self.object.document_determination = None
-        #   if is_json(self.request.POST['document_determination_json']) is True:
-        #        json_data = json.loads(self.request.POST['document_determination_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.document_determination = new_doc
-
-        #if 'document_briefing_note_json' in self.request.POST:
-        #   self.object.document_briefing_note = None
-        #   if is_json(self.request.POST['document_briefing_note_json']) is True:
-        #        json_data = json.loads(self.request.POST['document_briefing_note_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.document_briefing_note = new_doc
-
-        #if 'document_briefing_note_json' in self.request.POST:
-        #   self.object.document_briefing_note = None
-        #   if is_json(self.request.POST['document_briefing_note_json']) is True:
-        #        json_data = json.loads(self.request.POST['document_briefing_note_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.document_briefing_note = new_doc
-
-        #if 'document_new_draft_v3_json' in self.request.POST:
-        #   self.object.document_new_draft_v3 = None
-        #   if is_json(self.request.POST['document_new_draft_v3_json']) is True:
-        #        json_data = json.loads(self.request.POST['document_new_draft_v3_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.document_new_draft_v3 = new_doc
-
-
-        #if 'document_memo_json' in self.request.POST:
-        #   self.object.document_memo = None
-        #   if is_json(self.request.POST['document_memo_json']) is True:
-        #        json_data = json.loads(self.request.POST['document_memo_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.document_memo = new_doc
-
-        #if 'deed_json' in self.request.POST:
-        #   self.object.deed = None
-        #   if is_json(self.request.POST['deed_json']) is True:
-        #        json_data = json.loads(self.request.POST['deed_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.deed = new_doc
-        
-        #if 'swan_river_trust_board_feedback_json' in self.request.POST:
-        #   self.object.swan_river_trust_board_feedback = None
-        #   if is_json(self.request.POST['swan_river_trust_board_feedback_json']) is True:
-        #        json_data = json.loads(self.request.POST['swan_river_trust_board_feedback_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.swan_river_trust_board_feedback = new_doc
-
-        #if 'river_lease_scan_of_application_json' in self.request.POST:
-        #   self.object.river_lease_scan_of_application = None
-        #   if is_json(self.request.POST['river_lease_scan_of_application_json']) is True:
-        #        json_data = json.loads(self.request.POST['river_lease_scan_of_application_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.river_lease_scan_of_application = new_doc
-
-        #if 'document_draft_signed_json' in self.request.POST:
-        #   self.object.document_draft_signed = None
-        #   if is_json(self.request.POST['document_draft_signed_json']) is True:
-        #        json_data = json.loads(self.request.POST['document_draft_signed_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.document_draft_signed = new_doc
-
-        #if 'document_final_signed_json' in self.request.POST:
-        #   self.object.document_final_signed = None
-        #   if is_json(self.request.POST['document_final_signed_json']) is True:
-        #        json_data = json.loads(self.request.POST['document_final_signed_json'])
-        #        new_doc = Record.objects.get(id=json_data['doc_id'])
-        #        self.object.document_final_signed = new_doc
-
-
-# document_final_signed
-                #    if Attachment_Extension_Check('single', forms_data['river_lease_scan_of_application'], None) is False:
-                #        raise ValidationError('River Lease Scan of Application contains and unallowed attachment extension.')
-
-#            new_doc = Record()
-#            new_doc.upload = self.request.FILES['river_lease_scan_of_application']
-#            new_doc.save()
-#            self.object.river_lease_scan_of_application = new_doc
-        ########if self.request.FILES.get('document_determination'):
-        ########    if Attachment_Extension_Check('single', forms_data['document_determination'], None) is False:
-        ########        raise ValidationError('Determination contains and unallowed attachment extension.')
-
-        ########    new_doc = Record()
-        ########    new_doc.upload = self.request.FILES['document_determination']
-        ########    new_doc.save()
-        ########    self.object.document_determination = new_doc
-
-#        if self.request.FILES.get('document_determination_approved'):
-#            if Attachment_Extension_Check('single', forms_data['document_determination_approved'], None) is False:
-#                raise ValidationError('Determination contains and unallowed attachment extension.')
-#            new_doc = Record()
-#            new_doc.upload = self.request.FILES['document_determination_approved']
-#            new_doc.save()
-#            self.object.document_determination_approved = new_doc
-
-        #########if self.request.FILES.get('document_briefing_note'):
-        #########    if Attachment_Extension_Check('single', forms_data['document_briefing_note'], None) is False:
-        #########        raise ValidationError('Briefing Note contains and unallowed attachment extension.')
-
-        #########    new_doc = Record()
-        #########    new_doc.upload = self.request.FILES['document_briefing_note']
-        #########    new_doc.save()
-        #########    self.object.document_briefing_note = new_doc
-
-        #########if self.request.FILES.get('document_completion'):
-        #########    if Attachment_Extension_Check('single', forms_data['document_completion'], None) is False:
-        #########        raise ValidationError('Completion Docuemnt contains and unallowed attachment extension.')
-
-        #########    new_doc = Record()
-        #########    new_doc.upload = self.request.FILES['document_completion']
-        #########    new_doc.save()
-        #########    self.object.document_completion = new_doc
-
-        #if self.request.FILES.get('supporting_info_demonstrate_compliance_trust_policies'):
-        #    if Attachment_Extension_Check('single', forms_data['supporting_info_demonstrate_compliance_trust_policies'], None) is False:
-        #        raise ValidationError('Completion Docuemnt contains and unallowed attachment extension.')
-        #    new_doc = Record()
-        #    new_doc.upload = self.request.FILES['supporting_info_demonstrate_compliance_trust_policies']
-        #    new_doc.save()
-        #    self.object.supporting_info_demonstrate_compliance_trust_policies = new_doc
-        #
-        #new_loc.title_volume = forms_data['certificate_of_title_volume']
 
         if 'certificate_of_title_volume' in forms_data:
             new_loc.title_volume = forms_data['certificate_of_title_volume']
@@ -4719,6 +4131,8 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
             # if self.request.POST.get('prevstep'):
             # print self.request.POST['nextstep']
             # print "CONDITION ROUTING"
+        print ('FLOW UPDATE')
+
         flow = Flow()
         workflowtype = flow.getWorkFlowTypeFromApp(application)
         flow.get(workflowtype)
@@ -4840,19 +4254,24 @@ class ApplicationLodge(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         """Override form_valid to set the submit_date and status of the new application.
         """
+        print ("LODGE 1")
         app = self.get_object()
         flowcontext = {}
         error_messages = False
         # if app.app_type == app.APP_TYPE_CHOICES.part5:
         if app.routeid is None:
             app.routeid = 1
+ 
+        print ("LODGE 2")
         flow = Flow()
         workflowtype = flow.getWorkFlowTypeFromApp(app)
         flow.get(workflowtype)
         DefaultGroups = flow.groupList()
+        print ("LODGE 3")
         nextroute = flow.getNextRoute('lodge', app.routeid, workflowtype)
         route = flow.getNextRouteObj('lodge', app.routeid, workflowtype)
-       
+        print ("ROUTE ID")
+        print (route) 
         app.routeid = nextroute
         flowcontext = flow.getRequired(flowcontext, app.routeid, workflowtype)
         if "required" in route:
@@ -4882,7 +4301,7 @@ class ApplicationLodge(LoginRequiredMixin, UpdateView):
             if error_messages is True:
                  return HttpResponseRedirect(app.get_absolute_url()+'update/')
 
-        groupassignment = Group.objects.get(name=DefaultGroups['grouplink']['admin'])
+        groupassignment = Group.objects.get(name=DefaultGroups['grouplink'][route['lodgegroup']])
         app.group = groupassignment
 
         app.state = app.APP_STATE_CHOICES.with_admin
@@ -5028,17 +4447,6 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
 
     def get(self, request, *args, **kwargs):
         app = self.get_object()
-
-#        DefaultGroups = {}
-#        DefaultGroups['admin'] = 'Processor'
-#        DefaultGroups['assess'] = 'Assessor'
-#        DefaultGroups['manager'] = 'Approver'
-#        DefaultGroups['director'] = 'Director'
-#        DefaultGroups['exec'] = 'Executive'
-#        appt = "app_type1"
-#        print hasattr(app, appt)
-#        print getattr(app, appt)
-#        print app.routeid
 
         if app.assignee is None:
             messages.error(self.request, 'Please Allocate an Assigned Person First')
@@ -5995,7 +5403,7 @@ class ComplianceSubmit(LoginRequiredMixin, UpdateView):
 
         if admin_staff == True:
            pass
-        elif self.request.user.groups.filter(name__in=['Assessor']).exists():
+        elif self.request.user.groups.filter(name__in=['Statdev Assessor']).exists():
            pass
         elif self.request.user == self.object.applicant:
            pass
@@ -6022,7 +5430,7 @@ class ComplianceSubmit(LoginRequiredMixin, UpdateView):
         self.object.status = 9
         self.object.submit_date = datetime.now()
         self.object.submitted_by = self.request.user 
-        assigngroup = Group.objects.get(name='Assessor')
+        assigngroup = Group.objects.get(name='Statdev Assessor')
         self.object.group = assigngroup
         self.object.save() 
         # Record an action on the application:
@@ -6035,7 +5443,7 @@ class ComplianceSubmit(LoginRequiredMixin, UpdateView):
         emailcontext = {}
         #emailcontext['groupname'] = DefaultGroups['grouplink'][action]
         emailcontext['clearance_id'] = self.object.id
-        emailGroup('New Clearance of Condition Submitted', emailcontext, 'clearance-of-condition-submitted.html', None, None, None, 'Assessor')
+        emailGroup('New Clearance of Condition Submitted', emailcontext, 'clearance-of-condition-submitted.html', None, None, None, 'Statdev Assessor')
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -6056,7 +5464,7 @@ class ComplianceStaff(LoginRequiredMixin, UpdateView):
 
         if admin_staff == True:
            pass
-        elif self.request.user.groups.filter(name__in=['Assessor']).exists():
+        elif self.request.user.groups.filter(name__in=['Statdev Assessor']).exists():
            pass
         else:
            messages.error(self.request, 'Forbidden from viewing this page.')
@@ -6099,7 +5507,7 @@ class ComplianceStaff(LoginRequiredMixin, UpdateView):
         elif action == 'manager':
              self.object.status = 6
              #self.object.group
-             approver = Group.objects.get(name='Approver')
+             approver = Group.objects.get(name='Statdev Approver')
              self.object.assignee = None
              self.object.group = approver
              messages.success(self.request, "Compliance has been assigned to the manager group.")
@@ -6110,7 +5518,7 @@ class ComplianceStaff(LoginRequiredMixin, UpdateView):
  
              emailcontext = {}
              emailcontext['clearance_id'] = self.object.id
-             emailGroup('Clearance of Condition Assigned to Manager Group', emailcontext, 'clearance-of-condition-assigned-groups.html', None, None, None, 'Approver')
+             emailGroup('Clearance of Condition Assigned to Manager Group', emailcontext, 'clearance-of-condition-assigned-groups.html', None, None, None, 'Statdev Approver')
 
         elif action == 'holder':
              self.object.status = 7
@@ -6132,7 +5540,7 @@ class ComplianceStaff(LoginRequiredMixin, UpdateView):
              self.object.status = 5
              self.object.group = None
              self.object.assignee = None
-             assigngroup = Group.objects.get(name='Assessor')
+             assigngroup = Group.objects.get(name='Statdev Assessor')
              self.object.group = assigngroup
              messages.success(self.request, "Compliance has been assigned to the assessor.")
              action = Action(
@@ -6142,7 +5550,7 @@ class ComplianceStaff(LoginRequiredMixin, UpdateView):
 
              emailcontext = {}
              emailcontext['clearance_id'] = self.object.id
-             emailGroup('Clearance of Condition Assigned to Assessor Group', emailcontext, 'clearance-of-condition-assigned-groups.html', None, None, None, 'Assessor')
+             emailGroup('Clearance of Condition Assigned to Assessor Group', emailcontext, 'clearance-of-condition-assigned-groups.html', None, None, None, 'Statdev Assessor')
 
     
         self.object.save()
@@ -6653,7 +6061,7 @@ class ComplianceApprovalDetails(LoginRequiredMixin,DetailView):
        
         if admin_staff == True:
            pass
-        elif self.request.user.groups.filter(name__in=['Assessor']).exists():
+        elif self.request.user.groups.filter(name__in=['Statdev Assessor']).exists():
            pass
         elif self.request.user == self.object.applicant:
            pass
@@ -7049,16 +6457,6 @@ class NewsPaperPublicationDelete(LoginRequiredMixin, DeleteView):
             messages.error(self.request, "Can't delete newspaper publication to this application")
             return HttpResponseRedirect(app.get_absolute_url())
             # Rule: can only delete a condition if the parent application is status
-        # 'with referral' or 'with assessor'.
-#        if modelobject.application.state not in [Application.APP_STATE_CHOICES.with_assessor, Application.APP_STATE_CHOICES.with_referee]:
- #           messages.warning(self.request, 'You cannot delete this condition')
-  #          return HttpResponseRedirect(modelobject.application.get_absolute_url())
-        # Rule: can only delete a condition if the request user is an Assessor
-        # or they are assigned the referral to which the condition is attached
-        # and that referral is not completed.
-  #      assessor = Group.objects.get(name='Assessor')
-   #     ref = condition.referral
-        #    if assessor in self.request.user.groups.all() or (ref and ref.referee == request.user and ref.status == Referral.REFERRAL_STATUS_CHOICES.referred):
         return super(NewsPaperPublicationDelete, self).get(request, *args, **kwargs)
         #    else:
         #       messages.warning(self.request, 'You cannot delete this condition')
@@ -7500,7 +6898,7 @@ class ConditionCreate(LoginRequiredMixin, CreateView):
         initial['may_assessor_advise'] = flowcontext["may_assessor_advise"]
         #initial['may_assessor_advise'] = 'df'
         initial['assessor_staff'] = False
-        if self.request.user.groups.filter(name__in=['Assessor']).exists():
+        if self.request.user.groups.filter(name__in=['Statdev Assessor']).exists():
              initial['assessor_staff'] = True
         return initial
 
@@ -7583,7 +6981,7 @@ class ConditionUpdate(LoginRequiredMixin, UpdateView):
         # Rule: can only change a condition if the request user is an Assessor
         # or they are assigned the referral to which the condition is attached
         # and that referral is not completed.
-        assessor = Group.objects.get(name='Assessor')
+        assessor = Group.objects.get(name='Statdev Assessor')
         ref = condition.referral
         if assessor in self.request.user.groups.all() or (ref and ref.referee == request.user and ref.status == Referral.REFERRAL_STATUS_CHOICES.referred):
             return super(ConditionUpdate, self).get(request, *args, **kwargs)
@@ -7604,7 +7002,7 @@ class ConditionUpdate(LoginRequiredMixin, UpdateView):
         initial['may_assessor_advise'] = flowcontext["may_assessor_advise"]
 
         initial['assessor_staff'] = False
-        if self.request.user.groups.filter(name__in=['Assessor']).exists():
+        if self.request.user.groups.filter(name__in=['Statdev Assessor']).exists():
              initial['assessor_staff'] = True
         return initial
 
@@ -7674,7 +7072,7 @@ class ConditionDelete(LoginRequiredMixin, DeleteView):
             # Rule: can only delete a condition if the request user is an Assessor
             # or they are assigned the referral to which the condition is attached
             # and that referral is not completed.
-            assessor = Group.objects.get(name='Assessor')
+            assessor = Group.objects.get(name='Statdev Assessor')
             ref = condition.referral
             if assessor in self.request.user.groups.all() or (ref and ref.referee == request.user and ref.status == Referral.REFERRAL_STATUS_CHOICES.referred):
                 return super(ConditionDelete, self).get(request, *args, **kwargs)
@@ -7708,35 +7106,6 @@ class ConditionDelete(LoginRequiredMixin, DeleteView):
 class ConditionSuspension(LoginRequiredMixin, UpdateView):
     model = Condition
     form_class = apps_forms.ConditionSuspension
-
-#    def get(self, request, *args, **kwargs):
- #       condition = self.get_object()
-
-        # Rule: can only delete a condition if the parent application is status
-        # 'with referral' or 'with assessor'. Can also delete if you are the user assigned
-        # to an Emergency Works
-#        if condition.application.app_type != Application.APP_TYPE_CHOICES.emergency:
-#            if condition.application.state not in [Application.APP_STATE_CHOICES.with_assessor, Application.APP_STATE_CHOICES.with_referee]:
-#                messages.warning(self.request, 'You cannot delete this condition')
-#                return HttpResponseRedirect(condition.application.get_absolute_url())
-#            # Rule: can only delete a condition if the request user is an Assessor
-#            # or they are assigned the referral to which the condition is attached
-#            # and that referral is not completed.
-#            assessor = Group.objects.get(name='Assessor')
-#            ref = condition.referral
-#            if assessor in self.request.user.groups.all() or (ref and ref.referee == request.user and ref.status == Referral.REFERRAL_STATUS_CHOICES.referred):
-#                return super(ConditionDelete, self).get(request, *args, **kwargs)
-#            else:
-#                messages.warning(self.request, 'You cannot delete this condition')
-#                return HttpResponseRedirect(condition.application.get_absolute_url())
-#        else:
-#            # Rule: can only delete a condition if the request user is the assignee and the application
-#            # has not been issued.
-#            if condition.application.assignee == request.user and condition.application.state != Application.APP_STATE_CHOICES.issued:
-#                return super(ConditionDelete, self).get(request, *args, **kwargs)
-#            else:
-#                messages.warning(self.request, 'You cannot delete this condition')
-#                return HttpResponseRedirect(condition.application.get_absolute_url())
 
     def get(self, request, *args, **kwargs):
         context_processor = template_context(self.request)
@@ -7803,7 +7172,7 @@ class VesselCreate(LoginRequiredMixin, CreateView):
         flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, workflowtype)
         flowcontext = flow.getRequired(flowcontext, app.routeid, workflowtype)
 
-        if self.request.user.groups.filter(name__in=['Processor']).exists():
+        if self.request.user.groups.filter(name__in=['Statdev Processor']).exists():
             donothing = ''
         elif flowcontext["may_update_vessels_list"] != "True":
 #        if app.state != app.APP_STATE_CHOICES.draft:
@@ -8060,7 +7429,7 @@ class UserAccountUpdate(LoginRequiredMixin, UpdateView):
 
     def get_object(self, queryset=None):
         if 'pk' in self.kwargs:
-            if self.request.user.groups.filter(name__in=['Processor']).exists():
+            if self.request.user.groups.filter(name__in=['Statdev Processor']).exists():
                user = EmailUser.objects.get(pk=self.kwargs['pk'])
                return user
             elif self.request.user.id == int(self.kwargs['pk']):
@@ -8135,7 +7504,7 @@ class UserAccountIdentificationUpdate(LoginRequiredMixin, UpdateView):
  
     def get_object(self, queryset=None):
         if 'pk' in self.kwargs:
-            if self.request.user.groups.filter(name__in=['Processor']).exists():
+            if self.request.user.groups.filter(name__in=['Statdev Processor']).exists():
                user = EmailUser.objects.get(pk=self.kwargs['pk'])
                return user
             else:

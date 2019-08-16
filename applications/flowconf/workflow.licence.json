@@ -58,6 +58,7 @@
                 "title": "Lodge Application",
                 "route": "2",
                 "routegroup":"lodge",
+                "lodgegroup": "assess",
                 "required" : []
             }
 

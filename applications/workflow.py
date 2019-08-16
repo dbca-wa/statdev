@@ -188,36 +188,36 @@ class Flow():
         director = None
         executive = None
 
-        if Group.objects.filter(name='Processor').exists():
-            processor = Group.objects.get(name='Processor')
-        if Group.objects.filter(name='Assessor').exists():
-            assessor = Group.objects.get(name='Assessor')
-        if Group.objects.filter(name='Approver').exists():
-            approver = Group.objects.get(name='Approver')
-        if Group.objects.filter(name='Referee').exists():
-            referee = Group.objects.get(name='Referee')
-        if Group.objects.filter(name='Director').exists():
-            director = Group.objects.get(name='Director')
-        if Group.objects.filter(name='Executive').exists():
-            executive = Group.objects.get(name='Executive')
-        if Group.objects.filter(name='Emergency').exists():
-            emergency = Group.objects.get(name='Emergency')
+        if Group.objects.filter(name='Stadev Processor').exists():
+            processor = Group.objects.get(name='Statdev Processor')
+        if Group.objects.filter(name='Statdev Assessor').exists():
+            assessor = Group.objects.get(name='Statdev Assessor')
+        if Group.objects.filter(name='Statdev Approver').exists():
+            approver = Group.objects.get(name='Statdev Approver')
+        if Group.objects.filter(name='Statdev Referee').exists():
+            referee = Group.objects.get(name='Statdev Referee')
+        if Group.objects.filter(name='Statdev Director').exists():
+            director = Group.objects.get(name='Statdev Director')
+        if Group.objects.filter(name='Statdev Executive').exists():
+            executive = Group.objects.get(name='Statdev Executive')
+        if Group.objects.filter(name='Statdev Emergency').exists():
+            emergency = Group.objects.get(name='Statdev Emergency')
 
 
         if processor in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Processor')
+            context = self.getGroupAccess(context,route,'Statdev Processor')
         if assessor in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Assessor')
+            context = self.getGroupAccess(context,route,'Statdev Assessor')
         if approver in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Approver')
+            context = self.getGroupAccess(context,route,'Statdev Approver')
         if referee in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Referee')
+            context = self.getGroupAccess(context,route,'Statdev Referee')
         if director in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Director')
+            context = self.getGroupAccess(context,route,'Statdev Director')
         if executive in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Executive')
+            context = self.getGroupAccess(context,route,'Statdev Executive')
         if emergency in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Emergency')
+            context = self.getGroupAccess(context,route,'Statdev Emergency')
 
         return context
 
@@ -347,13 +347,13 @@ class Flow():
     def groupList(self):
 
         DefaultGroups = {'grouplink': {}, 'group': {}}
-        DefaultGroups['grouplink']['admin'] = 'Processor'
-        DefaultGroups['grouplink']['assess'] = 'Assessor'
-        DefaultGroups['grouplink']['manager'] = 'Approver'
-        DefaultGroups['grouplink']['director'] = 'Director'
-        DefaultGroups['grouplink']['exec'] = 'Executive'
-        DefaultGroups['grouplink']['referral'] = 'Referee'
-        DefaultGroups['grouplink']['emergency'] = 'Emergency'
+        DefaultGroups['grouplink']['admin'] = 'Statdev Processor'
+        DefaultGroups['grouplink']['assess'] = 'Statdev Assessor'
+        DefaultGroups['grouplink']['manager'] = 'Statdev Approver'
+        DefaultGroups['grouplink']['director'] = 'Statdev Director'
+        DefaultGroups['grouplink']['exec'] = 'Statdev Executive'
+        DefaultGroups['grouplink']['referral'] = 'Statdev Referee'
+        DefaultGroups['grouplink']['emergency'] = 'Statdev Emergency'
 
         # create reverse mapping groups
         for g in DefaultGroups['grouplink']:

@@ -54,6 +54,7 @@
                 "title": "Lodge Application",
                 "route": "2",
                 "routegroup":"lodge",
+                "lodgegroup": "assess",
                 "required": ["title","deed","cost","river_lease_require_river_lease","river_lease_reserve_licence","proposed_development_description","certificate_of_title_volume","folio","diagram_plan_deposit_number","proposed_development_plans"]
             }
         ],

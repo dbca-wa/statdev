@@ -177,7 +177,6 @@
 									{% endif %}
 							{% endif %}
 						{% endif %}
-						
                                                 {% if app_obj.may_assign_to_person == "True" %}
                                                 <li><a href="{% url 'application_assign_person' app_obj.app.pk %}" title="Assign Person">{% if app_obj.app.assignee == None %}Assign Person{% else %}Re Assign Person{% endif %}</a></li>
 						{% endif %}

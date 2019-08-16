@@ -1607,7 +1607,7 @@ class ReferralForm(ModelForm):
         self.helper.form_id = 'id_form_referral_create'
         self.helper.attrs = {'novalidate': ''}
         # Limit the referee queryset.
-        referee = Group.objects.get(name='Referee')
+        referee = Group.objects.get(name='Statdev Referee')
         existing_referees = app.referral_set.all().values_list('referee__email', flat=True)
         self.fields['referee'].queryset = User.objects.filter(groups__in=[referee]).exclude(email__in=existing_referees)
         # TODO: business logic to limit the document queryset.
@@ -1875,6 +1875,8 @@ class AssignPersonForm(ModelForm):
         self.helper = BaseFormHelper(self)
         self.helper.form_id = 'id_form_assign_person_application'
         self.helper.attrs = {'novalidate': ''}
+        print ("INITIAL GROUP")
+        print (self.initial['assigngroup'])
         # Limit the assignee queryset.
         assigngroup = Group.objects.get(name=self.initial['assigngroup'])
         self.fields['assignee'].queryset = User.objects.filter(groups__in=[assigngroup])
@@ -2148,7 +2150,7 @@ class AssignProcessorForm(ModelForm):
         self.helper.form_id = 'id_form_assign_application'
         self.helper.attrs = {'novalidate': ''}
         # Limit the assignee queryset.
-        processor = Group.objects.get(name='Processor')
+        processor = Group.objects.get(name='Statdev Processor')
         self.fields['assignee'].queryset = User.objects.filter(groups__in=[processor])
         self.fields['assignee'].required = True
         # Disable all form fields.
@@ -2182,7 +2184,7 @@ class AssignAssessorForm(ModelForm):
         self.helper.form_id = 'id_form_assign_application'
         self.helper.attrs = {'novalidate': ''}
         # Limit the assignee queryset.
-        assessor = Group.objects.get(name='Assessor')
+        assessor = Group.objects.get(name='Statdev Assessor')
         self.fields['assignee'].queryset = User.objects.filter(groups__in=[assessor])
         self.fields['assignee'].required = True
         # Disable all form fields.
@@ -2216,7 +2218,7 @@ class AssignApproverForm(ModelForm):
         self.helper.form_id = 'id_form_approve_application'
         self.helper.attrs = {'novalidate': ''}
         # Limit the assignee queryset.
-        approver = Group.objects.get(name='Approver')
+        approver = Group.objects.get(name='Statdev Approver')
         self.fields['assignee'].queryset = User.objects.filter(groups__in=[approver])
         self.fields['assignee'].required = True
         self.fields['assignee'].label = 'Manager'
@@ -2250,7 +2252,7 @@ class AssignEmergencyForm(ModelForm):
         self.helper.form_id = 'id_form_assign_emergency_application'
         self.helper.attrs = {'novalidate': ''}
         # Limit the assignee queryset.
-        emergency = Group.objects.get(name='Emergency')
+        emergency = Group.objects.get(name='Statdev Emergency')
         self.fields['assignee'].queryset = User.objects.filter(groups__in=[emergency])
         self.fields['assignee'].required = True
         # Disable all form fields.

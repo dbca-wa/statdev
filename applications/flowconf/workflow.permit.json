@@ -45,7 +45,7 @@
                     "field": "1-nextstep",
                     "fieldvalue": "Lodge Application",
                     "fieldoperator":"equals",
-                    "route": "3.2",
+                    "route": "2",
                     "routeurl": "application_lodge",
                     "required" : [],
                     "state": "15"
@@ -54,10 +54,11 @@
             }
         },
         "actions": [
-            {
+           {
                 "title": "Lodge Application",
                 "route": "2",
                 "routegroup":"lodge",
+                "lodgegroup": "assess",
                 "required": ["title","proposed_commence","description","land_owner_consent"]
             }
         ],
@@ -81,7 +82,7 @@
             "show_form_buttons": "True"
         },
         "groupaccess": {
-            "Processor": {
+            "Statdev Processor": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -97,7 +98,7 @@
                 "show_form_buttons": "True"
 
             },
-            "Assessor": {
+            "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -111,7 +112,7 @@
                 "hide_form_buttons": "False"
 
             },
-            "Approver": {
+            "Statdev Approver": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -202,11 +203,12 @@
             }
         },
         "groupaccess": {
-            "Assessor": {
+            "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"False",
                 "may_refer":"True",
                 "may_assign":"True",
+                "may_assign_to_person" : "True",
                 "may_assign_customer": "False",
                 "may_assign_processor": "True",
                 "may_create_condition":"False",
@@ -229,7 +231,7 @@
                 "allow_admin_side_menu" : "True",
                 "show_form_buttons": "True"
             },
-            "Approver": {
+            "Statdev Approver": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -288,7 +290,7 @@
         },
         "actions": [
             {
-                "title": "Send to Assessor",
+                "title": "Send to Statdev Assessor",
                 "route": "2",
                 "routegroup":"assess",
                 "state": "4"
@@ -300,7 +302,7 @@
             }
         },
         "groupaccess": {
-            "Processor": {
+            "Statdev Processor": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -316,7 +318,7 @@
 		"may_view_action_log": "True"
 
             },
-            "Assessor": {
+            "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -330,7 +332,7 @@
                 "allow_admin_side_menu" : "True"
 
             },
-            "Approver": {
+            "Statdev Approver": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -407,7 +409,7 @@
                 "state": "8"
             },
             {
-                "title": "Send back to Assessor",
+                "title": "Send back to Statdev Assessor",
                 "route": "2",
                 "routegroup": "assess",
                 "state": "4"
@@ -419,10 +421,10 @@
             }
         },
         "groupaccess": {
-	    "Processor" : {
+	    "Statdev Processor" : {
 		"may_view_action_log": "True"
 	    },
-            "Approver": {
+            "Statdev Approver": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -516,7 +518,7 @@
             }
         ],
         "groupaccess": {
-            "Processor": {
+            "Statdev Assessor": {
                 "may_update": "False",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -532,21 +534,7 @@
 		"may_view_action_log": "True"
 
             },
-            "Assessor": {
-                "may_update": "True",
-                "may_lodge":"True",
-                "may_refer":"False",
-                "may_assign":"False",
-                "may_assign_customer": "False",
-                "may_assign_processor": "False",
-                "may_create_condition":"False",
-                "may_submit_approval": "False",
-                "may_issue": "False",
-                "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
-
-            },
-            "Approver": {
+            "Statdev Approver": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -629,7 +617,7 @@
         "formcomponent": {
         },
         "groupaccess": {
-            "Processor": {
+            "Statdev Processor": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -644,7 +632,7 @@
 		"may_view_action_log": "True"
 
             },
-            "Assessor": {
+            "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -658,7 +646,7 @@
                 "allow_admin_side_menu" : "True"
 
             },
-            "Approver": {
+            "Statdev Approver": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -742,7 +730,7 @@
         "formcomponent": {
         },
         "groupaccess": {
-            "Processor": {
+            "Statdev Processor": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -757,7 +745,7 @@
 		"may_view_action_log": "True"
 
             },
-            "Assessor": {
+            "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -771,7 +759,7 @@
                 "allow_admin_side_menu" : "True"
 
             },
-            "Approver": {
+            "Statdev Approver": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",

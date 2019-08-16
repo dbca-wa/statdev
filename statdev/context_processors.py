@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group 
 
 def has_group(user):
-    staff_groups = ['Approver','Assessor','Director','Emergency','Executive','Processor']
+    staff_groups = ['Statdev Approver','Statdev Assessor','Statdev Director','Statdev Emergency','Statdev Executive','Statdev Processor']
     user_groups = user.groups.all()
     for sg in user_groups:
         group = Group.objects.get(name=sg)
@@ -17,7 +17,7 @@ def has_staff(user):
         return False
 
 def has_admin(user):
-    staff_groups = ['Processor']
+    staff_groups = ['Statdev Processor']
     user_groups = user.groups.all()
     for sg in staff_groups:
         group = Group.objects.get(name=sg)
