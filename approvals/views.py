@@ -118,7 +118,7 @@ class ApprovalList(ListView):
 #       context['app_list'] = context['app_list'].order_by('title')
 
         # TODO: any restrictions on who can create new applications?
-        processor = Group.objects.get(name='Processor')
+        processor = Group.objects.get(name='Statdev Processor')
 
         # Rule: admin officers may self-assign applications.
         if processor in self.request.user.groups.all() or self.request.user.is_superuser:
