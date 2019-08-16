@@ -6,14 +6,15 @@ from confy import env, database
 import os
 from ledger.settings_base import *
 
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 ROOT_URLCONF = 'statdev.urls'
 SITE_ID = 1
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 BOOKING_TIMEOUT = 1200
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Define the following in the environment:
 DEBUG = env('DEBUG', False)
