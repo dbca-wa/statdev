@@ -84,7 +84,7 @@
             "show_form_buttons": "True"
         },
         "groupaccess": {
-            "Statdev Statdev Processor": {
+            "Statdev Processor": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -100,7 +100,7 @@
                 "show_form_buttons": "True"
 
             },
-            "Statdev Statdev Assessor": {
+            "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
