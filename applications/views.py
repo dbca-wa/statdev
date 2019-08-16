@@ -2141,7 +2141,7 @@ class ApplicationApply(LoginRequiredMixin, CreateView):
     template_name = 'applications/application_apply_form.html'
 
     def get(self, request, *args, **kwargs):
-        if self.request.user.groups.filter(name__in=['Statdev Processor']).exists():
+        if self.request.user.groups.filter(name__in=['Statdev Processor', 'Statdev Assessor']).exists():
             app = Application.objects.create(submitted_by=self.request.user
                                              ,submit_date=date.today()
                                              ,state=Application.APP_STATE_CHOICES.new

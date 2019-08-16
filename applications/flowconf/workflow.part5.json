@@ -74,7 +74,7 @@
         },
         "groupaccess": {
 
-            "Assessor": {
+            "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -91,7 +91,7 @@
                 "show_form_buttons": "True"
             },
 
-            "Processor": {
+            "Statdev Processor": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -140,7 +140,7 @@
         }
     },
     "2": {
-        "title": "Assessor Officer",
+        "title": "Statdev Assessor Officer",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -193,7 +193,7 @@
                 }
         },
         "groupaccess": {
-            "Assessor": {
+            "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"False",
                 "may_refer":"True",
@@ -275,7 +275,7 @@
         },
         "actions": [
 			{
-                "title": "Send to Assessor",
+                "title": "Send to Statdev Assessor",
                 "route": "2",
                 "routegroup": "assess",
                 "state": "4"
@@ -283,7 +283,7 @@
             }
         ],
         "groupaccess": {
-            "Processor": {
+            "Statdev Processor": {
                 "may_update": "False",
                 "may_lodge": "False",
                 "may_refer": "False",
@@ -299,7 +299,7 @@
                 "may_view_action_log": "True",
                 "allow_admin_side_menu":"True"
             },
-            "Assessor": {
+            "Statdev Assessor": {
                 "may_update": "False",
                 "may_lodge": "False",
                 "may_refer":"False",
@@ -381,9 +381,9 @@
                 "allow_admin_side_menu":"True"
 
             },
-            "Assessor":{
+            "Statdev Assessor":{
             },
-            "Processor": {
+            "Statdev Processor": {
                 "may_view_action_log": "True"
             }
         },
@@ -472,14 +472,14 @@
                 "state": "12"
             },
             {
-                "title": "Reject to Assessor",
+                "title": "Reject to Statdev Assessor",
                 "route": "2",
                 "routegroup": "assess",
                 "state": "4"
             }
         ],
         "groupaccess": {
-            "Approver": {
+            "Statdev Approver": {
                 "may_update": "True",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -494,11 +494,11 @@
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu":"True"
             },
-            "Assessor": {
+            "Statdev Assessor": {
                     "may_assign":"False",
                     "allow_admin_side_menu":"True"
             },
-            "Processor": {
+            "Statdev Processor": {
                 "may_view_action_log": "True",
                  "allow_admin_side_menu":"True"
             }
@@ -601,10 +601,10 @@
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu":"True"
             },
-            "Assessor":{
+            "Statdev Assessor":{
                 "allow_admin_side_menu":"True"
             },
-            "Processor": {
+            "Statdev Processor": {
                 "may_view_action_log": "True",
                 "allow_admin_side_menu":"True"
             }
@@ -665,7 +665,7 @@
         }
     },
     "8": {
-        "title": "Assessor Officer - Swan River",
+        "title": "Statdev Assessor Officer - Swan River",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -701,7 +701,7 @@
            }
         },
         "groupaccess": {
-            "Processor": {
+            "Statdev Processor": {
                 "may_update": "True",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -800,14 +800,14 @@
                 "state": "12"
             },
             {
-                "title": "Reject To Assessor (Swan River)",
+                "title": "Reject To Statdev Assessor (Swan River)",
                 "route": "9",
                 "routegroup": "assess",
                 "state": "5"
             }
         ],
         "groupaccess": {
-            "Approver": {
+            "Statdev Approver": {
                 "may_update": "True",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -822,10 +822,10 @@
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu":"True"
             },
-            "Assessor":{
+            "Statdev Assessor":{
                 "allow_admin_side_menu":"True"
             },
-            "Processor": {
+            "Statdev Processor": {
                  "may_view_action_log": "True",
                  "allow_admin_side_menu":"True"
            }
@@ -941,9 +941,9 @@
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu":"True"
             },
-            "Assessor":{
+            "Statdev Assessor":{
             },
-            "Processor": {
+            "Statdev Processor": {
                "may_view_action_log": "True"
             }
         },
@@ -1048,9 +1048,9 @@
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu":"True"
             },
-            "Assessor":{
+            "Statdev Assessor":{
             },
-            "Processor": {
+            "Statdev Processor": {
                "may_view_action_log": "True"
            }
         },
@@ -1112,7 +1112,7 @@
         }
     },
     "13": {
-        "title": "Assessor Officer - Pending DG Draft",
+        "title": "Statdev Assessor Officer - Pending DG Draft",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -1154,7 +1154,7 @@
 
         },
         "groupaccess": {
-            "Assessor": {
+            "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -1228,7 +1228,7 @@
         "required": []
     },
     "14": {
-        "title": "Assessor (Public)",
+        "title": "Statdev Assessor (Public)",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -1268,7 +1268,7 @@
             }
         ],
         "groupaccess": {
-            "Assessor": {
+            "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -1288,7 +1288,7 @@
                 "show_form_buttons": "True"
 
             },
-	    "Processor": {
+	    "Statdev Processor": {
                 "may_view_action_log": "True",
                 "allow_admin_side_menu":"True"
             }
@@ -1371,7 +1371,7 @@
         },
         "actions": [
             {
-                "title": "Reject to Assessor (Public)",
+                "title": "Reject to Statdev Assessor (Public)",
                 "route": "13",
                 "routegroup": "assess",
                 "state": "4"
@@ -1387,7 +1387,7 @@
 
         ],
         "groupaccess": {
-            "Approver": {
+            "Statdev Approver": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -1402,10 +1402,10 @@
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu":"True"
             },
-            "Assessor":{
+            "Statdev Assessor":{
                 "allow_admin_side_menu":"True"
             },
-            "Processor": {
+            "Statdev Processor": {
                 "may_view_action_log": "True",
                 "allow_admin_side_menu":"True"
             }
@@ -1516,10 +1516,10 @@
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu":"True"
             },
-            "Assessor":{
+            "Statdev Assessor":{
                 "allow_admin_side_menu":"True"
             },
-			"Processor": {
+			"Statdev Processor": {
                 "may_view_action_log": "True",
                 "allow_admin_side_menu":"True"
             }
@@ -1624,10 +1624,10 @@
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu":"True"
             },
-            "Assessor":{
+            "Statdev Assessor":{
                 "allow_admin_side_menu":"True"
             },
-            "Processor": {
+            "Statdev Processor": {
                 "may_view_action_log": "True",
                 "allow_admin_side_menu":"True"
             }
@@ -1686,7 +1686,7 @@
         }
     },
     "18": {
-        "title": "Assessor Officer (DG Final)",
+        "title": "Statdev Assessor Officer (DG Final)",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -1728,7 +1728,7 @@
            }
         },
         "groupaccess": {
-            "Assessor": {
+            "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -1827,7 +1827,7 @@
         },
         "actions": [
             {
-                "title": "Reject to Assessor (Determination)",
+                "title": "Reject to Statdev Assessor (Determination)",
                 "route": "18",
                 "routegroup": "assess",
                 "state": "4"
@@ -1849,7 +1849,7 @@
             }
         ],
         "groupaccess": {
-            "Approver": {
+            "Statdev Approver": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -1865,10 +1865,10 @@
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu":"True"
             },
-            "Assessor":{
+            "Statdev Assessor":{
                 "allow_admin_side_menu":"True"
             },
-			"Processor": {
+			"Statdev Processor": {
                 "may_view_action_log": "True",
                 "allow_admin_side_menu":"True"
             }
@@ -1950,7 +1950,7 @@
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu":"True"
             },
-			"Processor": {
+			"Statdev Processor": {
                 "may_view_action_log": "True",
                 "allow_admin_side_menu":"True"
             }
@@ -2027,7 +2027,7 @@
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu":"True"
             },
-			"Processor": {
+			"Statdev Processor": {
                 "may_view_action_log": "True",
                 "allow_admin_side_menu":"True"
             }
@@ -2054,7 +2054,7 @@
         }
     },
     "23": {
-        "title": "Assessor Officer (Finalisation)",
+        "title": "Statdev Assessor Officer (Finalisation)",
 	"hidden": {
             "applicant": "False",
             "title": "False",
@@ -2083,14 +2083,14 @@
         },
         "actions": [
             {
-                "title": "Send to Assessor Officer (Finalisation) - Publish",
+                "title": "Send to Statdev Assessor Officer (Finalisation) - Publish",
                 "route": "24",
                 "routegroup": "assess",
                 "state": "2",
                 "required" : ["document_determination_approved","publish_determination_report"]
             },
 			{
-                "title": "Send to Assessor (Determination)",
+                "title": "Send to Statdev Assessor (Determination)",
                 "route": "18",
                 "routegroup": "assess",
                 "state": "4",
@@ -2104,7 +2104,7 @@
            }
         },
         "groupaccess": {
-            "Assessor": {
+            "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -2178,7 +2178,7 @@
         }
     },
     "24": {
-        "title": "Assessor (Finalisation) - Publish",
+        "title": "Statdev Assessor (Finalisation) - Publish",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -2215,7 +2215,7 @@
             }
         ],
         "groupaccess": {
-            "Processor": {
+            "Statdev Processor": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -2231,7 +2231,8 @@
                 "may_view_action_log": "True",
                 "allow_admin_side_menu":"True"
             },
-            "Assessor":{
+            "Statdev Assessor":{
+
                 "allow_admin_side_menu":"True"
             }
         },
@@ -2319,7 +2320,7 @@
         "actions": [
         ],
         "groupaccess": {
-   	    "Processor": {
+   	    "Statdev Processor": {
                 "may_view_action_log": "True",
                 "allow_admin_side_menu":"True"
             }

@@ -109,8 +109,9 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "hide_form_buttons": "False"
-
+                "may_change_application_applicant" :"True",
+                "may_view_action_log": "True",
+                "show_form_buttons": "True"
             }
 
         },
