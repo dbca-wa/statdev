@@ -78,7 +78,7 @@ class HomePage(TemplateView):
         #pdftool.generate_licence()
 
         context['referee'] = 'no'
-        referee = Group.objects.get(name='Referee')
+        referee = Group.objects.get(name='Statdev Referee')
         if referee in self.request.user.groups.all():
             context['referee'] = 'yes'
 
@@ -6924,7 +6924,7 @@ class ConditionCreate(LoginRequiredMixin, CreateView):
                 application=app, referee=self.request.user)
         # If the request user is not in the "Referee" group, then assume they're an internal user
         # and set the new condition to "applied" status (default = "proposed").
-        referee = Group.objects.get(name='Referee')
+        referee = Group.objects.get(name='Statdev Referee')
         if referee not in self.request.user.groups.all():
             self.object.status = Condition.CONDITION_STATUS_CHOICES.applied
         self.object.save()
