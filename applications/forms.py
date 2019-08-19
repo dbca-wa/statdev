@@ -668,7 +668,11 @@ class ApplicationLicencePermitForm(ApplicationFormMixin, ModelForm):
 #       self.fields['project_no'].label = "Riverbank Project Number"
         self.fields['purpose'].label = "Purpose of Approval"
         self.fields['proposed_commence'].label = "Proposed Commencement Date"
+        self.fields['proposed_commence'].widget.attrs['autocomplete'] = 'off'
+
         self.fields['proposed_end'].label = "Proposed End Date"
+        self.fields['proposed_end'].widget.attrs['autocomplete'] = 'off'
+
         self.fields['max_participants'].label = "Maximum Number of Participants"
         self.fields['address'].label = "Address of any landbased component of the commercial activity"
         self.fields['proposed_location'].label = "Proposed Location"
@@ -986,12 +990,24 @@ class ApplicationPermitForm(ApplicationFormMixin, ModelForm):
         # Add labels and help text for fields
         self.fields['proposed_commence'].label = "Proposed commencement date"
         self.fields['proposed_commence'].help_text = "(Please that consider routine assessment takes approximately 4 - 6 weeks, and set your commencement date accordingly)"
+        self.fields['proposed_commence'].widget.attrs['autocomplete'] = 'off'
+
         self.fields['proposed_end'].label = "Proposed end date"
+        self.fields['proposed_end'].widget.attrs['autocomplete'] = 'off'
+
         self.fields['cost'].label = "Approximate cost"
+        self.fields['cost'].widget.attrs['autocomplete'] = 'off'
+
         self.fields['project_no'].label = "Riverbank project number (if applicable)"
+        self.fields['project_no'].widget.attrs['autocomplete'] = 'off'
+
         self.fields['related_permits'].label = "Details of related permits"
         self.fields['description'].label = "Description of works, acts or activities"
+        self.fields['description'].widget.attrs['autocomplete'] = 'off'
+
         self.fields['assessment_start_date'].label = "Start Date"
+        self.fields['assessment_start_date'].widget.attrs['autocomplete'] = 'off'
+
         self.fields['over_water'].label = "Are any proposed works, acts or activities in or over waters?"
 
 #       self.fields['records'].label = "Attach more detailed descripton, maps or plans"
