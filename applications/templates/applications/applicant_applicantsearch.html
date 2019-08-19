@@ -8,8 +8,8 @@
 
 <div class="col-sm-12 col-md-12 col-lg-12">
     <ul class="nav nav-tabs">
-        <li role="presentation" class="{{ home_nav_other_applications }}"><a href="{% url "applicant_change" object.pk %}">Person Applicant</a></li>
-        <li role="presentation" class="{{ home_nav_other_approvals }}" ><a href="{% url "applicant_change_company" object.pk %}">Company Applicant</a></li>
+        <li role="presentation" class="{{ person_tab }}"><a href="{% url "applicant_change" object.pk %}">Person Applicant</a></li>
+        <li role="presentation" class="{{ company_tab }}" ><a href="{% url "applicant_change_company" object.pk %}">Company Applicant</a></li>
     </ul>
     <br>
 </div>
@@ -35,7 +35,7 @@
         </div>
 
         <div class="col-xs-12 col-sm-3">
-            <input type="submit" name="search-applicants" value="Search Applicants" class="btn btn-primary btn-lg" id="submit-id-assign">
+            <input type="submit" name="search-applicants" value="Search Person" class="btn btn-primary btn-lg" id="submit-id-assign">
         </div>
 
     </form>

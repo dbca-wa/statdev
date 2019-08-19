@@ -828,6 +828,7 @@ class ApplicationApplicantChange(LoginRequiredMixin,DetailView):
             lu.organisations =  Delegate.objects.filter(email_user=lu.id) 
             context['acc_list'].append(row)
         context['applicant_id'] = self.object.pk
+        context['person_tab'] = 'active'
 
         return context
 
@@ -860,6 +861,7 @@ class ApplicationApplicantCompanyChange(LoginRequiredMixin,DetailView):
             row['item_row'] = lu
             context['item_list'].append(row)
         context['company_id'] = self.object.pk
+        context['company_tab'] = 'active'
 
         return context
 class ApplicationFlows(LoginRequiredMixin,TemplateView):

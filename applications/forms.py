@@ -691,6 +691,7 @@ class ApplicationLicencePermitForm(ApplicationFormMixin, ModelForm):
         self.fields['operating_details'].label = "Hours and days of operation including length of tours / lessons"
         self.fields['vessel_or_craft_details'].label = "Are there any vessels or crafts to be noted in this application?"
         self.fields['assessment_start_date'].label = "Start Date"
+        self.fields['assessment_start_date'].widget.attrs['autocomplete'] = 'off'
 
         vesselandcraftdetails = crispy_para("Any vessel or craft to be used by a commercial operator in the river reserve must be noted in this application with the relevent Department of Transport certificate of survery or hire and driver registration.")
         deeddesc = crispy_para("Print <a href=''>the deed</a>, sign it and attach it to this application")
@@ -1268,6 +1269,7 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
 
         self.helper = BaseFormHelper()
 
+        self.fields['assessment_start_date'].widget.attrs['autocomplete'] = 'off'
 
         # Field helper Description text.
         fieldtext = crispy_para('Text Description') 
