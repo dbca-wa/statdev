@@ -2244,6 +2244,21 @@ class ApplicationApplyUpdate(LoginRequiredMixin, UpdateView):
 class ApplicationDetail(DetailView):
     model = Application
 
+
+    def get(self, request, *args, **kwargs):
+        # TODO: business logic to check the application may be changed.
+        app = self.get_object()
+
+        if request.user.is_staff == True or request.user.is_superuser == True or app.submitted_by == request.user.id or app.applicant.id == request.user.id or Delegate.objects.filter(email_user=request.user).count() > 0:
+              donothing =""
+        else:
+           messages.error(self.request, 'Forbidden from viewing this page.')
+           return HttpResponseRedirect("/")
+
+        # Rule: if the application status is 'draft', it can be updated.
+        return super(ApplicationDetail, self).get(request, *args, **kwargs)
+
+
     def get_context_data(self, **kwargs):
         context = super(ApplicationDetail, self).get_context_data(**kwargs)
         app = self.get_object()
@@ -2308,7 +2323,7 @@ class ApplicationDetail(DetailView):
             flow.get(workflowtype)
             context = flow.getAccessRights(self.request,context,app.routeid,workflowtype)
             context = flow.getCollapse(context,app.routeid,workflowtype)
-            context = flow.getHiddenAreas(context,app.routeid,workflowtype)
+            context = flow.getHiddenAreas(context,app.routeid,workflowtype,self.request)
             context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
             context['formcomponent'] = flow.getFormComponent(app.routeid,workflowtype)
 #        print context['workflow_actions']
@@ -2440,8 +2455,16 @@ class ApplicationActions(LoginRequiredMixin,DetailView):
 
     def get(self, request, *args, **kwargs):
         context_processor = template_context(self.request)
-        admin_staff = context_processor['admin_staff']
-        if admin_staff == True:
+        app = self.get_object()
+
+        flow = Flow()
+        workflowtype = flow.getWorkFlowTypeFromApp(app)
+        flow.get(workflowtype)
+        context_processor = flow.getAccessRights(request, context_processor, app.routeid, workflowtype)
+
+        #admin_staff = context_processor['admin_staff']
+        may_view_action_log = context_processor['may_view_action_log']
+        if may_view_action_log== 'True':
            donothing =""
         else:
            messages.error(self.request, 'Forbidden from viewing this page.')
@@ -2462,11 +2485,20 @@ class ApplicationComms(LoginRequiredMixin,DetailView):
 
     def get(self, request, *args, **kwargs):
         context_processor = template_context(self.request)
-        admin_staff = context_processor['admin_staff']
-        if admin_staff == True:
+        #admin_staff = context_processor['admin_staff']
+        #if admin_staff == True:
+        app = self.get_object()
+
+        flow = Flow()
+        workflowtype = flow.getWorkFlowTypeFromApp(app)
+        flow.get(workflowtype)
+        context_processor = flow.getAccessRights(request, context_processor, app.routeid, workflowtype)
+
+        may_view_comm_log = context_processor['may_view_comm_log']
+        if may_view_comm_log== 'True':
            pass
-        elif request.user.is_staff == True:
-           pass 
+        #elif request.user.is_staff == True:
+        #   pass 
         else:
            messages.error(self.request, 'Forbidden from viewing this page.')
            return HttpResponseRedirect("/")
@@ -3335,6 +3367,12 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
         # TODO: business logic to check the application may be changed.
         app = self.get_object()
 
+        if request.user.is_staff == True or request.user.is_superuser == True or app.submitted_by == request.user.id or app.applicant.id == request.user.id or Delegate.objects.filter(email_user=request.user).count() > 0:
+              donothing =""
+        else:
+           messages.error(self.request, 'Forbidden from viewing this page.')
+           return HttpResponseRedirect("/")
+
         # Rule: if the application status is 'draft', it can be updated.
         context = {}
         if app.assignee:
@@ -3488,7 +3526,7 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
 
         flowcontent = flow.getFields(flowcontent, app.routeid, workflowtype)
         flowcontent = flow.getAccessRights(request, flowcontent, app.routeid, workflowtype)
-        flowcontent = flow.getHiddenAreas(flowcontent,app.routeid,workflowtype)
+        flowcontent = flow.getHiddenAreas(flowcontent,app.routeid,workflowtype,request)
         flowcontent['condactions'] = flow.getAllConditionBasedRouteActions(app.routeid)
         initial['disabledfields'] = flow.getDisabled(flowcontent,app.routeid,workflowtype) 
         flowcontent['formcomponent'] = flow.getFormComponent(app.routeid, workflowtype)

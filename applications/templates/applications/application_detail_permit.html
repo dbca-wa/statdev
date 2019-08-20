@@ -2,6 +2,10 @@
 
 {% block page_content_inner %}
 {% load static %}
+<script>
+{% if object.state == 1 %}{% if object.app_type == None %}window.location = "{% url 'application_apply_form' object.pk 'apptype' %}";{% else %}window.location = "{% url 'application_update' object.pk %}";{% endif %}{% else %}{% endif %}
+</script>
+
 <link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}" />
 <div class="container-fluid">
     <div class="row">
@@ -241,7 +245,9 @@
                                 </div>
                                 <div class='col-sm-12 col-lg-6'>
                                 {% if object.supporting_info_demonstrate_compliance_trust_policies %}
-                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ object.supporting_info_demonstrate_compliance_trust_policies.file_url }}'>{{ object.supporting_info_demonstrate_compliance_trust_policies }}</A></div>
+                                        {% for doc in object.supporting_info_demonstrate_compliance_trust_policies.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}'>{{ doc }}</A></div>
+                                        {% endfor %}
                                 {% else %}
                                 No Attachments
                                 {% endif %}

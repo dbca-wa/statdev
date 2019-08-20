@@ -25,6 +25,10 @@
             "referrals": "True",
             "hide_form_buttons": "False"
         },
+        "hidden_owner": { 
+
+
+        },
         "condition-based-actions": {
             "2-prevstep": {
                 "steplabel": "Save",
@@ -95,6 +99,7 @@
                 "may_generate_pdf": "False",
                 "may_change_application_applicant" :"True",
 		"may_view_action_log": "True",
+                "may_view_comm_log": "True",
                 "show_form_buttons": "True"
 
             },
@@ -111,6 +116,7 @@
                 "may_generate_pdf": "False",
                 "may_change_application_applicant" :"True",
                 "may_view_action_log": "True",
+                "may_view_comm_log": "True",
                 "show_form_buttons": "True"
             }
 
@@ -135,6 +141,7 @@
             "expire_date" : "hide",
             "deed" : "deed"
         }
+        
     },
     "2": {
         "title": "Assessor Officer",
@@ -216,6 +223,7 @@
                 "may_assign_to_creator": "True",
                 "may_referral_delete": "True",
                 "may_view_action_log": "True",
+                "may_view_comm_log": "True",
                 "allow_admin_side_menu" : "True",
                 "show_form_buttons": "True"
             },
@@ -303,7 +311,8 @@
                 "may_issue": "False",
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu" : "True",
-		"may_view_action_log": "True"
+		"may_view_action_log": "True",
+                "may_view_comm_log": "True"
 
             },
             "Statdev Assessor": {
@@ -410,7 +419,8 @@
         },
         "groupaccess": {
 	    "Statdev Processor" : {
-		"may_view_action_log": "True"
+		"may_view_action_log": "True",
+                "may_view_comm_log": "True"
 	    },
             "Statdev Approver": {
                 "may_update": "True",
@@ -519,7 +529,8 @@
                 "may_issue": "False",
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu" : "True",
-		"may_view_action_log": "True"
+		"may_view_action_log": "True",
+                "may_view_comm_log": "True"
 
             },
             "Statdev Approver": {
@@ -533,7 +544,9 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "may_view_action_log": "True"
             }
 
         },
@@ -617,7 +630,8 @@
                 "may_issue": "False",
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu" : "True",
-		"may_view_action_log": "True"
+		"may_view_action_log": "True",
+                "may_view_comm_log": "True"
 
             },
             "Statdev Assessor": {
@@ -631,7 +645,10 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
+                "allow_admin_side_menu" : "True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True"
+
 
             },
             "Statdev Approver": {
@@ -645,7 +662,10 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
+                "allow_admin_side_menu" : "True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True"
+
             }
 
         },
@@ -730,7 +750,9 @@
                 "may_issue": "False",
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu" : "True",
-		"may_view_action_log": "True"
+		"may_view_action_log": "True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True"
 
             },
             "Statdev Assessor": {
@@ -744,7 +766,10 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
+                "allow_admin_side_menu" : "True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True"
+
 
             },
             "Statdev Approver": {
@@ -758,7 +783,9 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
+                "allow_admin_side_menu" : "True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True"
             }
 
         },

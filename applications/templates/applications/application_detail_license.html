@@ -3,6 +3,10 @@
 {% block page_content_inner %}
 {% load static %}
 
+<script>
+{% if object.state == 1 %}{% if object.app_type == None %}window.location = "{% url 'application_apply_form' object.pk 'apptype' %}";{% else %}window.location = "{% url 'application_update' object.pk %}";{% endif %}{% else %}{% endif %}
+</script>
+
 <link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}" />
 
 <div class="container-fluid">

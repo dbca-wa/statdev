@@ -112,6 +112,8 @@ class Flow():
             context["may_update_publication_feedback_final"] = "False"
         if "may_view_action_log" not in context:
             context["may_view_action_log"] = "False"
+        if "may_view_comm_log" not in context:
+            context["may_view_comm_log"] = "False"
         if "may_publish_publication_feedback_draft" not in context:
             context["may_publish_publication_feedback_draft"] = "False"
         if "may_publish_publication_feedback_final" not in context:
@@ -230,7 +232,7 @@ class Flow():
                   context['collapse'][c] = "in"
         return context
 
-    def getHiddenAreas(self,context,route,flow):
+    def getHiddenAreas(self,context,route,flow, request):
         context['hidden'] = {}
         json_obj = self.json_obj
         if json_obj[str(route)]:

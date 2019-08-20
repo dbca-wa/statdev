@@ -1258,7 +1258,8 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
         self.fields['title'].required = False
         self.fields['river_lease_require_river_lease'].required = False
         self.fields['river_lease_reserve_licence'].required = False
-
+        self.fields['assessment_start_date'].widget.attrs['autocomplete'] = 'off'
+ 
         for fielditem in self.initial["fieldstatus"]:
             if fielditem in self.fields:
                 del self.fields[fielditem]
@@ -1268,8 +1269,6 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
                 self.fields[fielditem].required = True
 
         self.helper = BaseFormHelper()
-
-        self.fields['assessment_start_date'].widget.attrs['autocomplete'] = 'off'
 
         # Field helper Description text.
         fieldtext = crispy_para('Text Description') 
