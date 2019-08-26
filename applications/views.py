@@ -2249,8 +2249,26 @@ class ApplicationDetail(DetailView):
         # TODO: business logic to check the application may be changed.
         app = self.get_object()
 
-        if request.user.is_staff == True or request.user.is_superuser == True or app.submitted_by == request.user.id or app.applicant.id == request.user.id or Delegate.objects.filter(email_user=request.user).count() > 0:
-              donothing =""
+
+        user_id = None
+        if request.user:
+           user_id = request.user.id
+
+        # start
+        if request.user.is_staff == True:
+             pass
+        elif request.user.is_superuser == True:
+             pass
+        elif app.submitted_by.id == user_id:
+             pass
+        elif app.applicant:
+             if app.applicant.id == user_id:
+                 pass 
+             else:
+                 messages.error(self.request, 'Forbidden from viewing this page.')
+                 return HttpResponseRedirect("/")   
+        elif Delegate.objects.filter(email_user=request.user).count() > 0:
+             pass
         else:
            messages.error(self.request, 'Forbidden from viewing this page.')
            return HttpResponseRedirect("/")
