@@ -496,7 +496,7 @@ class PDFtool(FPDF):
 #         pdf.cell(0, 8, 'DETERMINATION OF REQUEST FOR VARIATION',0,1,'C')
 #         pdf.set_font('Arial', '', 9)   
          BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-         pdf.output(BASE_DIR+'pdfs/approvals/'+str(app.id)+'-approval.pdf', 'F')
+         pdf.output(BASE_DIR+'/pdfs/approvals/'+str(app.id)+'-approval.pdf', 'F')
 
 
     def generate_section_84(self,app):
@@ -508,7 +508,7 @@ class PDFtool(FPDF):
 
          #swan_canning_riverpark_dbca.png
          BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-         pdf.image(BASE_DIR+'applications/static/images/swan_canning_riverpark_dbca.png', 30, 7, 144,24)
+         pdf.image(BASE_DIR+'/applications/static/images/swan_canning_riverpark_dbca.png', 30, 7, 144,24)
 
          pdf.set_font('Arial', 'I', 10)
          #pdf.cell(0,33,' ', 0,1,'L')
