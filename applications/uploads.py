@@ -20,7 +20,7 @@ def ApplicationUploads(request):
     file_group_ref_id = request.POST.get('file_group_ref_id',None)
 
     object_hash = {'status':'success','message':''} 
-    allow_extension_types = ['.pdf','.xls','.doc','.jpg','.png','.xlsx','.docx','.msg']
+    allow_extension_types = ['.pdf','.xls','.doc','.jpg','.png','.xlsx','.docx','.msg','.txt']
 
     for f in request.FILES.getlist('files'):
          extension = f.name.split('.')
