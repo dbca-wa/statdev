@@ -673,6 +673,7 @@ class ApplicationLicencePermitForm(ApplicationFormMixin, ModelForm):
         self.fields['proposed_end'].label = "Proposed End Date"
         self.fields['proposed_end'].widget.attrs['autocomplete'] = 'off'
 
+        self.fields['expire_date'].widget.attrs['autocomplete'] = 'off'
         self.fields['max_participants'].label = "Maximum Number of Participants"
         self.fields['address'].label = "Address of any landbased component of the commercial activity"
         self.fields['proposed_location'].label = "Proposed Location"
