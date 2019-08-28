@@ -997,6 +997,8 @@ class ApplicationPermitForm(ApplicationFormMixin, ModelForm):
         self.fields['proposed_end'].label = "Proposed end date"
         self.fields['proposed_end'].widget.attrs['autocomplete'] = 'off'
 
+        self.fields['expire_date'].widget.attrs['autocomplete'] = 'off'
+
         self.fields['cost'].label = "Approximate cost"
         self.fields['cost'].widget.attrs['autocomplete'] = 'off'
 
