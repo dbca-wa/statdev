@@ -374,7 +374,7 @@ class FormsList():
         applications = Application.objects.filter(Q(search_filter) ).exclude(state=17)[:200]
         usergroups = self_view.request.user.groups.all()
         context['app_list'] = []
-
+        print (' AM I HERE ')
         for app in applications:
              row = {}
              row['may_assign_to_person'] = 'False'

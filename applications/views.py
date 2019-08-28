@@ -2249,7 +2249,6 @@ class ApplicationDetail(DetailView):
         # TODO: business logic to check the application may be changed.
         app = self.get_object()
 
-
         user_id = None
         if request.user:
            user_id = request.user.id
@@ -2266,7 +2265,7 @@ class ApplicationDetail(DetailView):
                  pass 
              else:
                  messages.error(self.request, 'Forbidden from viewing this page.')
-                 return HttpResponseRedirect("/")   
+                 return HttpResponseRedirect("/")
         elif Delegate.objects.filter(email_user=request.user).count() > 0:
              pass
         else:
@@ -2299,9 +2298,9 @@ class ApplicationDetail(DetailView):
         context['may_assign_to_person'] = 'False'
         usergroups = self.request.user.groups.all()
         # print app.group
-        if app.group in usergroups:
-            if float(app.routeid) > 1:
-                context['may_assign_to_person'] = 'True'
+        #if app.group in usergroups:
+        #    if float(app.routeid) > 1:
+        #        context['may_assign_to_person'] = 'True'
         if app.app_type == app.APP_TYPE_CHOICES.part5:
             self.template_name = 'applications/application_details_part5_new_application.html'
             part5 = Application_Part5()
@@ -2482,8 +2481,10 @@ class ApplicationActions(LoginRequiredMixin,DetailView):
 
         #admin_staff = context_processor['admin_staff']
         may_view_action_log = context_processor['may_view_action_log']
+        print ("ACTION  LOG")
+        print (may_view_action_log)
         if may_view_action_log== 'True':
-           donothing =""
+           pass
         else:
            messages.error(self.request, 'Forbidden from viewing this page.')
            return HttpResponseRedirect("/")
@@ -2511,7 +2512,8 @@ class ApplicationComms(LoginRequiredMixin,DetailView):
         workflowtype = flow.getWorkFlowTypeFromApp(app)
         flow.get(workflowtype)
         context_processor = flow.getAccessRights(request, context_processor, app.routeid, workflowtype)
-
+        print ("COMMS LOG")
+        print (context_processor['may_view_comm_log'])
         may_view_comm_log = context_processor['may_view_comm_log']
         if may_view_comm_log== 'True':
            pass
@@ -5002,6 +5004,24 @@ class ApplicationAssignPerson(LoginRequiredMixin, UpdateView):
         if app.group is None:
             messages.error(self.request, 'Unable to set Person Assignments as No Group Assignments Set!')
             return HttpResponseRedirect(app.get_absolute_url())
+
+        app_type_short_name = None
+        for i in Application.APP_TYPE_CHOICES._identifier_map:
+             if Application.APP_TYPE_CHOICES._identifier_map[i] == app.app_type:
+                  app_type_short_name = i
+
+
+        flow = Flow()
+        flow.get(app_type_short_name)
+        flowcontext = {}
+        flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, app_type_short_name)
+        print (flowcontext["may_assign_to_person"])
+        if flowcontext["may_assign_to_person"] == "True":
+            pass
+        else:
+           messages.error(self.request, 'Forbidden from viewing this page.')
+           return HttpResponseRedirect("/")
+
         return super(ApplicationAssignPerson, self).get(request, *args, **kwargs)
 
     def get_form_class(self):

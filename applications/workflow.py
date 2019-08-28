@@ -132,6 +132,9 @@ class Flow():
             context['show_form_buttons'] = "False"
         if "may_assessor_advise" not in context:
             context['may_assessor_advise'] = "False"
+        if "may_assign_to_person" not in context:
+            context['may_assign_to_person'] = "False"
+
 
         # Form Components
         if "form_component_update" not in context:
