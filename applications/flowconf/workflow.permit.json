@@ -225,7 +225,8 @@
                 "may_view_action_log": "True",
                 "may_view_comm_log": "True",
                 "allow_admin_side_menu" : "True",
-                "show_form_buttons": "True"
+                "show_form_buttons": "True",
+                "may_assign_to_person": "True"
             },
             "Statdev Approver": {
                 "may_update": "True",
@@ -238,7 +239,8 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
+                "allow_admin_side_menu" : "True",
+                "may_assign_to_person": "True"
             }
         },
         "collapse": {
