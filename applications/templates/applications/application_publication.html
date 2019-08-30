@@ -20,9 +20,11 @@
                                 </div>
 
                                 {% if workflow_actions %}
+                                       {% if mode == 'update' %}
                                       {% if may_update_publication_newspaper == "True" %}
                                              <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_add_newspaperpublication' object.pk %}');" type="button">Add News Publication</button>
                                       {% endif %}
+                                       {% endif %}
                                 {% endif %}
                             </div>
                         </div>
@@ -41,10 +43,12 @@
                                         </a> 
                                     {% else %}
                                     {% if workflow_actions %}
+                                        {% if mode == 'update' %}
                                         {% if may_publish_website == "True" %}
                                         <a href="{% url 'application_publish_documents' object.pk 'documents' %}" class="btn btn-primary" role="button">
                                             Publish
                                         </a>
+                                        {% endif %}
                                         {% endif %}
                                     {% endif %}
                                     {% endif %}
@@ -84,6 +88,7 @@
                                         </td>
                                         <td>
                                         {% if workflow_actions %}
+                                           
                                            {% if may_update_publication_website == "True" %}
                                             <a href="{% url 'websitepublication_change' object.pk origdoc.fileid %}" class="btn btn-primary" role="button">
                                                 Attach / Change
@@ -134,9 +139,12 @@
 				</div>
 
                                 {% if workflow_actions %}
+                                    {% if mode == 'update' %}
                                 {% if may_update_publication_feedback_draft == "True" %}
 			               <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_add_feedbackpublication_draft' object.pk 'draft' %}');" type="button">Add Feedback</button>
                                 {% endif %}
+                                     {% endif %}
+
                                 {% endif %}
                             </div>
                         </div>
@@ -171,10 +179,12 @@
                                     </a>
                                     {% else %}
                                     {% if object.document_draft_signed.all|length >  0 %}
+                                     {% if mode == 'update' %}
                                     <a href="{% url 'application_publish_documents' object.pk 'draft' %}" class="btn btn-primary" role="button">
                                         Publish
                                     </a>
                                     {% endif %}
+                                        {% endif %}
                                     {% endif %}
                                 </td>
                             </div>
@@ -197,7 +207,9 @@
                                 {% if object.publish_draft_report %}
 				{% else %}
                                 {% if may_update_publication_feedback_final == "True" %}
+                                          {% if mode == 'update' %}
                                         <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_add_feedbackpublication_draft' object.pk 'final' %}');" type="button">Add Feedback</button>
+                                         {% endif %} 
                                 {% endif %}
                                 {% endif %}
                                 {% endif %}
@@ -238,9 +250,12 @@
                                     </a>
                                     {% else %}
                                     {% if object.document_final_signed.all|length >  0 %}
+                                    {% if mode == 'update' %}
                                     <a href="{% url 'application_publish_documents' object.pk 'final' %}" class="btn btn-primary" role="button">
                                         Publish
                                     </a>
+                                     {% endif %}
+
                                     {% endif %}
 
                                     {% endif %}
@@ -267,7 +282,9 @@
 
                                 {% if workflow_actions %}
                                     {% if may_update_publication_feedback_determination == "True" %}
+                                         {% if mode == 'update' %}
                                         <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_add_feedbackpublication_draft' object.pk 'determination' %}');" type="button">Add Feedback</button>
+                                         {% endif %}
                                     {% endif %}
                                 {% endif %}
 
@@ -309,9 +326,11 @@
                                     </a>
                                     {% else %}
                                     {% if object.document_determination_approved.all|length >  0 %}
+                                           {% if mode == 'update' %}
                                     <a href="{% url 'application_publish_documents' object.pk 'determination' %}" class="btn btn-primary" role="button">
                                         Publish
                                     </a>
+                                           {% endif %}
                                     {% endif %}
                                     {% endif %}
                                 </td>

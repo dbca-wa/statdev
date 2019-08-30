@@ -3393,7 +3393,7 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
            messages.error(self.request, 'Forbidden from viewing this page.')
            return HttpResponseRedirect("/")
 
-        if app.assignee is None:
+        if app.assignee is None and float(app.routeid) > 1:
              messages.error(self.request, 'Must be assigned to you before any changes can be made.')
              return HttpResponseRedirect("/")
 
@@ -5983,13 +5983,31 @@ class ReferralResend(LoginRequiredMixin, UpdateView):
     def get(self, request, *args, **kwargs):
         referral = self.get_object()
         context_processor = template_context(self.request)
-        admin_staff = context_processor['admin_staff']
 
-        if admin_staff == True:
+        app = referral.application
+        app_type_short_name = None
+        for i in Application.APP_TYPE_CHOICES._identifier_map:
+             if Application.APP_TYPE_CHOICES._identifier_map[i] == referral.application.app_type:
+                  app_type_short_name = i
+
+        flow = Flow()
+        flow.get(app_type_short_name)
+        flowcontext = {}
+        flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, app_type_short_name)
+        if flowcontext["may_referral_resend"] == "True":
            pass
         else:
            messages.error(self.request, 'Forbidden from viewing this page.')
            return HttpResponseRedirect("/")
+
+
+        #admin_staff = context_processor['admin_staff']
+
+        #if admin_staff == True:
+        #   pass
+        #else:
+        #   messages.error(self.request, 'Forbidden from viewing this page.')
+        #   return HttpResponseRedirect("/")
 
         # Rule: can't recall a referral that is any other status than
         # 'referred'.
@@ -6005,13 +6023,31 @@ class ReferralResend(LoginRequiredMixin, UpdateView):
 
     def post(self, request, *args, **kwargs):
         context_processor = template_context(self.request)
-        admin_staff = context_processor['admin_staff']
+        referral = self.get_object()
+        app = referral.application
+        app_type_short_name = None
+        for i in Application.APP_TYPE_CHOICES._identifier_map:
+             if Application.APP_TYPE_CHOICES._identifier_map[i] == referral.application.app_type:
+                  app_type_short_name = i
 
-        if admin_staff == True:
+        flow = Flow()
+        flow.get(app_type_short_name)
+        flowcontext = {}
+        flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, app_type_short_name)
+        if flowcontext["may_referral_resend"] == "True":
            pass
         else:
            messages.error(self.request, 'Forbidden from viewing this page.')
            return HttpResponseRedirect("/")
+
+
+        #admin_staff = context_processor['admin_staff']
+
+        #if admin_staff == True:
+        #   pass
+        #else:
+        #   messages.error(self.request, 'Forbidden from viewing this page.')
+        #   return HttpResponseRedirect("/")
 
         if request.POST.get('cancel'):
             return HttpResponseRedirect(self.get_object().application.get_absolute_url())
@@ -6041,9 +6077,7 @@ class ReferralRemind(LoginRequiredMixin, UpdateView):
         context_processor = template_context(self.request)
         #admin_staff = context_processor['admin_staff']
 
-
         app = referral.application
-        print ('STEP 1')
         app_type_short_name = None
         for i in Application.APP_TYPE_CHOICES._identifier_map:
              if Application.APP_TYPE_CHOICES._identifier_map[i] == referral.application.app_type:
@@ -6053,8 +6087,6 @@ class ReferralRemind(LoginRequiredMixin, UpdateView):
         flow.get(app_type_short_name)
         flowcontext = {}
         flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, app_type_short_name)
-        print ('test')
-        print (flowcontext)
         if flowcontext["may_recall_resend"] == "True":
            pass
         else:

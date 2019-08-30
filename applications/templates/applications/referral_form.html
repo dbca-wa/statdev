@@ -1,15 +1,11 @@
 {% load crispy_forms_tags %}
 
 {% block page_content_inner %}
-<a href="{% url 'application_detail' application.pk %}" class="btn btn-primary" role="button">
-    Back to Application
-</a>
-
-
-<h1>Referral of application {{ application.pk }}</h1>
-<p>Please provide any required feedback related to this application (in addition to already-proposed conditions):</p>
+<h1>Add Referral to application {{ application.pk }}</h1>
 {% crispy form %}
 
+
+{% if hide == 'yes' %}
 <div class="col-sm-12 col-md-12 col-lg-12">
 <div class="panel-body">
             <table class="table table-striped table-bordered table-condensed">
@@ -42,4 +38,5 @@
 			</table>
 </div>
 </div>
+{% endif %}
 {% endblock %}
