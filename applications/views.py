@@ -3393,6 +3393,13 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
            messages.error(self.request, 'Forbidden from viewing this page.')
            return HttpResponseRedirect("/")
 
+        if app.assignee is None:
+             messages.error(self.request, 'Must be assigned to you before any changes can be made.')
+             return HttpResponseRedirect("/")
+
+             
+
+
         # Rule: if the application status is 'draft', it can be updated.
         context = {}
         if app.assignee:
@@ -3430,6 +3437,7 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
         context = super(ApplicationUpdate, self).get_context_data(**kwargs)
         context['page_heading'] = 'Update application details'
         context['left_sidebar'] = 'yes'
+        context['mode']  = 'update' 
         app = self.get_object()
 
         if app.assignee:
@@ -4552,6 +4560,7 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
                         messages.error(self.request, 'Required Field ' + fielditem + ' is empty,  Please Complete')
                         return HttpResponseRedirect(reverse('application_update', args=(app.pk,)))
                     appattr = getattr(app, fielditem)
+
                     if isinstance(appattr, unicode) or isinstance(appattr, str):
                         if len(appattr) == 0:
                             messages.error(self.request, 'Required Field ' + fielditem + ' is empty,  Please Complete')
@@ -4838,8 +4847,19 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
         elif app.app_type == 3:
            # Licence Proposal
            pdftool.generate_part5(approval)
+           location_count = Location.objects.filter(application=app).count()
+           location = ''
+           if location_count > 0:
+              location = Location.objects.filter(application=app)[0].location
+           applicant = ''
+           if app.organisation:
+                 applicant = app.organisation.name
+           else:
+                 if app.applicant:
+                     applicant = app.applicant.first_name+' '+app.applicant.last_name
+ 
            emailcontext['person'] = app.submitted_by
-           sendHtmlEmail([app.submitted_by.email], 'Determination - Part 5 - '+str(app.id)+' - '+str(app.location)+' - [Description of Works] - [Applicant]', emailcontext, 'application-determination.html', None, None, None, approval_pdf)
+           sendHtmlEmail([app.submitted_by.email], 'Determination - Part 5 - '+str(app.id)+' - '+str(location)+' - '+applicant, emailcontext, 'application-determination.html', None, None, None, approval_pdf)
         elif app.app_type == 10 or app.app_type == 11:
            # Permit & Licence Renewal 
            emailcontext['person'] = app.submitted_by

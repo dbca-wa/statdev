@@ -180,7 +180,7 @@ class Application(models.Model):
     app_type = models.IntegerField(choices=APP_TYPE_CHOICES, blank=True, null=True)
     apply_on_behalf_of = models.IntegerField(choices=APP_APPLY_ON, blank=True, null=True)
     assignee = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.PROTECT, related_name='assignee')
-    state = models.IntegerField(choices=APP_STATE_CHOICES, default=APP_STATE_CHOICES.draft, editable=False)
+    state = models.IntegerField(choices=APP_STATE_CHOICES, default=APP_STATE_CHOICES.draft, editable=True)
     title = models.CharField(max_length=256)
     description = models.TextField(null=True, blank=True)
     submit_date = models.DateField()

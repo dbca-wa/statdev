@@ -140,7 +140,7 @@
         }
     },
     "2": {
-        "title": "Statdev Assessor Officer",
+        "title": "Assessor Officer",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -220,9 +220,74 @@
                 "allow_admin_side_menu":"True",
                 "show_form_buttons": "True",
                 "may_update": "True",
-                "may_update_assessment_draft": "True"
+                "may_update_assessment_draft": "True",
+                "may_assign_to_person": "True"
+            },
 
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
             }
+
+
+
         },
         "collapse": {
             "applicant": "False",
@@ -275,7 +340,7 @@
         },
         "actions": [
 			{
-                "title": "Send to Statdev Assessor",
+                "title": "Send to Assessor",
                 "route": "2",
                 "routegroup": "assess",
                 "state": "4"
@@ -365,8 +430,8 @@
             }
         ],
         "groupaccess": {
-            "Director": {
-                "may_update": "True",
+           "Statdev Director": {
+                "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
@@ -378,14 +443,75 @@
                 "may_assign_assessor": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu":"True"
-
+                "allow_admin_side_menu":"True",
+                "may_assign_to_person": "True"
+           },
+           "Statdev Assessor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "allow_admin_side_menu" : "True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_assign_to_person": "False",
+                "may_assign_assessor": "False"
             },
-            "Statdev Assessor":{
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
             },
             "Statdev Processor": {
-                "may_view_action_log": "True"
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
             }
+
+
         },
 
         "collapse": {
@@ -472,14 +598,14 @@
                 "state": "12"
             },
             {
-                "title": "Reject to Statdev Assessor",
+                "title": "Reject to Assessor",
                 "route": "2",
                 "routegroup": "assess",
                 "state": "4"
             }
         ],
         "groupaccess": {
-            "Statdev Approver": {
+           "Statdev Approver": {
                 "may_update": "True",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -492,16 +618,75 @@
                 "may_assign_assessor": "True",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu":"True"
+                "allow_admin_side_menu":"True",
+                "may_assign_to_person": "True"
+           },
+           "Statdev Assessor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "allow_admin_side_menu" : "True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_assign_to_person": "False",
+                "may_assign_assessor": "False"
             },
-            "Statdev Assessor": {
-                    "may_assign":"False",
-                    "allow_admin_side_menu":"True"
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
             },
             "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
                 "may_view_action_log": "True",
-                 "allow_admin_side_menu":"True"
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
             }
+
+
         },
         "collapse": {
             "applicant": "True",
@@ -581,35 +766,94 @@
             {
                 "title": "Post to Swan River Trust",
                 "route": "8",
-                "routegroup": "admin",
+                "routegroup": "assess",
                 "state": "2"
 
             }
         ],
         "groupaccess": {
-            "Executive": {
+            "Statdev Executive": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
                 "may_assign_customer": "False",
-                "may_assign_processor": "True",
+                "may_assign_processor": "False",
                 "may_create_condition":"False",
                 "may_submit_approval": "False",
-                "may_assign_assessor": "False",
+                "may_assign_assessor": "True",
+                "may_assign_exec": "True",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu":"True"
+                "allow_admin_side_menu":"True",
+                "may_assign_to_person": "True"
             },
-            "Statdev Assessor":{
-                "allow_admin_side_menu":"True"
+           "Statdev Assessor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "allow_admin_side_menu" : "True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_assign_to_person": "False",
+                "may_assign_assessor": "False"
+            },
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
             },
             "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
                 "may_view_action_log": "True",
-                "allow_admin_side_menu":"True"
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
             }
-        },
 
+        },
         "collapse": {
             "applicant": "True",
             "title": "True",
@@ -701,7 +945,7 @@
            }
         },
         "groupaccess": {
-            "Statdev Processor": {
+            "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -715,8 +959,72 @@
                 "may_generate_pdf": "False",
                 "may_view_action_log": "True",
                 "allow_admin_side_menu":"True",
-                "show_form_buttons": "True"
+                "show_form_buttons": "True",
+                "may_assign_to_person": "True"
+            },
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
             }
+
+
         },
         "collapse": {
             "applicant": "True",
@@ -800,7 +1108,7 @@
                 "state": "12"
             },
             {
-                "title": "Reject To Statdev Assessor (Swan River)",
+                "title": "Reject To Assessor (Swan River)",
                 "route": "9",
                 "routegroup": "assess",
                 "state": "5"
@@ -820,15 +1128,75 @@
                 "may_assign_director": "True",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu":"True"
+                "allow_admin_side_menu":"True",
+                "may_view_action_log": "True",
+                "may_assign_to_person": "True"
+           },
+           "Statdev Assessor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "allow_admin_side_menu" : "True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_assign_to_person": "False",
+                "may_assign_assessor": "False"
             },
-            "Statdev Assessor":{
-                "allow_admin_side_menu":"True"
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
             },
             "Statdev Processor": {
-                 "may_view_action_log": "True",
-                 "allow_admin_side_menu":"True"
-           }
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
+            }
+
         },
 
         "collapse": {
@@ -926,7 +1294,7 @@
 
         ],
         "groupaccess": {
-            "Director": {
+            "Statdev Director": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -939,15 +1307,76 @@
                 "may_assign_exec": "True",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu":"True"
+                "allow_admin_side_menu":"True",
+                "may_view_action_log": "True",
+                "may_assign_to_person": "True"
             },
-            "Statdev Assessor":{
+           "Statdev Assessor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "allow_admin_side_menu" : "True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_assign_to_person": "False",
+                "may_assign_assessor": "False"
+            },
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
             },
             "Statdev Processor": {
-               "may_view_action_log": "True"
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
             }
-        },
 
+        },
         "collapse": {
             "applicant": "True",
             "title": "True",
@@ -1028,14 +1457,14 @@
             {
                 "title": "Post to DG",
                 "route": "13",
-                "routegroup": "admin",
+                "routegroup": "assess",
                 "state": "2",
                 "process": ["draft_completed"]
             }
         ],
         "groupaccess": {
-            "Executive": {
-                "may_update": "True",
+            "Statdev Executive": {
+                "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
@@ -1043,16 +1472,79 @@
                 "may_assign_processor": "True",
                 "may_create_condition":"False",
                 "may_submit_approval": "False",
-                "may_assign_assessor": "False",
+                "may_assign_assessor": "True",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu":"True"
+                "allow_admin_side_menu":"True",
+                "may_assign_to_person": "True",
+                "may_view_action_log": "True"
             },
-            "Statdev Assessor":{
+
+           "Statdev Assessor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "allow_admin_side_menu" : "True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_assign_to_person": "True",
+                "may_assign_assessor": "True"
+            },
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
             },
             "Statdev Processor": {
-               "may_view_action_log": "True"
-           }
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
+            }
+
         },
         "collapse": {
             "applicant": "True",
@@ -1131,6 +1623,7 @@
             "assessments_draft_report": "False",
             "assessments_swan_river_trust_board_feedback": "False",
             "assessments_new_draft": "False",
+            "assessments_draft_report": "False",
             "publication_feedback_final" : "False",
             "publish_publication_feedback_draft" : "False",
             "publish_publication_feedback_final" : "True"
@@ -1142,16 +1635,13 @@
                 "routegroup": "manager",
                 "state": "5",
                 "required":["document_draft_signed","publish_draft_report","document_new_draft_v3","document_memo"]
-
             }
-
         ],
         "formcomponent": {
              "update": {
                 "title": "Attached Signed Draft",
                 "required": []
             }
-
         },
         "groupaccess": {
             "Statdev Assessor": {
@@ -1171,8 +1661,72 @@
                 "may_update_publication_feedback_draft": "False",
                 "may_update_publication_feedback_final": "True",
                 "allow_admin_side_menu":"True",
-                "show_form_buttons": "True"
+                "show_form_buttons": "True",
+                "may_assign_to_person": "True"
+            },
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
             }
+
+
         },
 
         "collapse": {
@@ -1400,14 +1954,71 @@
                 "may_assign_assessor": "True",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu":"True"
+                "allow_admin_side_menu":"True",
+                "show_form_buttons": "True",
+                "may_assign_to_person": "True"
+
             },
-            "Statdev Assessor":{
-                "allow_admin_side_menu":"True"
+            "Statdev Assessor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
             },
             "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
                 "may_view_action_log": "True",
-                "allow_admin_side_menu":"True"
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
             }
         },
         "collapse": {
@@ -1490,18 +2101,16 @@
                 "route": "17",
                 "routegroup": "exec",
                 "state": "13"
-
             },
             {
                 "title": "Reject to Manager",
                 "route": "15",
                 "routegroup": "manager",
                 "state": "5"
-
             }
         ],
         "groupaccess": {
-            "Director": {
+            "Statdev Director": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -1514,15 +2123,71 @@
                 "may_assign_assessor": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu":"True"
+                "allow_admin_side_menu":"True",
+                "may_assign_to_person": "True"
             },
-            "Statdev Assessor":{
-                "allow_admin_side_menu":"True"
-            },
-			"Statdev Processor": {
+            "Statdev Assessor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
                 "may_view_action_log": "True",
-                "allow_admin_side_menu":"True"
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
             }
+
         },
         "collapse": {
             "applicant": "True",
@@ -1603,33 +2268,88 @@
             {
                 "title": "Post Determination to DG",
                 "route": "18",
-                "routegroup": "admin",
+                "routegroup": "assess",
                 "state": "2",
                 "process": ["final_completed"]
 
             }
         ],
         "groupaccess": {
-            "Executive": {
+            "Statdev Executive": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
                 "may_assign_customer": "False",
-                "may_assign_processor": "True",
+                "may_assign_processor": "False",
                 "may_create_condition":"False",
                 "may_submit_approval": "False",
-                "may_assign_assessor": "False",
+                "may_assign_assessor": "True",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu":"True"
+                "allow_admin_side_menu":"True",
+                "may_assign_to_person": "True"
             },
-            "Statdev Assessor":{
-                "allow_admin_side_menu":"True"
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Assessor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
             },
             "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
                 "may_view_action_log": "True",
-                "allow_admin_side_menu":"True"
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
             }
         },
         "collapse": {
@@ -1744,9 +2464,70 @@
                 "may_publish_publication_feedback_final" :"False",
                 "may_update_publication_feedback_determination" : "True",
                 "allow_admin_side_menu":"True",
-                "show_form_buttons": "True"
+                "show_form_buttons": "True",
+                "may_assign_to_person": "True"
+            },
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
             }
-
         },
         "collapse": {
             "applicant": "True",
@@ -1827,7 +2608,7 @@
         },
         "actions": [
             {
-                "title": "Reject to Statdev Assessor (Determination)",
+                "title": "Reject to Assessor (Determination)",
                 "route": "18",
                 "routegroup": "assess",
                 "state": "4"
@@ -1863,15 +2644,74 @@
                 "may_assign_exec": "True",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu":"True"
-            },
-            "Statdev Assessor":{
-                "allow_admin_side_menu":"True"
-            },
-			"Statdev Processor": {
+                "allow_admin_side_menu":"True",
+                "may_assign_to_person": "True",
                 "may_view_action_log": "True",
-                "allow_admin_side_menu":"True"
+                "may_view_comm_log": "True"
+            },
+            "Statdev Assessor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+               
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
             }
+
         },
 
         "collapse": {
@@ -1935,7 +2775,7 @@
             }
         ],
         "groupaccess": {
-            "Director": {
+            "Statdev Director": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -1948,12 +2788,73 @@
                 "may_assign_assessor": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu":"True"
-            },
-			"Statdev Processor": {
+                "allow_admin_side_menu":"True",
+                "may_assign_to_person": "True",
                 "may_view_action_log": "True",
-                "allow_admin_side_menu":"True"
+                "may_view_comm_log": "True"
+            },
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+            "Statdev Assessor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
             }
+
         },
 
         "collapse": {
@@ -1993,7 +2894,7 @@
             "assessments": "False",
             "stakeholdercommunication": "True",
             "referrals": "False",
-			"assessments_draft_report": "True",
+            "assessments_draft_report": "True",
             "assessments_swan_river_trust_board_feedback": "False",
             "assessments_new_draft": "False",
             "publication_feedback_final" : "False",
@@ -2007,13 +2908,13 @@
             {
                 "title": "Post to DG / Minister",
                 "route": "23",
-                "routegroup": "admin",
+                "routegroup": "assess",
                 "state": "2"
 
             }
         ],
         "groupaccess": {
-            "Executive": {
+            "Statdev Executive": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -2025,14 +2926,73 @@
                 "may_assign_assessor": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu":"True"
-            },
-			"Statdev Processor": {
+                "allow_admin_side_menu":"True",
                 "may_view_action_log": "True",
-                "allow_admin_side_menu":"True"
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True"
+            },
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Assessor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
             }
         },
-
         "collapse": {
             "applicant": "True",
             "title": "True",
@@ -2083,21 +3043,21 @@
         },
         "actions": [
             {
-                "title": "Send to Statdev Assessor Officer (Finalisation) - Publish",
+                "title": "Send to Assessor Officer (Finalisation) - Publish",
                 "route": "24",
                 "routegroup": "assess",
                 "state": "2",
                 "required" : ["document_determination_approved","publish_determination_report"]
             },
-			{
-                "title": "Send to Statdev Assessor (Determination)",
+            {
+                "title": "Send to Assessor (Determination)",
                 "route": "18",
                 "routegroup": "assess",
                 "state": "4",
                 "required" : []
             }	
         ],
-		"formcomponent": {
+        "formcomponent": {
            "update": {
               "title": "Attach Signed Deterimination",
               "required": []
@@ -2119,9 +3079,74 @@
                 "may_publish_publication_feedback_determination": "True",
                 "may_view_action_log": "True",
                 "allow_admin_side_menu":"True",
-                "show_form_buttons": "True"
+                "show_form_buttons": "True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True"
 
+            },
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
             }
+
         },
 
         "collapse": {
@@ -2178,7 +3203,7 @@
         }
     },
     "24": {
-        "title": "Statdev Assessor (Finalisation) - Publish",
+        "title": "Assessor (Finalisation) - Publish",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -2209,32 +3234,92 @@
             {
                 "title": "Completed (Close Application)",
                 "route": "25",
-                "routegroup": "admin",
+                "routegroup": "assess",
                 "state": "14",
                 "required" : []
             }
         ],
         "groupaccess": {
-            "Statdev Processor": {
+            "Statdev Assessor": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
                 "may_assign_customer": "False",
-                "may_assign_processor": "True",
+                "may_assign_processor": "False",
                 "may_create_condition":"False",
                 "may_submit_approval": "False",
-                "may_assign_assessor": "False",
+                "may_assign_assessor": "True",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
                 "may_publish_publication_feedback_determination": "True",
+                "allow_admin_side_menu":"True",
                 "may_view_action_log": "True",
-                "allow_admin_side_menu":"True"
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True"
             },
-            "Statdev Assessor":{
-
-                "allow_admin_side_menu":"True"
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
             }
+
         },
         "collapse": {
             "applicant": "True",
@@ -2320,10 +3405,84 @@
         "actions": [
         ],
         "groupaccess": {
-   	    "Statdev Processor": {
+            "Statdev Assessor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
                 "may_view_action_log": "True",
-                "allow_admin_side_menu":"True"
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "False",
+                "allow_admin_side_menu" : "True"
             }
+
         },
         "collapse": {
             "applicant": "True",
