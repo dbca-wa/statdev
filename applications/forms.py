@@ -797,6 +797,9 @@ class ApplicationLicencePermitForm(ApplicationFormMixin, ModelForm):
 
             crispy_boxes.append(HTML('{% include "applications/application_vessel_and_craft_details.html" %}'))
 
+        if self.initial["workflow"]["hidden"]["referrals"] == 'False':
+             crispy_boxes.append(HTML('{% include "applications/application_referrals.html" %}'))
+
 #        else:
 #             crispy_boxes.append()
  

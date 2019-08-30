@@ -306,7 +306,7 @@
             "river_reserve_lease_section_32": "False",
             "details_of_proposed_development": "False",
             "publication": "True",
-            "referrals": "True",
+            "referrals": "False",
             "deed": "False",
             "landowner_consent": "False"
         },
@@ -365,13 +365,15 @@
                 "may_assign_processor": "False",
                 "may_create_condition":"False",
                 "may_submit_approval": "False",
-                "may_recall_resend": "True",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True",
                 "show_form_buttons": "False",
+                "may_view_comm_log": "True",
+                "may_recall_resend": "True",
+                "may_referral_resend": "True",
                 "may_view_action_log": "True",
-                "may_view_comm_log": "True"
+                "allow_admin_side_menu":"True"
+
 
             },
             "Statdev Assessor": {
@@ -387,8 +389,11 @@
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu" : "True",
                 "show_form_buttons": "True",
+                "may_view_comm_log": "True",
+                "may_recall_resend": "True",
+                "may_referral_resend": "True",
                 "may_view_action_log": "True",
-                "may_view_comm_log": "True"
+                "allow_admin_side_menu":"True"
 
             },
 
@@ -437,57 +442,22 @@
                 "may_view_action_log": "True",
                 "allow_admin_side_menu" : "True",
                 "may_view_comm_log": "True"
-            },
-            "Statdev Processor": {
-                "may_update": "False",
-                "may_lodge":"False",
-                "may_refer":"False",
-                "may_assign":"False",
-                "may_assign_customer": "False",
-                "may_assign_processor": "False",
-                "may_create_condition":"False",
-                "may_submit_approval": "False",
-                "may_issue": "False",
-                "may_generate_pdf": "False",
-                "may_view_action_log": "True",
-                "may_view_comm_log": "True",
-                "allow_admin_side_menu" : "True"
-
-            },
-            "Statdev Assessor": {
-                "may_update": "False",
-                "may_lodge":"False",
-                "may_refer":"False",
-                "may_assign":"False",
-                "may_assign_customer": "False",
-                "may_assign_processor": "False",
-                "may_create_condition":"False",
-                "may_submit_approval": "False",
-                "may_issue": "False",
-                "may_generate_pdf": "False",
-                "may_view_action_log": "True",
-                "may_view_comm_log": "True",
-                "allow_admin_side_menu" : "True"
-
             }
-
-
-
-
 
         },
         "collapse": {
             "applicant": "False",
             "title": "False",
-            "proposed_activities": "False",
+            "proposed_activities": "True",
             "certificate_commerical_acts_and_activities": "False",
             "river_reserve_lease_section_29": "False",
             "river_reserve_lease_section_32": "False",
             "details_of_proposed_development": "False",
             "publication": "True",
-            "referrals": "True",
-            "deed": "False",
-            "landowner_consent": "False"
+            "referrals": "False",
+            "deed": "True",
+            "landowner_consent": "True",
+            "vessel_details": "True"
         },
         "fields": {
             "location": "hide",
