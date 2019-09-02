@@ -2838,6 +2838,7 @@ class ReferralConditions(UpdateView):
         context['left_sidebar'] = 'yes'
         #context['action'] = self.kwargs['action']
         app = self.get_object()
+        context['referral']  = Referral.objects.get(application=app,referee=self.request.user)
         return context
 
     def get_initial(self):

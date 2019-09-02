@@ -1600,12 +1600,17 @@ class ApplicationReferralConditionsPart5(ModelForm):
         crispy_boxes.append(crispy_box('applicant_collapse','form_applicant','Applicant', applicant_info))
         del self.fields['applicant']
 
+        if self.initial['comments'] is None:
+               self.initial['comments'] = ''
+        if self.initial['proposed_conditions'] is None:
+               self.initial['proposed_conditions'] = ''
+
 
         crispy_boxes.append(crispy_box('title_collapse','form_title','Title',HTML('{% include "public/title.html" %}')))
 #        crispy_boxes.append(crispy_box('river_licence_collapse','river_licence_title','River Licence',HTML('{% include "public/river_reserve_licence_snippet.html" %}')))
         crispy_boxes.append(HTML('{% include "public/river_reserve_licence_snippet.html" %}'))
         crispy_boxes.append(HTML('{% include "public/details_of_proposed_develeopment_snipplet.html" %}'))
-        if self.initial['response_date'] is None and int(self.initial['state']) == 3:
+        if self.initial['response_date'] is None and int(self.initial['state']) == 3 and self.initial['referral_status'] == 1:
             crispy_boxes.append(crispy_box('feedback_collapse','form_feecback','Feedback',crispy_para(self.initial['referral_name'] + ' (' + self.initial['referral_email'] + ') '),'comments','proposed_conditions','records',Submit('submitfeedback', 'Submit', css_class='btn-lg')))
         else:
             if self.initial['referral_status'] != 5:

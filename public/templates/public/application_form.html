@@ -3,7 +3,11 @@
 {% load static %} 
 {% block page_content_inner %}
 <link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}" />
-
+{% if referral.status  == 3 %}
+<div class='alert alert-warning'>
+This referral has been recalled by the assessor no further updates can be provided at this time.  Thank you!
+</div>
+{% endif %}
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-6 col-md-6 col-lg-6">
