@@ -27,4 +27,8 @@ function select_condition(input_id) {
 
 }
 
+function close_popup() {
+   $('#overtop').hide();
+
+}
 

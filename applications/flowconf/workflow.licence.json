@@ -232,7 +232,8 @@
                 "may_view_action_log": "True",
                 "may_view_comm_log": "True",
                 "show_form_buttons": "True",
-                "may_assign_to_person": "True"
+                "may_assign_to_person": "True",
+                "may_update_vessels_list": "True"
             },
             "Statdev Approver": {
                 "may_update": "False",
@@ -247,7 +248,8 @@
                 "may_generate_pdf": "False",
                 "may_view_action_log": "True",
                 "may_view_comm_log": "True",
-                "allow_admin_side_menu" : "True"
+                "allow_admin_side_menu" : "True",
+                "may_update_vessels_list": "True"
             },
             "Statdev Director": {
                 "may_update": "False",

@@ -1,0 +1,49 @@
+
+    {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+          {{message}}
+          </div>
+        {% endfor %}
+    {% endif %}
+<div id=''>
+
+</div>
+
+
+<script>
+
+
+var popup_html ='';
+popup_html += '<div class="modal-dialog">';
+popup_html += '    <div class="modal-content">';
+popup_html += '      <div class="modal-header">';
+popup_html += '        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" onclick="close_popup();">&times;</span></button>';
+popup_html += '        <h4 class="modal-title"><span class="glyphicon glyphicon-alert" aria-hidden="true"></span> Error</h4>';
+popup_html += '      </div>';
+popup_html += '      <div class="modal-body" id="">';
+
+    {% if messages %}
+        {% for message in messages %}
+                 {% if message.tags == 'error' %}
+popup_html += '         <div class="alert alert-danger">{{message}}</div>';                      
+                 {% else %}
+popup_html += '         <div class="alert alert-{{ message.tags }}">{{message}}</div>';
+                 {% endif %}
+        {% endfor %}
+    {% endif %}
+
+popup_html += '      </div>';
+popup_html += '      <div class="modal-footer">';
+popup_html += '        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="close_popup();">Close</button>';
+popup_html += '      </div>';
+popup_html += '    </div><!-- /.modal-content -->';
+popup_html += '  </div><!-- /.modal-dialog -->';
+
+
+$('#overtop').html(popup_html);
+$('#overtop').show();
+
+
+$('#popup_error_button').click();
+</script>

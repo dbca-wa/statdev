@@ -183,6 +183,18 @@ class HomePageOLD(LoginRequiredMixin, TemplateView):
             app_list.append(row)
         return app_list
 
+
+
+class PopupError(TemplateView):
+    template_name = 'applications/popup-error.html'
+
+    def get(self, request, *args, **kwargs):
+        #messages.error(self.request,"Please complete at least one phone number")
+        #messages.success(self.request,"Please complete at least one phone number")
+        #messages.warning(self.request,"Please complete at least one phone number")
+        return super(PopupError, self).get(request, *args, **kwargs)
+
+
 class FirstLoginInfo(LoginRequiredMixin,CreateView):
 
     template_name = 'applications/firstlogin.html'
@@ -3201,6 +3213,32 @@ class ApplicationVesselTable(LoginRequiredMixin, DetailView):
 
         context = {}
 
+
+        user_id = None
+        if request.user:
+           user_id = request.user.id
+
+        # start
+        if request.user.is_staff == True:
+             pass
+        elif request.user.is_superuser == True:
+             pass
+        elif app.submitted_by.id == user_id:
+             pass
+        elif app.applicant:
+             if app.applicant.id == user_id:
+                 pass
+             else:
+                 messages.error(self.request, 'Forbidden from viewing this page.')
+                 return HttpResponseRedirect("/")
+        elif Delegate.objects.filter(email_user=request.user).count() > 0:
+             pass
+        else:
+           messages.error(self.request, 'Forbidden from viewing this page.')
+           return HttpResponseRedirect('/')
+
+
+
         if app.routeid is None:
             app.routeid = 1
 
@@ -3215,9 +3253,9 @@ class ApplicationVesselTable(LoginRequiredMixin, DetailView):
         context = flow.getAccessRights(request, context, app.routeid, workflowtype)
         #if self.request.user.groups.filter(name__in=['Processor']).exists():
         #    donothing = ''
-        if context['may_update_vessels_list'] != "True":
-            messages.error(self.request, 'This application cannot be updated!')
-            return HttpResponseRedirect(app.get_absolute_url())
+        #if context['may_update_vessels_list'] != "True":
+        #    messages.error(self.request, 'Forbidden from updating vessels')
+        #    return HttpResponseRedirect(reverse('popup_error'))
 
         return super(ApplicationVesselTable, self).get(request, *args, **kwargs)
 

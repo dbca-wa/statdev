@@ -15,9 +15,6 @@
     </div>
 </div>
 
-{% if may_update_vessels_list == "True"  %}
-	<button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_add_vessel' object.pk %}');" type='button'>Add new vessel / craft</button>
-{% endif %}
 <div id='vessels_table'>
 {% include "applications/application_vessels_table.html" %}
 </div>
@@ -25,5 +22,10 @@
 {% else %}
 <p>None</p>
 {% endif %}
+
+{% if may_update_vessels_list == "True"  %}
+        <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_add_vessel' object.pk %}');" type='button'>Add new vessel / craft</button>
+{% endif %}
+
 </div>
 

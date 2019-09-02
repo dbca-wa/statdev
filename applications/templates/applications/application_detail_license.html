@@ -381,14 +381,15 @@
         });
     });
 
-function loadForm() {
-               $.ajax({
-                    url: '{% url 'application_conditions_table' object.pk %}',
-                    async: false,
-                    success: function(data) {
-                          $('#conditions_table').html(data);
-                    }
-               });
-}
+//function loadForm() {
+//               console.log("LOADED FORM");
+//               $.ajax({
+//                    url: '{% url 'application_conditions_table' object.pk %}',
+//                    async: false,
+//                    success: function(data) {
+//                          $('#conditions_table').html(data);
+//                    }
+//               });
+//}
 </script>
 {% endblock extra_js %}

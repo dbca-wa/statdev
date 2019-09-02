@@ -910,9 +910,8 @@ class ApplicationLicencePermitForm(ApplicationFormMixin, ModelForm):
                 crispy_boxes.append(HTML('{% include "applications/application_assessment.html" %}'))
 
 
-
-        dynamic_selections = HTML('{% include "applications/application_form_js_dynamics.html" %}')
-
+        #dynamic_selections = HTML('{% include "applications/application_form_js_dynamics.html" %}')
+        dynamic_selections = HTML('{% include "applications/application_form_js_licence_dynamics.html" %}')
         self.helper.layout = Layout(crispy_boxes,dynamic_selections)
 
         if show_form_buttons == 'True' and may_update == "True":
