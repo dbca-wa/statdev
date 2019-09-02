@@ -279,7 +279,7 @@ showFiles: function(input_id,upload_type) {
 					   }
 					   htmlvalue += '</a></div>';
 					   htmlvalue += '<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">';
-					   htmlvalue += '<A onclick="ajax_loader_django.deleteFile(\''+input_id+'\',\''+input_array[file].doc_id+'\',\''+upload_type+'\')" href="javascript:void(0);">X</A>';
+					   htmlvalue += '<A onclick="ajax_loader_django.deleteFile(\''+input_id+'\',\''+input_array[file].doc_id+'\',\''+upload_type+'\')" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red"></span></A>';
 					   htmlvalue += '</div>';
 					   filecount++;
 				   }
@@ -301,7 +301,7 @@ showFiles: function(input_id,upload_type) {
 				   htmlvalue += '</A>';
 				   htmlvalue += '</div>';
 				   htmlvalue += '<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">';
-				   htmlvalue += '<A onclick="ajax_loader_django.deleteFile(\''+input_id+'\',\''+input_array.doc_id+'\',\''+upload_type+'\')" href="javascript:void(0);">X</A>';
+				   htmlvalue += '<A onclick="ajax_loader_django.deleteFile(\''+input_id+'\',\''+input_array.doc_id+'\',\''+upload_type+'\')" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red"></span></A>';
 				   htmlvalue += '</div>';
 			   }
 

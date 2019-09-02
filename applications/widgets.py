@@ -288,7 +288,7 @@ class AjaxFileUploader(FileInput):
                      substitutions['ajax_uploader'] += '</A>'
                      substitutions['ajax_uploader'] += '</div>'
                      substitutions['ajax_uploader'] += '<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">';
-                     substitutions['ajax_uploader'] += '<A onclick="ajax_loader_django.deleteFile(\''+name+'\',\''+str(fi['doc_id'])+'\',\''+upload_type+'\')" href="javascript:void(0);">X</A>'
+                     substitutions['ajax_uploader'] += '<A onclick="ajax_loader_django.deleteFile(\''+name+'\',\''+str(fi['doc_id'])+'\',\''+upload_type+'\')" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red"></span></A>'
                      substitutions['ajax_uploader'] += '</div>'
                      substitutions['ajax_uploader'] += '</div>'
 
@@ -310,7 +310,7 @@ class AjaxFileUploader(FileInput):
                      substitutions['ajax_uploader'] += '</A>'
                      substitutions['ajax_uploader'] += '</div>';
                      substitutions['ajax_uploader'] += '<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">'
-                     substitutions['ajax_uploader'] += '<A onclick="ajax_loader_django.deleteFile(\''+name+'\',\''+str(value['doc_id'])+'\',\''+upload_type+'\')" href="javascript:void(0);">X</A>'
+                     substitutions['ajax_uploader'] += '<A onclick="ajax_loader_django.deleteFile(\''+name+'\',\''+str(value['doc_id'])+'\',\''+upload_type+'\')" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red"></span></A>'
                      substitutions['ajax_uploader'] += '</div>'
                   
            #substitutions['ajax_uploader'] += '<li>1. <A HREF="">File 1</A></li>'
