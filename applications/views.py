@@ -2582,16 +2582,26 @@ class ApplicationCommsCreate(LoginRequiredMixin,CreateView):
         self.object.application = application
         self.object.save()
 
-        if self.request.FILES.get('records'):
-            if Attachment_Extension_Check('multi', self.request.FILES.getlist('records'), ['.pdf','.xls','.doc','.jpg','.png','.xlsx','.docx','.msg']) is False:
-                raise ValidationError('Documents attached contains and unallowed attachment extension.')
 
-            for f in self.request.FILES.getlist('records'):
-                doc = Record()
-                doc.upload = f
-                doc.name = f.name
-                doc.save()
-                self.object.records.add(doc)
+        if 'records_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['records_json'])
+             self.object.records.remove()
+             for d in self.object.records.all():
+                 self.object.records.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.records.add(doc)
+
+#        if self.request.FILES.get('records'):
+#            if Attachment_Extension_Check('multi', self.request.FILES.getlist('records'), ['.pdf','.xls','.doc','.jpg','.png','.xlsx','.docx','.msg']) is False:
+#                raise ValidationError('Documents attached contains and unallowed attachment extension.')
+#
+#            for f in self.request.FILES.getlist('records'):
+#                doc = Record()
+#                doc.upload = f
+#                doc.name = f.name
+#                doc.save()
+#                self.object.records.add(doc)
         self.object.save()
         # If this is not an Emergency Works set the applicant as current user
         success_url = reverse('application_comms', args=(app_id,))
@@ -3187,6 +3197,8 @@ class ApplicationReferTable(LoginRequiredMixin, DetailView):
            context['application_assignee_id'] = app.assignee.id
         else:
            context['application_assignee_id'] = None
+
+        context['mode'] = 'update'
 
         flow = Flow()
 

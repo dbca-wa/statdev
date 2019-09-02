@@ -28,7 +28,7 @@
                         <td>{{ refer_obj.get_status_display }}</td>
                         <td>{{ refer_obj.details }}</td>
                         <td>
-                        {% if may_referral_delete == "True" %}
+                        {% if may_referral_delete == "True"  and mode == 'update' %}
                               <a class="btn btn-primary btn-sm" role="button" href="{% url 'referral_delete' refer_obj.pk %}">Delete</a>
                         {% endif %}
                         </td>

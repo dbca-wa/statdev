@@ -23,7 +23,7 @@
                                                             <a class="btn btn-primary btn-sm" role="button" href="{% url 'referral_complete' ref.pk %}">Complete with feedback</a>
                                                         {% endif %}
 
-                                                        {% if may_referral_delete == "True" %}
+                                                        {% if may_referral_delete == "True" and mode == 'update'  %}
                                                                     <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'referral_delete' ref.pk %}');" type="button">Delete</button>
                                                         {% endif %}
 
