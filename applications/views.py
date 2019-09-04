@@ -185,14 +185,22 @@ class HomePageOLD(LoginRequiredMixin, TemplateView):
 
 
 
-class PopupError(TemplateView):
-    template_name = 'applications/popup-error.html'
+class PopupNotification(TemplateView):
+    template_name = 'applications/popup-notification.html'
 
     def get(self, request, *args, **kwargs):
         #messages.error(self.request,"Please complete at least one phone number")
         #messages.success(self.request,"Please complete at least one phone number")
         #messages.warning(self.request,"Please complete at least one phone number")
-        return super(PopupError, self).get(request, *args, **kwargs)
+        return super(PopupNotification, self).get(request, *args, **kwargs)
+
+
+class NotificationInsidePopup(TemplateView):
+    template_name = 'applications/popup-inside-notification.html'
+
+    def get(self, request, *args, **kwargs):
+        #messages.error(self.request,"Please complete at least one phone number")
+        return super(NotificationInsidePopup, self).get(request, *args, **kwargs)
 
 
 class FirstLoginInfo(LoginRequiredMixin,CreateView):
@@ -3258,7 +3266,10 @@ class ApplicationVesselTable(LoginRequiredMixin, DetailView):
         if app.assignee:
            context['application_assignee_id'] = app.assignee.id
         else:
-           context['application_assignee_id'] = None
+            if float(app.routeid) == 1 and app.assignee is None:
+                context['application_assignee_id'] = self.request.user.id
+            else:
+                context['application_assignee_id'] = None
 
         flow = Flow()
         workflowtype = flow.getWorkFlowTypeFromApp(app)
@@ -3286,7 +3297,10 @@ class ApplicationVesselTable(LoginRequiredMixin, DetailView):
         if app.assignee:
            context['application_assignee_id'] = app.assignee.id
         else:
-           context['application_assignee_id'] = None
+            if float(app.routeid) == 1 and app.assignee is None:
+                context['application_assignee_id'] = self.request.user.id
+            else:
+                context['application_assignee_id'] = None
 
         flow = Flow()
 
@@ -3456,11 +3470,15 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
         if app.assignee:
             context['application_assignee_id'] = app.assignee.id
         else:
-            context['application_assignee_id'] = None
+            if float(app.routeid) == 1 and app.assignee is None:
+                context['application_assignee_id'] = request.user.id
+            else:
+                context['application_assignee_id'] = None
 #        if app.app_type == app.APP_TYPE_CHOICES.part5:
         if app.routeid is None:
             app.routeid = 1
 
+       
         flow = Flow()
         workflowtype = flow.getWorkFlowTypeFromApp(app)
         flow.get(workflowtype)
@@ -3469,10 +3487,14 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
         if float(app.routeid) > 1:
             if app.assignee is None:
                 context['may_update'] = "False"
-
+               
             if context['may_update'] == "True":
                 if app.assignee != self.request.user:
                     context['may_update'] = "False"
+         
+        print ("ASSIGNEE")
+        print (app.assignee)
+              
 
         #if context['may_update'] != "True":
         #    messages.error(self.request, 'This application cannot be updated!')
@@ -3494,7 +3516,10 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
         if app.assignee:
             context['application_assignee_id'] = app.assignee.id
         else:
-            context['application_assignee_id'] = None
+            if float(app.routeid) == 1 and app.assignee is None:
+                context['application_assignee_id'] = self.request.user.id
+            else:
+                context['application_assignee_id'] = None
 
 
         # if app.app_type == app.APP_TYPE_CHOICES.part5:
@@ -7475,7 +7500,9 @@ class VesselCreate(LoginRequiredMixin, CreateView):
 #                doc.save()
 #                self.object.registration.add(doc)
 
-        return super(VesselCreate, self).form_valid(form)
+        return HttpResponseRedirect(reverse('inside_popup_notification'),)
+
+        #return super(VesselCreate, self).form_valid(form)
 
 
 class VesselDelete(LoginRequiredMixin, UpdateView):
@@ -7491,7 +7518,10 @@ class VesselDelete(LoginRequiredMixin, UpdateView):
         if app.assignee:
            flowcontext['application_assignee_id'] = app.assignee.id
         else:
-           flowcontext['application_assignee_id'] = None
+            if float(app.routeid) == 1 and app.assignee is None:
+                flowcontext['application_assignee_id'] = self.request.user.id
+            else:
+                flowcontext['application_assignee_id'] = None
 
 #        flowcontext['application_assignee_id'] = app.assignee.id
         workflowtype = flow.getWorkFlowTypeFromApp(app)
@@ -7503,7 +7533,7 @@ class VesselDelete(LoginRequiredMixin, UpdateView):
 #        if app.state != app.APP_STATE_CHOICES.draft:
             messages.error(
                 self.request, "Can't add new vessels to this application")
-            return HttpResponseRedirect(app.get_absolute_url())
+            return HttpResponseRedirect(reverse('popup-error'))
         #if referral.status != Referral.REFERRAL_STATUS_CHOICES.referred:
         #    messages.error(self.request, 'This delete is already completed!')
         #    return HttpResponseRedirect(referral.application.get_absolute_url())
@@ -7532,7 +7562,7 @@ class VesselDelete(LoginRequiredMixin, UpdateView):
             content_object=app, user=self.request.user,
             action='Vessel to {} delete'.format(vessel.id))
         action.save()
-        return HttpResponseRedirect(self.get_success_url(app.id))
+        return HttpResponseRedirect(reverse('inside_popup_notification'),)
 
 class VesselUpdate(LoginRequiredMixin, UpdateView):
     model = Vessel
@@ -7550,7 +7580,11 @@ class VesselUpdate(LoginRequiredMixin, UpdateView):
         if app.assignee:
             flowcontext['application_assignee_id'] = app.assignee.id
         else:
-            flowcontext['application_assignee_id'] = None
+            if float(app.routeid) == 1 and app.assignee is None:
+                flowcontext['application_assignee_id'] = self.request.user.id
+            else:
+                flowcontext['application_assignee_id'] = None
+
 
 
         flow = Flow()
@@ -7565,7 +7599,7 @@ class VesselUpdate(LoginRequiredMixin, UpdateView):
 #        if app.state != app.APP_STATE_CHOICES.draft:
             messages.error(
                 self.request, "Can't add new vessels to this application")
-            return HttpResponseRedirect(app.get_absolute_url())
+            return HttpResponseRedirect(reverse('notification_popup'))
         return super(VesselUpdate, self).get(request, *args, **kwargs)
 
     def get_success_url(self,app_id):
@@ -7586,6 +7620,7 @@ class VesselUpdate(LoginRequiredMixin, UpdateView):
             fileitem = {}
             fileitem['fileid'] = b1.id
             fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
             fileitem['extension']  = b1.extension
             multifilelist.append(fileitem)
         initial['registration'] = multifilelist
@@ -7624,7 +7659,8 @@ class VesselUpdate(LoginRequiredMixin, UpdateView):
 #                self.object.registration.add(doc)
 
         app = self.object.application_set.first()
-        return HttpResponseRedirect(self.get_success_url(app.id),)
+        #return HttpResponseRedirect(self.get_success_url(app.id),)
+        return HttpResponseRedirect(reverse('inside_popup_notification'),)
 
 
 #class RecordCreate(LoginRequiredMixin, CreateView):

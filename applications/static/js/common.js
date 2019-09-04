@@ -6,13 +6,13 @@ $(function() {
 	$(this).parent().find(".glyphicon-chevron-down").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-left");
     });
 
-    $('#vesselModal').bind("DOMSubtreeModified",function() {
-	 alert('changed');
+//    $('#vesselModal').bind("DOMSubtreeModified",function() {
+	 // alert('changed');
 
 //       $('#id_predefined_conditions').on('click', function() {
 //          alert('fff');
 //       });
-    });
+//    });
 });
 function select_condition(input_id) {
 
