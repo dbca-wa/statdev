@@ -64,6 +64,7 @@ urlpatterns = [
     url(r'^applications/(?P<pk>\d+)/webpublish/(?P<publish_type>\w+)/', views.WebPublish.as_view(), name='application_publish_documents'),
     url(r'^applications/(?P<approvalid>\d+)/change/(?P<action>\w+)/$', views.ApplicationChange.as_view(), name='application_change'),
     url(r'^applications/viewpdf-(?P<application_id>\d+).pdf$', views.getPDFapplication, name='application_view_pdf'),
+    url(r'^applications/payment-details/$', views.ApplicationBooking.as_view(), name='application_booking'),
 #    url(r'^private-media/view/(?P<file_id>\d+)/(?P<app_id>\d+)/(?P<app_type>\d+)/file.(?P<extension>\w\w\w)$', views.getAppFile, name='view_private_file'),
 #    url(r'^private-media/view/(?P<file_id>\d+)/(?P<app_id>\d+)/(?P<app_type>\d+)/file.(?P<extension>\w\w\w\w)$', views.getAppFile, name='view_private_file2'),
     url(r'^private-media/view/(?P<file_id>\d+)-file.(?P<extension>\w\w\w)$', views.getAppFile, name='view_private_file'),

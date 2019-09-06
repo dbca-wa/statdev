@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.views import login
 from ledger.accounts.views import logout 
+from ledger.urls import urlpatterns as ledger_patterns
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -14,7 +15,7 @@ urlpatterns = [
     url(r'^ledger/', include('ledger.accounts.urls', namespace='accounts')),
     url(r'^ledger/', include('social_django.urls', namespace='social')),
     #url(r'^', include('approvals.urls'))
-]
+] + ledger_patterns
 
 if settings.DEBUG:
     from django.views.static import serve

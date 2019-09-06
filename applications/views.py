@@ -29,6 +29,7 @@ from applications.views_sub import Application_Part5, Application_Emergency, App
 from applications.email import sendHtmlEmail, emailGroup, emailApplicationReferrals
 from applications.validationchecks import Attachment_Extension_Check, is_json
 from applications.utils import get_query, random_generator
+from applications import utils
 from ledger.accounts.models import EmailUser, Address, Organisation, Document, OrganisationAddress
 from approvals.models import Approval
 from datetime import datetime, timedelta
@@ -43,6 +44,8 @@ import os.path
 from applications.views_pdf import PDFtool
 import mimetypes
 from django.middleware.csrf import get_token
+from django.shortcuts import render, get_object_or_404, redirect
+
 
 class HomePage(TemplateView):
     # preperation to replace old homepage with screen designs..
@@ -2317,6 +2320,9 @@ class ApplicationDetail(DetailView):
 
         context['may_assign_to_person'] = 'False'
         usergroups = self.request.user.groups.all()
+        context['stakeholder_communication'] = StakeholderComms.objects.filter(application=app)
+        print ("STAKE HOLDER")
+        print (context['stakeholder_communication'])
         # print app.group
         #if app.group in usergroups:
         #    if float(app.routeid) > 1:
@@ -3539,6 +3545,7 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
         context['condactions'] = flow.getAllConditionBasedRouteActions(app.routeid)
         context['workflow'] = flow.getAllRouteConf(workflowtype,app.routeid)
 
+        context['stakeholder_communication'] = StakeholderComms.objects.filter(application=app)
 
         if app.app_type == app.APP_TYPE_CHOICES.part5:
             part5 = Application_Part5()
@@ -9230,6 +9237,40 @@ class UnlinkDelegate(LoginRequiredMixin, FormView):
         action.save()
         return HttpResponseRedirect(self.get_success_url())
 
+class ApplicationBooking(LoginRequiredMixin, FormView):
+
+    model = Application 
+    form_class = apps_forms.PaymentDetailForm
+    template_name = 'applications/application_payment_details_form.html'
+
+    def render_page(self, request, booking, form, show_errors=False):
+        booking_mooring = None
+        booking_total = '0.00'
+        print ("TTT")
+
+        #lines.append(booking_change_fees)
+        return render(request, self.template_name, {
+            'form': form,
+            'booking': booking,
+        })
+
+    def get(self, request, *args, **kwargs):
+        booking = {}
+        form = apps_forms.PaymentDetailForm 
+        print ("TEMPLATE")
+        print (self.template_name,)
+        return self.render_page(request, booking, form)
+
+    def post(self, request, *args, **kwargs):
+
+        invoice_text = u"Your licence renewal '{}' ".format('hello world')
+        booking=None
+        lines = []
+        lines.append({'ledger_description':'Test Licence',"quantity":1,"price_incl_tax":'11.00',"oracle_code":'00123sda', 'line_status': 1})
+
+        result = utils.checkout(request, booking, lines, invoice_text=invoice_text)
+        return result
+
 
 def getPDFapplication(request,application_id):
 
@@ -9281,6 +9322,5 @@ def getAppFile(request,file_id,extension):
 #          pdf_data = pdf_file.read()
 #          pdf_file.close()
 #          return HttpResponse(pdf_data, content_type='application/pdf')
-
 
 

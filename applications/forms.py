@@ -87,6 +87,28 @@ class ApplicationApplyForm(ModelForm):
         self.helper.attrs = {'novalidate': ''}
         self.helper.add_input(Submit('Continue', 'Continue', css_class='btn-lg'))
 
+
+class PaymentDetailForm(ModelForm):
+
+    class Meta:
+        model = Application
+        fields = ['id',]
+
+    def __init__(self, *args, **kwargs):
+        # User must be passed in as a kwarg.
+        super(PaymentDetailForm, self).__init__(*args, **kwargs)
+        self.helper = BaseFormHelper()
+        # delete internal option
+        crispy_boxes = crispy_empty_box()
+        #self.helper.form_show_labels = False
+
+        #crispy_boxes.append(crispy_h3("Do you want to apply"),)
+        self.helper.layout = Layout(crispy_boxes,)
+
+        self.helper.form_id = 'id_form_payment_details'
+        self.helper.attrs = {'novalidate': ''}
+        self.helper.add_input(Submit('Proceed to Payment', 'Proceed to Payment', css_class='btn-lg'))
+
 class CreateAccountForm(ModelForm):
 
     class Meta:
@@ -1589,6 +1611,13 @@ class ApplicationReferralConditionsPart5(ModelForm):
         # User must be passed in as a kwarg.
         super(ApplicationReferralConditionsPart5, self).__init__(*args, **kwargs)
         crispy_boxes = crispy_empty_box()
+        if self.initial['response_date'] is None and int(self.initial['state']) == 3 and self.initial['referral_status'] == 1:
+             pass
+        else:
+            if self.initial['referral_status'] != 5:
+                crispy_boxes.append(HTML("<div class='alert alert-success'>Thank you,  referral completed</div>"))
+
+        # 
         crispy_boxes.append(crispy_box('read_this_collapse','form_read_this','Read This',HTML('{% include "public/read_this_snipplet.html" %}')))
 
         organisation = self.initial['organisation']
@@ -2576,9 +2605,6 @@ class UserFormIdentificationUpdate(ModelForm):
                 Submit('cancel', 'Cancel')
             )
         )
-
-
-
 
 class AddressForm(ModelForm):
 
