@@ -50,6 +50,10 @@ def random_generator(size=12, chars=string.digits):
         return ''.join(random.choice(chars) for _ in range(size))
 
 
+def set_session_booking(session, key, value):
+    session[key] = value
+    session.modified = True
+
 def checkout(request, booking, lines, invoice_text=None, vouchers=[], internal=False):
     basket_params = {
         'products': lines,
@@ -57,13 +61,14 @@ def checkout(request, booking, lines, invoice_text=None, vouchers=[], internal=F
         'system': settings.PS_PAYMENT_SYSTEM_ID,
         'custom_basket': True,
     }
+    set_session_booking(request.session, 'test', 'JASON TEST')
 
     basket, basket_hash = create_basket_session(request, basket_params)
     checkout_params = {
         'system': settings.PS_PAYMENT_SYSTEM_ID,
         'fallback_url': request.build_absolute_uri('/'),
-        'return_url': request.build_absolute_uri('/'), #request.build_absolute_uri(reverse('public_booking_success')),
-        'return_preload_url': request.build_absolute_uri('/'), #request.build_absolute_uri(reverse('public_booking_success')),
+        'return_url': request.build_absolute_uri(reverse('payment_success')), #request.build_absolute_uri(reverse('public_booking_success')),
+        'return_preload_url': request.build_absolute_uri(reverse('payment_success')), #request.build_absolute_uri(reverse('public_booking_success')),
         'force_redirect': True,
         'proxy': True if internal else False,
         'invoice_text': invoice_text,
@@ -75,6 +80,10 @@ def checkout(request, booking, lines, invoice_text=None, vouchers=[], internal=F
 
 
     create_checkout_session(request, checkout_params)
+    print ("BBB")
+    print (booking)
+    set_session_booking(request.session, 'basket_id', basket.id)
+    set_session_booking(request.session, 'application_id', booking['app'].id)
 
 
 

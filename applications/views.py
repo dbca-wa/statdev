@@ -23,7 +23,7 @@ from actions.models import Action
 from applications import forms as apps_forms
 from applications.models import (
     Application, Referral, Condition, Compliance, Vessel, Location, Record, PublicationNewspaper,
-    PublicationWebsite, PublicationFeedback, Communication, Delegate, OrganisationContact, OrganisationPending, OrganisationExtras, CommunicationAccount,CommunicationOrganisation, ComplianceGroup,CommunicationCompliance, StakeholderComms)
+    PublicationWebsite, PublicationFeedback, Communication, Delegate, OrganisationContact, OrganisationPending, OrganisationExtras, CommunicationAccount,CommunicationOrganisation, ComplianceGroup,CommunicationCompliance, StakeholderComms, ApplicationLicenceFee)
 from applications.workflow import Flow
 from applications.views_sub import Application_Part5, Application_Emergency, Application_Permit, Application_Licence, Referrals_Next_Action_Check, FormsList
 from applications.email import sendHtmlEmail, emailGroup, emailApplicationReferrals
@@ -2295,6 +2295,10 @@ class ApplicationDetail(DetailView):
            messages.error(self.request, 'Forbidden from viewing this page.')
            return HttpResponseRedirect("/")
 
+        if app.state == 18:
+             return HttpResponseRedirect(reverse('application_booking', args=(app.id,)))              
+
+
         # Rule: if the application status is 'draft', it can be updated.
         return super(ApplicationDetail, self).get(request, *args, **kwargs)
 
@@ -2557,6 +2561,21 @@ class ApplicationComms(LoginRequiredMixin,DetailView):
         context['communications'] = Communication.objects.filter(application_id=app.pk).order_by('-created')
         return context
 
+class ApplicationCommsView(LoginRequiredMixin,TemplateView):
+    model = Application 
+    #form_class = apps_forms.CommunicationCreateForm
+    template_name = 'applications/application_comms_view.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ApplicationCommsView, self).get_context_data(**kwargs)
+        context['page_heading'] = 'View communication'
+        context['file_group'] =  '2003'
+        context['file_group_ref_id'] = self.kwargs['pk']
+        context['communication_entry'] = Communication.objects.get(pk=self.kwargs['comms_id'])
+        print (context['communication_entry'])
+        return context
+
+
 class ApplicationCommsCreate(LoginRequiredMixin,CreateView):
     model = Communication
     form_class = apps_forms.CommunicationCreateForm
@@ -2572,6 +2591,8 @@ class ApplicationCommsCreate(LoginRequiredMixin,CreateView):
     def get_initial(self):
         initial = {}
         initial['application'] = self.kwargs['pk']
+        #initial['records_json'] = []
+        #initial['records'] = []
         return initial
 
     def get_form_kwargs(self):
@@ -4643,11 +4664,17 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
                         messages.error(self.request, 'Required Field ' + fielditem + ' is empty,  Please Complete')
                         return HttpResponseRedirect(reverse('application_update', args=(app.pk,)))
                     appattr = getattr(app, fielditem)
+                    try:
+                        if isinstance(appattr, unicode) or isinstance(appattr, str):
+                            if len(appattr) == 0:
+                                messages.error(self.request, 'Required Field ' + fielditem + ' is empty,  Please Complete')
+                                return HttpResponseRedirect(reverse('application_update', args=(app.pk,)))
+                    except:
+                        if isinstance(appattr, str):
+                            if len(appattr) == 0:
+                                messages.error(self.request, 'Required Field ' + fielditem + ' is empty,  Please Complete')
+                                return HttpResponseRedirect(reverse('application_update', args=(app.pk,)))
 
-                    if isinstance(appattr, unicode) or isinstance(appattr, str):
-                        if len(appattr) == 0:
-                            messages.error(self.request, 'Required Field ' + fielditem + ' is empty,  Please Complete')
-                            return HttpResponseRedirect(reverse('application_update', args=(app.pk,)))
 
         return super(ApplicationAssignNextAction, self).get(request, *args, **kwargs)
 
@@ -9237,6 +9264,40 @@ class UnlinkDelegate(LoginRequiredMixin, FormView):
         action.save()
         return HttpResponseRedirect(self.get_success_url())
 
+class BookingSuccessView(TemplateView):
+    template_name = 'applications/success.html'
+
+    def get(self, request, *args, **kwargs):
+        print ("BOOKING SUCCESS")
+        
+        context_processor = template_context(self.request)
+        basket = None
+        context = {}
+        print ("START TEST")
+        if 'test' in request.session:
+            print (request.session['test'])
+    
+        print ("END TEST")
+        print (request.session['basket_id'])    
+        print (request.session['application_id'])
+        app = Application.objects.get(id=request.session['application_id'])
+        flow = Flow()
+        workflowtype = flow.getWorkFlowTypeFromApp(app)
+        flow.get(workflowtype)
+        DefaultGroups = flow.groupList()
+        flowcontext = {}
+        flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, workflowtype)
+        flowcontext = flow.getRequired(flowcontext, app.routeid, workflowtype)
+        route = flow.getNextRouteObj('payment', app.routeid, workflowtype)
+        #app.routeid = route["route"]
+        #app.state = route["state"]
+        #app.group = None 
+        #app.assignee = None
+        #app.save()
+
+        return render(request, self.template_name, context)
+
+
 class ApplicationBooking(LoginRequiredMixin, FormView):
 
     model = Application 
@@ -9246,27 +9307,71 @@ class ApplicationBooking(LoginRequiredMixin, FormView):
     def render_page(self, request, booking, form, show_errors=False):
         booking_mooring = None
         booking_total = '0.00'
-        print ("TTT")
-
+        #application_fee = ApplicationLicenceFee.objects.filter(app_type=booking['app'].app_type)
+        to_date = datetime.now()
+        application_fee = None
+        if ApplicationLicenceFee.objects.filter(app_type=booking['app'].app_type,start_dt__lte=to_date, end_dt__gte=to_date).count() > 0:
+            application_fee = ApplicationLicenceFee.objects.filter(app_type=booking['app'].app_type,start_dt__lte=to_date, end_dt__gte=to_date)[0]
+            
+        print ("APPLICATION FEE") 
+        
         #lines.append(booking_change_fees)
         return render(request, self.template_name, {
             'form': form,
             'booking': booking,
+            'application_fee': application_fee
         })
 
+    def get_context_data(self, **kwargs):
+        context = super(ApplicationBooking, self).get_context_data(**kwargs)
+        application_fee = None
+
+        to_date = datetime.now()
+        pk=self.kwargs['pk']
+        app = Application.objects.get(pk=pk)
+        booking = {'app': app}
+        fee_total = '0.00'
+        print (ApplicationLicenceFee.objects.filter(app_type=booking['app'].app_type,start_dt__lte=to_date, end_dt__gte=to_date))
+        if ApplicationLicenceFee.objects.filter(app_type=booking['app'].app_type,start_dt__lte=to_date, end_dt__gte=to_date).count() > 0:
+            print ("APLICATIO FEE")
+            application_fee = ApplicationLicenceFee.objects.filter(app_type=booking['app'].app_type,start_dt__lte=to_date, end_dt__gte=to_date)[0]
+            fee_total = application_fee.licence_fee
+        context['application_fee'] = fee_total
+        context['page_heading'] = 'Licence Fees'
+        return context
+
     def get(self, request, *args, **kwargs):
-        booking = {}
+        context_processor = template_context(self.request)
+        #app = self.get_object()
+        pk=self.kwargs['pk']
+        app = Application.objects.get(pk=pk)
+        
+        booking = {'app': app}
         form = apps_forms.PaymentDetailForm 
         print ("TEMPLATE")
         print (self.template_name,)
+        return super(ApplicationBooking, self).get(request, *args, **kwargs)
         return self.render_page(request, booking, form)
 
     def post(self, request, *args, **kwargs):
 
+        pk=self.kwargs['pk']
+        app = Application.objects.get(pk=pk)
+
+        booking = {'app': app}
+
+        to_date = datetime.now()
+        application_fee = None
+        fee_total = '0.00'
+        if ApplicationLicenceFee.objects.filter(app_type=booking['app'].app_type,start_dt__lte=to_date, end_dt__gte=to_date).count() > 0:
+            application_fee = ApplicationLicenceFee.objects.filter(app_type=booking['app'].app_type,start_dt__lte=to_date, end_dt__gte=to_date)[0]
+            fee_total = application_fee.licence_fee
+        else:
+            raise ValidationError("Unable to find licence fees")
         invoice_text = u"Your licence renewal '{}' ".format('hello world')
-        booking=None
+        
         lines = []
-        lines.append({'ledger_description':'Test Licence',"quantity":1,"price_incl_tax":'11.00',"oracle_code":'00123sda', 'line_status': 1})
+        lines.append({'ledger_description':'Test Licence',"quantity":1,"price_incl_tax": fee_total,"oracle_code":'00123sda', 'line_status': 1})
 
         result = utils.checkout(request, booking, lines, invoice_text=invoice_text)
         return result

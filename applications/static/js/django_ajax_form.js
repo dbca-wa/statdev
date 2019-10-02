@@ -5,6 +5,7 @@ var django_ajax_form = {
       },
       OpenForm: function(url) {
         console.log(url);
+        $('.modal-body').height('auto');
 	django_ajax_form.var.url = url;
 
         //  var crispy_form_load = $.get( "/applications/272/vessel/" ).responseText;
@@ -29,13 +30,14 @@ var django_ajax_form = {
             htmlvalue += '        <button type="button" class="close" data-dismiss="modal">&times;</button>';
             htmlvalue += '        <h4 class="modal-title"></h4>';
             htmlvalue += '      </div>';
-            htmlvalue += '      <div class="modal-body">';
+            htmlvalue += '      <div class="modal-body" style="overflow: auto;">';
             htmlvalue += django_ajax_form.var.form_html;
             htmlvalue += '<form action="/applications-uploads/" method="post" enctype="multipart/form-data" id="upload_form">';
             htmlvalue += '<input type="hidden" name="csrfmiddlewaretoken" value="'+csrfmiddlewaretoken+'" />';
             htmlvalue += '</form>';
             htmlvalue += '<BR><BR>';
             htmlvalue += '<BR><BR>';
+            htmlvalue += '</div>';
             htmlvalue += '<div class="modal-footer">';
             htmlvalue += '<BR><BR><button name="close" type="button" class="btn btn-primary" value="Close" class="close" data-dismiss="modal" value="Close">Close</button>';
             htmlvalue += '</div>';
@@ -46,8 +48,15 @@ var django_ajax_form = {
 
             $('html').prepend(htmlvalue);
 	    $('#vesselModal').modal({
-        show: 'false'
- });
+                 show: 'false'
+            });
+            $( window ).resize(function() {
+                             var modalbodyheight = window.innerHeight * 0.7;
+                             $('.modal-body').height(modalbodyheight+'px');
+            });
+            var modalbodyheight = window.innerHeight * 0.7;
+            $('.modal-body').height(modalbodyheight+'px');
+
  // $('#vesselModal').modal('show');
 $('#vesselModal').show();
 
@@ -63,7 +72,11 @@ $('.ajax-submit').on("click", function(event) {
 $('.ajax-close').on("click", function(event) {
     django_ajax_form.CloseForm();
 });
-
+$("#vesselModal").on("hidden.bs.modal", function () {
+    $('.modal-body').html('');
+    $('.modal-body').height('auto');
+    // put your default event here
+});
 
     $(function() {
         // Initialise datepicker widgets.
@@ -110,7 +123,7 @@ if (res.indexOf('alert-danger') >= 0 ) {
             htmlvalue += '        <button type="button" class="close" data-dismiss="modal">&times;</button>';
             htmlvalue += '        <h4 class="modal-title"></h4>';
             htmlvalue += '      </div>';
-            htmlvalue += '      <div class="modal-body">';
+            htmlvalue += '      <div class="modal-body" style="overflow: auto;">';
             htmlvalue += res;
             htmlvalue += '<form action="/applications-uploads/" method="post" enctype="multipart/form-data" id="upload_form">';
             htmlvalue += '<input type="hidden" name="csrfmiddlewaretoken" value="'+csrfmiddlewaretoken+'" />';
@@ -216,8 +229,7 @@ $('#vesselModal').show();
 
 },
 CloseForm: function() {
-$('#vesselModal').modal('hide');
-
+   $('#vesselModal').modal('hide');
 }
 
 }

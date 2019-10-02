@@ -1,0 +1,64 @@
+
+<div class='col-lg-12'>
+
+<h2>{{ page_heading }}</h2>
+</div>
+<div class='col-lg-12'>
+   <div class='col-lg-12' style=' background-color:#e2e2e2' >
+    <h4>Subject:</h4>
+   </div>
+
+   <div class='col-lg-12' style=' background-color: #f1f1f1'>
+        <h5>{{ communication_entry.subject }}</h5>
+  </div>
+
+   <div class='col-lg-12' style=' background-color:#e2e2e2'>
+     <h4>Comms Type:</h4>
+   </div>
+
+   <div class='col-lg-12' style=' background-color: #f1f1f1'>
+        <h5>{{ communication_entry.get_comms_type_display }}</h5>
+   </div>
+
+   <div class='col-lg-12' style=' background-color:#e2e2e2'>
+     <h4>Entry Date:</h4>
+   </div>
+   <div class='col-lg-12' style=' background-color: #f1f1f1'>
+        <h5>{{ communication_entry.created }}</h5>
+   </div>
+   <div class='col-lg-12' style=' background-color:#e2e2e2'>
+     <h4>Communication To:</h4>
+   </div>
+   <div class='col-lg-12' style=' background-color: #f1f1f1'>
+        <h5>{{ communication_entry.comms_to }}</h5>
+   </div>
+
+   <div class='col-lg-12' style=' background-color:#e2e2e2'>
+     <h4>Communication From:</h4>
+   </div>
+   <div class='col-lg-12' style=' background-color: #f1f1f1'>
+        <h5>{{ communication_entry.comms_from }}</h5>
+   </div>
+
+   <div class='col-lg-12' style=' background-color:#e2e2e2'>
+     <h4>Details:</h4>
+   </div>
+   <div class='col-lg-12' style=' background-color: #f1f1f1'>
+        <h5>{{ communication_entry.details|linebreaksbr }}</h5>
+   </div>
+
+   <div class='col-lg-12' style=' background-color:#e2e2e2'>
+     <h4>Attachments:</h4>
+   </div>
+   <div class='col-lg-12' style=' background-color: #f1f1f1'>
+
+                        {% if communication_entry.records.exists %}
+                            {% for doc in communication_entry.records.all %}
+                                <div class="col-sm-12 col-md-12 col-lg-12"><h5><A HREF='{{ doc.file_url }}' target='comms_attachment_{{ doc.id }}'>{{ doc.name }}</A></h5></div>
+                            {% endfor %}
+                        {% endif %}
+
+
+   </div>
+
+</div>

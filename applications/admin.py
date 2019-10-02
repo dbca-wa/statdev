@@ -3,7 +3,7 @@ from .models import (
     Record, Vessel, ApplicationPurpose, Application, Location, Referral,
     Condition, Compliance, Delegate, ApplicationInvoice, Communication, Craft, 
     OrganisationContact, OrganisationPending, OrganisationExtras,PublicationFeedback, 
-    PublicationWebsite,ComplianceGroup, StakeholderComms, ConditionPredefined)
+    PublicationWebsite,ComplianceGroup, StakeholderComms, ConditionPredefined, ApplicationLicenceFee)
 
 
 @register(Record)
@@ -25,7 +25,12 @@ class VesselAdmin(ModelAdmin):
 class ApplicationPurposeAdmin(ModelAdmin):
     search_fields = ('purpose',)
 
-
+@register(ApplicationLicenceFee)
+class ApplicationLicenceFeeAdmin(ModelAdmin):
+    list_display = ('app_type','licence_fee','start_dt','end_dt','created',)
+    list_filter = ('app_type',)
+    order_by = ('-start_dt',)
+    
 @register(Application)
 class ApplicationAdmin(ModelAdmin):
     date_hierarchy = 'submit_date'

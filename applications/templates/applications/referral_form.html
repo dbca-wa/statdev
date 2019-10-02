@@ -1,10 +1,15 @@
 {% load crispy_forms_tags %}
 
-{% block page_content_inner %}
-<h1>Add Referral to application {{ application.pk }}</h1>
-{% crispy form %}
+<div class="col-sm-1 col-md-1 col-lg-1">
+&nbsp;
+</div>
+<div class="col-sm-8 col-md-8 col-lg-8">
+      <div class="col-sm-12 col-md-12 col-lg-12">
+          <h1>Add Referral to application {{ application.pk }}</h1>
+      </div>
+      {% crispy form %}
 
-
+</div>
 {% if hide == 'yes' %}
 <div class="col-sm-12 col-md-12 col-lg-12">
 <div class="panel-body">
@@ -39,4 +44,8 @@
 </div>
 </div>
 {% endif %}
-{% endblock %}
+<div class="col-sm-1 col-md-1 col-lg-1">
+&nbsp;
+</div>
+
+

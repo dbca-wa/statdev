@@ -175,7 +175,6 @@
                 "state": "5",
                 "required": ["assessment_start_date","expiry_date","document_final"]
             },
-
             {
                 "title": "Return to submitter",
                 "route": "1",
@@ -211,7 +210,7 @@
                 "may_assign":"True",
                 "may_assign_customer": "False",
                 "may_assign_processor": "False",
-                "may_create_condition":"False",
+                "may_create_condition":"True",
                 "may_submit_approval": "True",
                 "may_assign_assessor": "True",
                 "may_send_for_referral": "True",

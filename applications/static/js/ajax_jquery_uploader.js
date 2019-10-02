@@ -201,7 +201,7 @@ openUploader: function(input_id,upload_type) {
 		      htmlvalue += '        <button type="button" class="close"  onclick="ajax_loader_django.closeUploader(\''+input_id+'\');" >&times;</button>';
 		      htmlvalue += '        <h4 class="modal-title">File Uploader</h4>';
 		      htmlvalue += '      </div>';
-		      htmlvalue += '      <div class="modal-body">';
+		      htmlvalue += '      <div class="modal-body" >';
 		      htmlvalue += '<form action="/applications-uploads/" method="post" enctype="multipart/form-data" id="upload_form" id="'+input_id+'__uploadform" >';
 		      htmlvalue += '<input type="hidden" name="csrfmiddlewaretoken" value="'+csrfmiddlewaretoken+'" />';
 		      htmlvalue += '  <label class="custom-file">';

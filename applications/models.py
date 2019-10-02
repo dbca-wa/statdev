@@ -8,6 +8,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from model_utils import Choices
 from django.contrib.auth.models import Group
 from django.core.files.storage import FileSystemStorage
+from django.core.exceptions import ValidationError
 #from approvals.models import Approval
 from ledger.accounts.models import Organisation, Address as LedgerAddress, OrganisationAddress
 #from ledger.payments.models import Invoice
@@ -155,7 +156,8 @@ class Application(models.Model):
         (14, 'completed', ('Completed')),
         (15, 'creator', ('Form Creator')),
         (16, 'current', ('Current')),
-        (17, 'discard', ('Deleted'))
+        (17, 'discard', ('Deleted')),
+        (18, 'payment', ('Pending Payment'))
     )
 
     APP_LOCATION_CHOICES = Choices(
@@ -180,6 +182,7 @@ class Application(models.Model):
     app_type = models.IntegerField(choices=APP_TYPE_CHOICES, blank=True, null=True)
     apply_on_behalf_of = models.IntegerField(choices=APP_APPLY_ON, blank=True, null=True)
     assignee = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.PROTECT, related_name='assignee')
+    assigned_officer = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.PROTECT, related_name='assigned_officer')
     state = models.IntegerField(choices=APP_STATE_CHOICES, default=APP_STATE_CHOICES.draft, editable=True)
     title = models.CharField(max_length=256)
     description = models.TextField(null=True, blank=True)
@@ -263,6 +266,24 @@ class Application(models.Model):
 
     def get_absolute_url(self):
         return reverse('application_detail', args=(self.pk,))
+
+@python_2_unicode_compatible
+class ApplicationLicenceFee(models.Model):
+    app_type = models.IntegerField(choices=Application.APP_TYPE_CHOICES, blank=True, null=True)
+    licence_fee = models.DecimalField(max_digits=8, decimal_places=2, default='0.00', blank=False, null=False)
+    start_dt = models.DateTimeField(blank=True, null=True)
+    end_dt = models.DateTimeField(blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+
+    def clean(self, *args, **kwargs):
+        if self.end_dt < self.start_dt:
+              raise ValidationError('End date must be greater than Start Date') 
+        if ApplicationLicenceFee.objects.filter(app_type=self.app_type,start_dt__lte=self.start_dt, end_dt__gte=self.start_dt).exclude(pk=self.pk).count() > 0:
+              raise ValidationError('Start Date matches existing record.')
+        if ApplicationLicenceFee.objects.filter(app_type=self.app_type,start_dt__lte=self.end_dt, end_dt__gte=self.end_dt).exclude(pk=self.pk).count() > 0:
+              raise ValidationError('End Date matches existing record.')
+        if ApplicationLicenceFee.objects.filter(app_type=self.app_type,start_dt__gte=self.start_dt, end_dt__lte=self.end_dt).exclude(pk=self.pk).count() > 0:
+              raise ValidationError('Dates matches existing record.')
 
 
 @python_2_unicode_compatible
