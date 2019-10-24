@@ -107,6 +107,7 @@ class PaymentDetailForm(ModelForm):
 
         self.helper.form_id = 'id_form_payment_details'
         self.helper.attrs = {'novalidate': ''}
+        self.helper.layout = Layout(HTML("{% include 'applications/application_payment_details_form_price_override.html' %}"),)
         self.helper.add_input(Submit('Proceed to Payment', 'Proceed to Payment', css_class='btn-lg'))
 
 class CreateAccountForm(ModelForm):

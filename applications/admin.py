@@ -1,9 +1,12 @@
 from django.contrib.admin import register, ModelAdmin
+from django.contrib.gis import admin
+
 from .models import (
     Record, Vessel, ApplicationPurpose, Application, Location, Referral,
     Condition, Compliance, Delegate, ApplicationInvoice, Communication, Craft, 
     OrganisationContact, OrganisationPending, OrganisationExtras,PublicationFeedback, 
-    PublicationWebsite,ComplianceGroup, StakeholderComms, ConditionPredefined, ApplicationLicenceFee)
+    PublicationWebsite,ComplianceGroup, StakeholderComms, ConditionPredefined, ApplicationLicenceFee, 
+    Booking, DiscountReason, BookingInvoice)
 
 
 @register(Record)
@@ -12,6 +15,20 @@ class RecordAdmin(ModelAdmin):
     list_filter = ('category',)
     search_fields = ('name',)
 
+class BookingInvoiceInline(admin.TabularInline):
+    model = BookingInvoice
+    extra = 0
+
+@register(Booking)
+class BookingAdmin(ModelAdmin):
+    list_display = ('customer', 'application', 'cost_total','created')
+    list_filter = ('customer',)
+    search_fields = ('customer','application')
+    inlines = [BookingInvoiceInline,]
+
+@register(DiscountReason)
+class DiscountReasonAdmin(ModelAdmin):
+    list_display = ('text', 'detailRequired', 'editable',)
 
 @register(Vessel)
 class VesselAdmin(ModelAdmin):

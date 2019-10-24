@@ -23,7 +23,7 @@ from actions.models import Action
 from applications import forms as apps_forms
 from applications.models import (
     Application, Referral, Condition, Compliance, Vessel, Location, Record, PublicationNewspaper,
-    PublicationWebsite, PublicationFeedback, Communication, Delegate, OrganisationContact, OrganisationPending, OrganisationExtras, CommunicationAccount,CommunicationOrganisation, ComplianceGroup,CommunicationCompliance, StakeholderComms, ApplicationLicenceFee)
+    PublicationWebsite, PublicationFeedback, Communication, Delegate, OrganisationContact, OrganisationPending, OrganisationExtras, CommunicationAccount,CommunicationOrganisation, ComplianceGroup,CommunicationCompliance, StakeholderComms, ApplicationLicenceFee, Booking, DiscountReason,BookingInvoice)
 from applications.workflow import Flow
 from applications.views_sub import Application_Part5, Application_Emergency, Application_Permit, Application_Licence, Referrals_Next_Action_Check, FormsList
 from applications.email import sendHtmlEmail, emailGroup, emailApplicationReferrals
@@ -45,7 +45,13 @@ from applications.views_pdf import PDFtool
 import mimetypes
 from django.middleware.csrf import get_token
 from django.shortcuts import render, get_object_or_404, redirect
-
+from decimal import Decimal
+from ledger.payments.models import Invoice
+from oscar.apps.order.models import Order
+from ledger.basket.models import Basket
+from applications.invoice_pdf import create_invoice_pdf_bytes
+from ledger.payments.mixins import InvoiceOwnerMixin
+from django.views.generic.base import View, TemplateView
 
 class HomePage(TemplateView):
     # preperation to replace old homepage with screen designs..
@@ -797,6 +803,8 @@ class CreateLinkCompany(LoginRequiredMixin,CreateView):
                       content_object=pending_org, user=self.request.user,
                       action='Organisation is pending approval')
                  action.save()
+                 emailcontext = {'pending_org': pending_org}
+                 emailGroup('Organisation pending approval ', emailcontext, 'pending_organisation_approval.html', None, None, None, 'Statdev Assessor')
 
            if self.request.user.groups.filter(name__in=['Statdev Processor']).exists():
                if app_id is None:
@@ -2273,6 +2281,10 @@ class ApplicationDetail(DetailView):
         app = self.get_object()
 
         user_id = None
+
+        if app.state == 18:
+             return HttpResponseRedirect(reverse('application_booking', args=(app.id,)))
+
         if request.user:
            user_id = request.user.id
 
@@ -2294,9 +2306,6 @@ class ApplicationDetail(DetailView):
         else:
            messages.error(self.request, 'Forbidden from viewing this page.')
            return HttpResponseRedirect("/")
-
-        if app.state == 18:
-             return HttpResponseRedirect(reverse('application_booking', args=(app.id,)))              
 
 
         # Rule: if the application status is 'draft', it can be updated.
@@ -2619,13 +2628,14 @@ class ApplicationCommsCreate(LoginRequiredMixin,CreateView):
 
 
         if 'records_json' in self.request.POST:
-             json_data = json.loads(self.request.POST['records_json'])
-             self.object.records.remove()
-             for d in self.object.records.all():
-                 self.object.records.remove(d)
-             for i in json_data:
-                 doc = Record.objects.get(id=i['doc_id'])
-                 self.object.records.add(doc)
+             if is_json(self.request.POST['records_json']) is True:
+                  json_data = json.loads(self.request.POST['records_json'])
+                  self.object.records.remove()
+                  for d in self.object.records.all():
+                      self.object.records.remove(d)
+                  for i in json_data:
+                      doc = Record.objects.get(id=i['doc_id'])
+                      self.object.records.add(doc)
 
 #        if self.request.FILES.get('records'):
 #            if Attachment_Extension_Check('multi', self.request.FILES.getlist('records'), ['.pdf','.xls','.doc','.jpg','.png','.xlsx','.docx','.msg']) is False:
@@ -3478,6 +3488,10 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
     def get(self, request, *args, **kwargs):
         # TODO: business logic to check the application may be changed.
         app = self.get_object()
+
+
+        if app.state == 18:
+             return HttpResponseRedirect(reverse('application_booking', args=(app.id,)))
 
         if request.user.is_staff == True or request.user.is_superuser == True or app.submitted_by == request.user.id or app.applicant.id == request.user.id or Delegate.objects.filter(email_user=request.user).count() > 0:
               donothing =""
@@ -4476,7 +4490,8 @@ class ApplicationLodge(LoginRequiredMixin, UpdateView):
         groupassignment = Group.objects.get(name=DefaultGroups['grouplink'][route['lodgegroup']])
         app.group = groupassignment
 
-        app.state = app.APP_STATE_CHOICES.with_admin
+        #app.state = app.APP_STATE_CHOICES.with_admin
+        app.state  = route['state']
         self.object.submit_date = date.today()
         app.assignee = None
         app.save()
@@ -4494,28 +4509,37 @@ class ApplicationLodge(LoginRequiredMixin, UpdateView):
             user=self.request.user, action='Application lodgement')
         action.save()
         # Success message.
-        msg = """Your {0} application has been successfully submitted. The application
-        number is: <strong>WO-{1}</strong>.<br>
-        Please note that routine applications take approximately 4-6 weeks to process.<br>
-        If any information is unclear or missing, Parks and Wildlife may return your
-        application to you to amend or complete.<br>
-        The assessment process includes a 21-day external referral period. During this time
-        your application may be referred to external departments, local government
-        agencies or other stakeholders. Following this period, an internal report will be
-        produced by an officer for approval by the Manager, Rivers and Estuaries Division,
-        to determine the outcome of your application.<br>
-        You will be notified by email once your {0} application has been determined and/or
-        further action is required.""".format(app.get_app_type_display(), app.pk)
-        messages.success(self.request, msg)
+        #msg = """Your {0} application has been successfully submitted. The application
+        #number is: <strong>WO-{1}</strong>.<br>
+        #Please note that routine applications take approximately 4-6 weeks to process.<br>
+        #If any information is unclear or missing, Parks and Wildlife may return your
+        #application to you to amend or complete.<br>
+        #The assessment process includes a 21-day external referral period. During this time
+        #your application may be referred to external departments, local government
+        #agencies or other stakeholders. Following this period, an internal report will be
+        #produced by an officer for approval by the Manager, Rivers and Estuaries Division,
+        #to determine the outcome of your application.<br>
+        #You will be notified by email once your {0} application has been determined and/or
+        #further action is required.""".format(app.get_app_type_display(), app.pk)
+        #messages.success(self.request, msg)
 
 
-        emailcontext = {}
-        emailcontext['app'] = self.object
+        #emailcontext = {}
+        #emailcontext['app'] = self.object
 
-        emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
-        emailcontext['person'] = app.submitted_by
-        emailcontext['body'] = msg 
-        sendHtmlEmail([app.submitted_by.email], emailcontext['application_name'] + ' application submitted ', emailcontext, 'application-lodged.html', None, None, None)
+        #emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
+        #emailcontext['person'] = app.submitted_by
+        #emailcontext['body'] = msg 
+        #sendHtmlEmail([app.submitted_by.email], emailcontext['application_name'] + ' application submitted ', emailcontext, 'application-lodged.html', None, None, None)
+
+        if float(route['state']) == float("18"):
+            print ("TEST")
+            if "payment_redirect" in route:
+                 print ("TEST 2")
+                 if route["payment_redirect"] == "True":
+                      print ("TEST 3")
+                      return HttpResponseRedirect(reverse('application_booking', args=(app.id,)))
+
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -4657,6 +4681,7 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
             if app_refs == 0:
                 messages.error(self.request, 'Unable to complete action as you have no referrals! ')
                 return HttpResponseRedirect(app.get_absolute_url())
+
         if "required" in route:
             for fielditem in route["required"]:
                 if hasattr(app, fielditem):
@@ -9063,25 +9088,25 @@ class OrganisationContactUpdate(LoginRequiredMixin, UpdateView):
 
 
 
-#class OrganisationAddressCreate(AddressCreate):
-#    """A view to create a new address for an Organisation.
-#    """
-#    def get_context_data(self, **kwargs):
-#        context = super(OrganisationAddressCreate, self).get_context_data(**kwargs)
-#        org = Organisation.objects.get(pk=self.kwargs['pk'])
-#        context['principal'] = org.name
-#        return context
-#
-#    def form_valid(self, form):
-#        self.obj = form.save()
-#        # Attach the new address to the organisation.
-#        org = Organisation.objects.get(pk=self.kwargs['pk'])
-#        if self.kwargs['type'] == 'postal':
-#            org.postal_address = self.obj
-#        elif self.kwargs['type'] == 'billing':
-#            org.billing_address = self.obj
-#        org.save()
-#        return HttpResponseRedirect(reverse('organisation_detail', args=(org.pk,)))
+class OrganisationAddressCreate(AddressCreate):
+    """A view to create a new address for an Organisation.
+    """
+    def get_context_data(self, **kwargs):
+        context = super(OrganisationAddressCreate, self).get_context_data(**kwargs)
+        org = Organisation.objects.get(pk=self.kwargs['pk'])
+        context['principal'] = org.name
+        return context
+
+    def form_valid(self, form):
+        self.obj = form.save()
+        # Attach the new address to the organisation.
+        org = Organisation.objects.get(pk=self.kwargs['pk'])
+        if self.kwargs['type'] == 'postal':
+            org.postal_address = self.obj
+        elif self.kwargs['type'] == 'billing':
+            org.billing_address = self.obj
+        org.save()
+        return HttpResponseRedirect(reverse('organisation_detail', args=(org.pk,)))
 
 
 #class RequestDelegateAccess(LoginRequiredMixin, FormView):
@@ -9280,6 +9305,11 @@ class BookingSuccessView(TemplateView):
         print ("END TEST")
         print (request.session['basket_id'])    
         print (request.session['application_id'])
+        checkout_routeid  = request.session['routeid']
+        basket_id = request.session['basket_id']
+        booking_id = request.session['booking_id']
+        booking = Booking.objects.get(id=booking_id)
+
         app = Application.objects.get(id=request.session['application_id'])
         flow = Flow()
         workflowtype = flow.getWorkFlowTypeFromApp(app)
@@ -9288,15 +9318,66 @@ class BookingSuccessView(TemplateView):
         flowcontext = {}
         flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, workflowtype)
         flowcontext = flow.getRequired(flowcontext, app.routeid, workflowtype)
-        route = flow.getNextRouteObj('payment', app.routeid, workflowtype)
-        #app.routeid = route["route"]
-        #app.state = route["state"]
-        #app.group = None 
-        #app.assignee = None
-        #app.save()
+        actions = flow.getAllRouteActions(app.routeid, workflowtype)
+
+        route = {} 
+        if app.routeid == checkout_routeid: 
+            for a in actions:
+                 if a['payment'] == 'success':
+                     route = a 
+            
+
+            basket_row =  Basket.objects.get(id=basket_id)
+            order = Order.objects.get(basket_id=basket_row.id)
+            invoices = Invoice.objects.filter(order_number=order.number)
+            for i in invoices:
+                    BookingInvoice.objects.get_or_create(booking=booking, invoice_reference=i.reference) 
+            #route = flow.getNextRouteObj('payment', app.routeid, workflowtype)
+            print ("PAYMENT ROUTE")
+            print (route)
+            groupassignment = Group.objects.get(name=DefaultGroups['grouplink'][route['routegroup']])
+            app.routeid = route["route"]
+            app.state = route["state"]
+            app.group = groupassignment
+            app.assignee = None
+            app.route_status = flow.json_obj[route["route"]]['title']
+            app.save()
+
+        # Success message.
+        msg = """Your {0} application has been successfully submitted. The application
+        number is: <strong>WO-{1}</strong>.<br>
+        Please note that routine applications take approximately 4-6 weeks to process.<br>
+        If any information is unclear or missing, Parks and Wildlife may return your
+        application to you to amend or complete.<br>
+        The assessment process includes a 21-day external referral period. During this time
+        your application may be referred to external departments, local government
+        agencies or other stakeholders. Following this period, an internal report will be
+        produced by an officer for approval by the Manager, Rivers and Estuaries Division,
+        to determine the outcome of your application.<br>
+        You will be notified by email once your {0} application has been determined and/or
+        further action is required.""".format(app.get_app_type_display(), app.pk)
+        messages.success(self.request, msg)
+        emailcontext = {}
+        emailcontext['app'] = app
+        emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
+        emailcontext['person'] = app.submitted_by
+        emailcontext['body'] = msg
+        sendHtmlEmail([app.submitted_by.email], emailcontext['application_name'] + ' application submitted ', emailcontext, 'application-lodged.html', None, None, None)
 
         return render(request, self.template_name, context)
 
+class InvoicePDFView(InvoiceOwnerMixin,View):
+
+    def get(self, request, *args, **kwargs):
+        invoice = get_object_or_404(Invoice, reference=self.kwargs['reference'])
+        response = HttpResponse(content_type='application/pdf')
+        tc = template_context(request)
+        response.write(create_invoice_pdf_bytes('invoice.pdf',invoice, request, tc))
+        return response
+
+    def get_object(self):
+        invoice = get_object_or_404(Invoice, reference=self.kwargs['reference'])
+        return invoice
 
 class ApplicationBooking(LoginRequiredMixin, FormView):
 
@@ -9337,7 +9418,9 @@ class ApplicationBooking(LoginRequiredMixin, FormView):
             application_fee = ApplicationLicenceFee.objects.filter(app_type=booking['app'].app_type,start_dt__lte=to_date, end_dt__gte=to_date)[0]
             fee_total = application_fee.licence_fee
         context['application_fee'] = fee_total
+        context['override_reasons'] = DiscountReason.objects.all() 
         context['page_heading'] = 'Licence Fees'
+        context['allow_overide_access']  = self.request.user.groups.filter(name__in=['Statdev Processor', 'Statdev Assessor']).exists()
         return context
 
     def get(self, request, *args, **kwargs):
@@ -9345,6 +9428,22 @@ class ApplicationBooking(LoginRequiredMixin, FormView):
         #app = self.get_object()
         pk=self.kwargs['pk']
         app = Application.objects.get(pk=pk)
+        flow = Flow()
+        workflowtype = flow.getWorkFlowTypeFromApp(app)
+        flow.get(workflowtype)
+        DefaultGroups = flow.groupList()
+
+        flowcontext = {}
+        flowcontext['application_submitter_id']  = app.submitted_by.id
+        if app.applicant.id == request.user.id or Delegate.objects.filter(email_user=request.user).count() > 0:
+            flowcontext['application_owner'] = True
+
+        flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, workflowtype)
+        flowcontext = flow.getRequired(flowcontext, app.routeid, workflowtype)
+        if flowcontext['may_payment'] == "False":
+           messages.error(self.request, 'You do not have permission to perform this action.')
+           return HttpResponseRedirect('/')
+
         
         booking = {'app': app}
         form = apps_forms.PaymentDetailForm 
@@ -9357,9 +9456,12 @@ class ApplicationBooking(LoginRequiredMixin, FormView):
 
         pk=self.kwargs['pk']
         app = Application.objects.get(pk=pk)
+        overridePrice = request.POST.get('overridePrice','0.00')
+        overrideReason = request.POST.get('overrideReason', None)
+        overrideDetail = request.POST.get('overrideDetail', None)
+        override_checkbox = request.POST.get('override_checkbox', 'off')
 
         booking = {'app': app}
-
         to_date = datetime.now()
         application_fee = None
         fee_total = '0.00'
@@ -9368,12 +9470,33 @@ class ApplicationBooking(LoginRequiredMixin, FormView):
             fee_total = application_fee.licence_fee
         else:
             raise ValidationError("Unable to find licence fees")
-        invoice_text = u"Your licence renewal '{}' ".format('hello world')
+
+        if override_checkbox == 'on': 
+            fee_total = Decimal(overridePrice)
+        if Booking.objects.filter(customer=app.applicant,application=app).count() > 0:
+            booking_obj = Booking.objects.filter(customer=app.applicant,application=app)[0]
+            if override_checkbox == 'on':
+                booking_obj.override_price = Decimal(overridePrice)
+                booking_obj.override_reason = DiscountReason.objects.get(id=overrideReason)
+                booking_obj.override_reason_info = overrideDetail
+            booking_obj.customer=app.applicant
+            booking_obj.cost_total=fee_total
+            booking_obj.application=app
+            booking_obj.save()
+        else:
+            if override_checkbox == 'on':
+                booking_obj = Booking.objects.create(customer=app.applicant,cost_total=fee_total,application=app,override_price=Decimal(overridePrice),override_reason_info=overrideDetail, override_reason=DiscountReason.objects.get(id=overrideReason))
+            else:
+                booking_obj = Booking.objects.create(customer=app.applicant,cost_total=fee_total,application=app,override_price=None,override_reason_info=None, override_reason=None)
+
+        booking['booking'] = booking_obj
+        invoice_text = u"Your licence {} ".format('fees')
         
         lines = []
-        lines.append({'ledger_description':'Test Licence',"quantity":1,"price_incl_tax": fee_total,"oracle_code":'00123sda', 'line_status': 1})
-
+        lines.append({'ledger_description':booking['app'].get_app_type_display(),"quantity":1,"price_incl_tax": fee_total,"oracle_code":'00123sda', 'line_status': 1})
+        print (lines)
         result = utils.checkout(request, booking, lines, invoice_text=invoice_text)
+       
         return result
 
 

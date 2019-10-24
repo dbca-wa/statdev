@@ -42,7 +42,8 @@ def template_context(request):
         'project_last_commit_date': settings.GIT_COMMIT_DATE,
         'staff': has_staff(request.user),
         'admin_staff': has_admin(request.user),
-        'admin_assessor_staff':  has_admin_assessor(request.user)
+        'admin_assessor_staff':  has_admin_assessor(request.user),
+        'TEMPLATE_GROUP': "rivers",
         #['Approver','Assessor','Director','Emergency','Executive','Processor']
     }
     return context

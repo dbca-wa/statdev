@@ -80,11 +80,10 @@ def checkout(request, booking, lines, invoice_text=None, vouchers=[], internal=F
 
 
     create_checkout_session(request, checkout_params)
-    print ("BBB")
-    print (booking)
     set_session_booking(request.session, 'basket_id', basket.id)
     set_session_booking(request.session, 'application_id', booking['app'].id)
-
+    set_session_booking(request.session, 'booking_id', booking['booking'].id)
+    set_session_booking(request.session, 'routeid', booking['app'].routeid)
 
 
 #    if internal:

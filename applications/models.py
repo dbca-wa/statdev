@@ -173,7 +173,7 @@ class Application(models.Model):
 
     APP_VESSEL_CRAFT = Choices(
         (1, 'vessel', ('Vessel(s)')),
-        (2, 'craft', ('Craft(s)')),
+        #(2, 'craft', ('Craft(s)')),
         (0, 'none', ('None'))
     )
 
@@ -284,6 +284,76 @@ class ApplicationLicenceFee(models.Model):
               raise ValidationError('End Date matches existing record.')
         if ApplicationLicenceFee.objects.filter(app_type=self.app_type,start_dt__gte=self.start_dt, end_dt__lte=self.end_dt).exclude(pk=self.pk).count() > 0:
               raise ValidationError('Dates matches existing record.')
+
+class Reason(models.Model):
+    text = models.TextField()
+    detailRequired = models.BooleanField(default=False)
+    editable = models.BooleanField(default=True,editable=False)
+
+    class Meta:
+        ordering = ('id',)
+        abstract = True
+
+    #def save(self, *args, **kwargs):
+    #    if self.mooring_group == None:
+    #        raise ValidationError("Mooring Group required, please select from list.")
+    #    else:
+    #        super(Reason,self).save(*args,**kwargs)
+
+    # Properties
+    # ==============================
+    def code(self):
+        return self.__get_code()
+
+    # Methods
+    # ==============================
+    def __get_code(self):
+        length = len(str(self.id))
+        val = '0'
+        return '{}{}'.format((val*(4-length)),self.id)
+
+class DiscountReason(Reason):
+    pass
+    def __str__(self):
+        return '{}'.format(self.text)
+    
+
+class Booking(models.Model):
+    BOOKING_TYPE_CHOICES = (
+        (0, 'Reception booking'),
+        (1, 'Internet booking'),
+        (2, 'Black booking'),
+        (3, 'Temporary reservation'),
+        (4, 'Cancelled Booking'),
+    )
+
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, blank=True, null=True)
+    details = JSONField(null=True, blank=True)
+    booking_type = models.SmallIntegerField(choices=BOOKING_TYPE_CHOICES, default=0)
+    expiry_time = models.DateTimeField(blank=True, null=True)
+    cost_total = models.DecimalField(max_digits=8, decimal_places=2, default='0.00')
+    override_price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    override_reason = models.ForeignKey('DiscountReason', null=True, blank=True)
+    override_reason_info = models.TextField(blank=True, null=True)
+    overridden_by = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT, blank=True, null=True, related_name='overridden_bookings')
+    application = models.ForeignKey('Application', null=True)
+    send_invoice = models.BooleanField(default=False)
+    cancellation_reason = models.TextField(null=True,blank=True)
+    cancelation_time = models.DateTimeField(null=True,blank=True)
+    confirmation_sent = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT, blank=True, null=True,related_name='created_by_booking')
+    canceled_by = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT, blank=True, null=True,related_name='canceled_bookings')
+
+
+class BookingInvoice(models.Model):
+    booking = models.ForeignKey(Booking, related_name='invoices')
+    invoice_reference = models.CharField(max_length=50, null=True, blank=True, default='')
+    system_invoice = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return 'Booking {} : Invoice #{}'.format(self.id,self.invoice_reference)
 
 
 @python_2_unicode_compatible

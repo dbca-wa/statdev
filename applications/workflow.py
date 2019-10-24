@@ -134,6 +134,8 @@ class Flow():
             context['may_assessor_advise'] = "False"
         if "may_assign_to_person" not in context:
             context['may_assign_to_person'] = "False"
+        if "may_payment" not in context:
+            context['may_payment'] = "False"
 
 
         # Form Components
@@ -141,6 +143,10 @@ class Flow():
             context["form_component_update_title"] = "Update Application"
         if "application_assignee_id" not in context:
             context['application_assignee_id'] = None
+        if "application_submitter_id" not in context:
+            context['application_submitter_id'] = None
+        if "application_owner" not in context:
+            context['application_owner'] = None
 
         return context
 
@@ -149,6 +155,10 @@ class Flow():
         context = self.getAllGroupAccess(request,context,route)
         if context['application_assignee_id'] == request.user.id:
             context = self.getAssignToAccess(context,route)
+        if context['application_submitter_id'] == request.user.id:
+            context = self.getSubmitterAccess(context,route)
+        if context['application_owner'] is True:
+            context = self.getOwnerAccess(context,route)
         return context
 
     def getAssignToAccess(self,context,route):
@@ -166,6 +176,39 @@ class Flow():
                         else:
                            context[at] = assigntoaccess[at]
         return context
+
+    def getSubmitterAccess(self,context,route):
+        json_obj = self.json_obj
+        if json_obj[str(route)]:
+           if "submitteraccess" in json_obj[str(route)]:
+                 assigntoaccess = json_obj[str(route)]['submitteraccess']
+                 for at in assigntoaccess:
+                     if at in context:
+                        if context[at]:
+                           if context[at] in 'True':
+                              donothing = ''
+                           else:
+                              context[at] = assigntoaccess[at]
+                        else:
+                           context[at] = assigntoaccess[at]
+        return context
+
+    def getOwnerAccess(self,context,route):
+        json_obj = self.json_obj
+        if json_obj[str(route)]:
+           if "owneraccess" in json_obj[str(route)]:
+                 assigntoaccess = json_obj[str(route)]['owneraccess']
+                 for at in assigntoaccess:
+                     if at in context:
+                        if context[at]:
+                           if context[at] in 'True':
+                              donothing = ''
+                           else:
+                              context[at] = assigntoaccess[at]
+                        else:
+                           context[at] = assigntoaccess[at]
+        return context
+
 
     def getGroupAccess(self,context,route,group):
         json_obj = self.json_obj
