@@ -820,6 +820,9 @@ class ApplicationLicencePermitForm(ApplicationFormMixin, ModelForm):
 
             crispy_boxes.append(HTML('{% include "applications/application_vessel_and_craft_details.html" %}'))
 
+        if self.initial["workflow"]["hidden"]["conditions"] == 'False':
+            crispy_boxes.append(HTML('{% include "applications/application_conditions.html" %}'))
+
         if self.initial["workflow"]["hidden"]["referrals"] == 'False':
              crispy_boxes.append(HTML('{% include "applications/application_referrals.html" %}'))
 
@@ -914,8 +917,8 @@ class ApplicationLicencePermitForm(ApplicationFormMixin, ModelForm):
             application_deed = HTML('{% include "applications/application_deed.html" %}')
             crispy_boxes.append(application_deed)
     
-        if self.initial["workflow"]["hidden"]["conditions"] == 'False':
-            crispy_boxes.append(HTML('{% include "applications/application_conditions.html" %}'))
+#        if self.initial["workflow"]["hidden"]["conditions"] == 'False':
+#            crispy_boxes.append(HTML('{% include "applications/application_conditions.html" %}'))
 
 
 
@@ -1856,9 +1859,8 @@ class ConditionActionForm(ModelForm):
         self.helper.form_id = 'id_form_condition_action'
         self.fields['condition'].disabled = True
         self.fields['due_date'].disabled = True
-        self.helper.add_input(Submit('update', 'Update', css_class='btn-lg'))
+        self.helper.add_input(Submit('update', 'Update', css_class='btn-lg ajax-submit'))
         self.helper.add_input(Submit('cancel', 'Cancel'))
-
 
 
 class OldConditionActionForm(ConditionUpdateForm):

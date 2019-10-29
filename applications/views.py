@@ -7246,6 +7246,7 @@ class ConditionCreate(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         """Override to redirect to the condition's parent application detail view.
         """
+        return "/"
         return reverse('application_update', args=(self.object.application.pk,))
 
     def post(self, request, *args, **kwargs):
@@ -7325,6 +7326,7 @@ class ConditionUpdate(LoginRequiredMixin, UpdateView):
         assessor = Group.objects.get(name='Statdev Assessor')
         ref = condition.referral
         if assessor in self.request.user.groups.all() or (ref and ref.referee == request.user and ref.status == Referral.REFERRAL_STATUS_CHOICES.referred):
+            messages.success(self.request, 'Condition Successfully added')
             return super(ConditionUpdate, self).get(request, *args, **kwargs)
         else:
             messages.warning(self.request, 'You cannot update this condition')
@@ -7381,6 +7383,9 @@ class ConditionUpdate(LoginRequiredMixin, UpdateView):
                 action='Condition {} updated (status: {})'.format(self.object.pk, self.object.get_status_display()))
             action.save()
         self.object.save()
+
+        messages.success(self.request, "Successfully Applied")
+        return HttpResponseRedirect("/")
         return HttpResponseRedirect(self.object.application.get_absolute_url()+'')
 
 class ConditionDelete(LoginRequiredMixin, DeleteView):

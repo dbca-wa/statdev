@@ -112,7 +112,7 @@ mimeType:"multipart/form-data"
 //        var input_array =[];
 $('#vesselModal').modal('hide');
 if (res.indexOf('alert-danger') >= 0 ) { 
-
+        console.log("ERROR Found in response");
         var csrfmiddlewaretoken = $("input[name=csrfmiddlewaretoken]").val();
 
         var htmlvalue = "";
@@ -146,8 +146,9 @@ if (res.indexOf('alert-danger') >= 0 ) {
 
 if (typeof loadForm == 'function') { 
   loadForm(); 
+} else {
+  console.log("no loadForm");
 }
-
 $('#id_form_modals').submit(function(event) {
 event.preventDefault();
 });
@@ -202,6 +203,8 @@ $('#vesselModal').show();
 }
 if (typeof loadForm == 'function') {
   loadForm();
+} else {
+  console.log('no loadForm');
 }
 
 // $( "#vesselModal" ).remove();

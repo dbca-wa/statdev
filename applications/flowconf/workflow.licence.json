@@ -491,8 +491,6 @@
         },
         "required" : []
     },
-
-
     "2": {
         "title": "Assessor Officer",
         "hidden": {
@@ -509,7 +507,7 @@
             "landowner_consent": "False",
             "deed": "False",
             "publication": "True",
-            "conditions": "True",
+            "conditions": "False",
             "assessments": "True",
             "stakeholdercommunication": "True",
             "referrals": "False"
@@ -586,7 +584,8 @@
                 "may_view_comm_log": "True",
                 "show_form_buttons": "True",
                 "may_assign_to_person": "True",
-                "may_update_vessels_list": "True"
+                "may_update_vessels_list": "True",
+                "may_update_condition": "True"
             },
             "Statdev Approver": {
                 "may_update": "False",
@@ -663,7 +662,8 @@
             "publication": "True",
             "referrals": "False",
             "deed": "False",
-            "landowner_consent": "False"
+            "landowner_consent": "False",
+            "conditions": "False"
         },
         "fields": {
             "location": "hide",

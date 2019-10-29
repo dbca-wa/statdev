@@ -717,7 +717,8 @@
                 "show_form_buttons": "True",
                 "may_update": "True",
                 "may_update_assessment_draft": "True",
-                "may_assign_to_person": "True"
+                "may_assign_to_person": "True",
+                "may_update_condition": "True"
             },
 
             "Statdev Approver": {
@@ -1134,7 +1135,7 @@
             "publication": "False",
             "conditions": "False",
             "assessments": "False",
-            "stakeholdercommunication": "True",
+            "stakeholdercommunication": "False",
             "referrals": "False",
             "assessments_draft_report": "False",
             "hide_form_buttons": "True"
@@ -1250,7 +1251,8 @@
             "referrals": "False",
             "deed": "True",
             "conditions": "False",
-            "assessments": "False"
+            "assessments": "False",
+            "stakeholder_communication": "False"
         },
         "fields": {
             "title": "hide",

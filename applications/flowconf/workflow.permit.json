@@ -579,7 +579,8 @@
                 "allow_admin_side_menu" : "True",
                 "show_form_buttons": "True",
                 "may_assign_to_person": "True",
-                "may_create_condition":"True"
+                "may_create_condition":"True",
+                "may_update_condition": "True"
             },
             "Statdev Approver": {
                 "may_update": "False",
@@ -654,7 +655,8 @@
             "publication": "True",
             "referrals": "False",
             "deed": "False",
-            "landowner_consent": "False"
+            "landowner_consent": "False",
+            "conditions": "False"
         },
         "fields": {
             "document_completion": "hide"
@@ -972,12 +974,14 @@
 
         },
         "actions": [
+
             {
-                "title": "Request Payment",
-                "route": "7",
-                "routegroup":"assess",
-                "state":"18"
+                "title": "Email & Complete Application - Payment Completed",
+                "route": "9",
+                "routegroup":"payment",
+                "state":"14"
             }
+
         ],
         "groupaccess": {
             "Statdev Assessor": {
