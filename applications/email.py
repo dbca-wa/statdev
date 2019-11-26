@@ -102,7 +102,7 @@ def sendHtmlEmail(to,subject,context,template,cc,bcc,from_email,attachment1=None
        doc.save()
        
        
-       comms = models.Communication.objects.create(application=context['app'],comms_to=str(to), comms_from=from_email, subject=subject, details='see attachment')
+       comms = models.Communication.objects.create(application=context['app'],comms_type=2,comms_to=str(to), comms_from=from_email, subject=subject, details='see attachment')
        comms.records.add(doc)
        comms.save()
     return True
