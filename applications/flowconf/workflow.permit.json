@@ -978,7 +978,7 @@
             {
                 "title": "Email & Complete Application - Payment Completed",
                 "route": "9",
-                "routegroup":"payment",
+                "routegroup":"assess",
                 "state":"14"
             }
 

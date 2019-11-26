@@ -17,6 +17,8 @@ from .models import (
 #from ajax_upload.widgets import AjaxClearableFileInput
 from django_countries.fields import CountryField
 from django_countries.data import COUNTRIES
+from ledger.accounts.models import EmailUser, Address, Organisation, Document, OrganisationAddress
+
 User = get_user_model()
 
 class BaseFormHelper(FormHelper):
@@ -131,6 +133,43 @@ class CreateAccountForm(ModelForm):
         self.helper.form_id = 'id_form_new_account'
         self.helper.attrs = {'novalidate': ''}
         self.helper.add_input(Submit('Continue', 'Continue', css_class='btn-lg'))
+
+class OrganisationAddressForm(ModelForm):
+    postal_line1 = CharField(required=False,max_length=255)
+    postal_line2 = CharField(required=False, max_length=255)
+    postal_line3 = CharField(required=False, max_length=255)
+    postal_locality = CharField(required=False, max_length=255, label='Town/Suburb')
+    postal_postcode = CharField(required=False, max_length=10)
+    postal_state = ChoiceField(required=False, choices=Address.STATE_CHOICES)
+    postal_country = ChoiceField(sorted(COUNTRIES.items()), required=False)
+
+    billing_line1 = CharField(required=False,max_length=255)
+    billing_line2 = CharField(required=False, max_length=255)
+    billing_line3 = CharField(required=False, max_length=255)
+    billing_locality = CharField(required=False, max_length=255, label='Town/Suburb')
+    billing_postcode = CharField(required=False, max_length=10)
+    billing_state = ChoiceField(required=False, choices=Address.STATE_CHOICES)
+    billing_country = ChoiceField(sorted(COUNTRIES.items()), required=False)
+
+    class Meta:
+        model = OrganisationAddress
+        fields = ['postal_line1']
+
+    def __init__(self, *args, **kwargs):
+        super(OrganisationAddress, self).__init__(*args, **kwargs)
+        self.helper = BaseFormHelper()
+
+        crispy_boxes = crispy_empty_box()
+
+        crispy_boxes.append(crispy_box('postal_information_collapse','form_postal_informtion','Enter Postal Information','postal_line1','postal_line2','postal_line3','postal_locality','postal_postcode','postal_state','postal_country'))
+        crispy_boxes.append(crispy_box('billing_information_collapse','form_billing_information','Enter Billing Information','billing_line1','billing_line2','billing_line3','billing_locality','billing_postcode','billing_state','billing_country'))
+
+
+        self.helper.layout = Layout(crispy_boxes,)
+        self.helper.form_id = 'id_form_apply_application'
+        self.helper.attrs = {'novalidate': ''}
+        self.helper.add_input(Submit('Continue', 'Continue', css_class='btn-lg'))
+
 
 class CreateLinkCompanyForm(ModelForm):
     company_name = CharField(required=False,max_length=255)
@@ -1856,7 +1895,8 @@ class ConditionActionForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(ConditionActionForm, self).__init__(*args, **kwargs)
         self.helper = BaseFormHelper(self)
-        self.helper.form_id = 'id_form_condition_action'
+#        self.helper.form_id = 'id_form_condition_action'
+        self.helper.form_id = 'id_form_modals'
         self.fields['condition'].disabled = True
         self.fields['due_date'].disabled = True
         self.helper.add_input(Submit('update', 'Update', css_class='btn-lg ajax-submit'))
@@ -2617,6 +2657,23 @@ class AddressForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(AddressForm, self).__init__(*args, **kwargs)
+
+        self.fields['locality'].label = 'Town/Suburb'
+        self.helper = BaseFormHelper(self)
+        self.helper.form_id = 'id_form_address'
+        self.helper.attrs = {'novalidate': ''}
+        self.helper.add_input(Submit('save', 'Save', css_class='btn-lg'))
+        self.helper.add_input(Submit('cancel', 'Cancel'))
+
+
+class OrganisationAddressForm2(ModelForm):
+
+    class Meta:
+        model = OrganisationAddress
+        fields = ['line1', 'line2', 'line3', 'locality', 'state', 'country', 'postcode']
+#        fields = ['line1', 'line2',]
+    def __init__(self, *args, **kwargs):
+        super(OrganisationAddressForm2, self).__init__(*args, **kwargs)
 
         self.fields['locality'].label = 'Town/Suburb'
         self.helper = BaseFormHelper(self)

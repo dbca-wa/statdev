@@ -530,8 +530,8 @@ class CreateLinkCompany(LoginRequiredMixin,CreateView):
 
             else:
                if pending_org.postal_address is not None:
-                   postal_address = Address.objects.get(id=pending_org.postal_address.id)
-                   billing_address = Address.objects.get(id=pending_org.billing_address.id)
+                   postal_address = OrganisationAddress.objects.get(id=pending_org.postal_address.id)
+                   billing_address = OrganisationAddress.objects.get(id=pending_org.billing_address.id)
                    initial['postal_line1'] = postal_address.line1
                    initial['postal_line2'] = postal_address.line2
                    initial['postal_line3'] = postal_address.line3
@@ -707,8 +707,8 @@ class CreateLinkCompany(LoginRequiredMixin,CreateView):
                 action.save()
 
             else:
-                postal_address = Address.objects.get(id=pending_org.postal_address.id)
-                billing_address = Address.objects.get(id=pending_org.billing_address.id)
+                postal_address = OrganisationAddress.objects.get(id=pending_org.postal_address.id)
+                billing_address = OrganisationAddress.objects.get(id=pending_org.billing_address.id)
    
                 postal_address.line1=forms_data['postal_line1']
                 postal_address.line2=forms_data['postal_line2']
@@ -803,7 +803,7 @@ class CreateLinkCompany(LoginRequiredMixin,CreateView):
                       content_object=pending_org, user=self.request.user,
                       action='Organisation is pending approval')
                  action.save()
-                 emailcontext = {'pending_org': pending_org}
+                 emailcontext = {'pending_org': pending_org,  }
                  emailGroup('Organisation pending approval ', emailcontext, 'pending_organisation_approval.html', None, None, None, 'Statdev Assessor')
 
            if self.request.user.groups.filter(name__in=['Statdev Processor']).exists():
@@ -2334,8 +2334,8 @@ class ApplicationDetail(DetailView):
         context['may_assign_to_person'] = 'False'
         usergroups = self.request.user.groups.all()
         context['stakeholder_communication'] = StakeholderComms.objects.filter(application=app)
-        print ("STAKE HOLDER")
-        print (context['stakeholder_communication'])
+        #print ("STAKE HOLDER")
+        #print (context['stakeholder_communication'])
         # print app.group
         #if app.group in usergroups:
         #    if float(app.routeid) > 1:
@@ -7330,6 +7330,7 @@ class ConditionUpdate(LoginRequiredMixin, UpdateView):
             return super(ConditionUpdate, self).get(request, *args, **kwargs)
         else:
             messages.warning(self.request, 'You cannot update this condition')
+            return super(ConditionUpdate, self).get(request, *args, **kwargs)
             return HttpResponseRedirect(condition.application.get_absolute_url())
 
     def get_initial(self):
@@ -7348,6 +7349,11 @@ class ConditionUpdate(LoginRequiredMixin, UpdateView):
         if self.request.user.groups.filter(name__in=['Statdev Assessor']).exists():
              initial['assessor_staff'] = True
         return initial
+
+    def get_success_url(self):
+        """Override to redirect to the condition's parent application detail view.
+        """
+        return "/"
 
     def get_form_class(self):
         # Updating the condition as an 'action' should not allow the user to
@@ -7385,7 +7391,8 @@ class ConditionUpdate(LoginRequiredMixin, UpdateView):
         self.object.save()
 
         messages.success(self.request, "Successfully Applied")
-        return HttpResponseRedirect("/")
+        #return HttpResponseRedirect("/")
+        return super(ConditionUpdate, self).form_valid(form)
         return HttpResponseRedirect(self.object.application.get_absolute_url()+'')
 
 class ConditionDelete(LoginRequiredMixin, DeleteView):
@@ -8063,6 +8070,103 @@ class AddressCreate(LoginRequiredMixin, CreateView):
         #        return HttpResponseRedirect(reverse('user_account'))
  #       else:
   #          return HttpResponseRedirect(reverse('user_account'))
+
+#class AAOrganisationAddressUpdate(LoginRequiredMixin, UpdateView):
+#
+#    model = OrganisationAddress
+#    form_class = apps_forms.OrganisationAddressForm
+#    template_name = 'accounts/address_form.html'
+#
+#    def get(self, request, *args, **kwargs):
+#        context_processor = template_context(self.request)
+#        admin_staff = context_processor['admin_ddstaff']
+#
+#        address = self.get_object()
+#
+
+class OrganisationAddressUpdate(LoginRequiredMixin, UpdateView):
+    model = OrganisationAddress
+    form_class = apps_forms.AddressForm
+    success_url = reverse_lazy('user_account')
+    template_name = 'accounts/address_form.html'
+
+    def get(self, request, *args, **kwargs):
+        context_processor = template_context(self.request)
+        admin_staff = context_processor['admin_staff']
+
+        address = self.get_object()
+        u = request.user
+        # User addresses: only the user can change an address.
+        if u.postal_address == address or u.billing_address == address:
+            return super(OrganisationAddressUpdate, self).get(request, *args, **kwargs)
+
+        # Organisational addresses: find which org uses this address, and if
+        # the user is a delegate for that org then they can change it.
+        org_list = list(chain(address.org_postal_address.all(), address.org_billing_address.all()))
+        if Delegate.objects.filter(email_user=u, organisation__in=org_list).exists():
+            return super(OrganisationAddressUpdate, self).get(request, *args, **kwargs)
+#        elif u.is_staff is True:
+        elif admin_staff is True:
+            return super(OrganisationAddressUpdate, self).get(request, *args, **kwargs)
+        else:
+            messages.error(self.request, 'You cannot update this address!')
+            return HttpResponseRedirect(reverse('home_page'))
+
+    def get_context_data(self, **kwargs):
+        context = super(OrganisationAddressUpdate, self).get_context_data(**kwargs)
+        context['action'] = 'Update'
+        address = self.get_object()
+        u = self.request.user
+        if u.postal_address == address:
+            context['action'] = 'Update postal'
+            context['principal'] = u.email
+        if u.billing_address == address:
+            context['action'] = 'Update billing'
+            context['principal'] = u.email
+        # TODO: include context for Organisation addresses.
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('cancel'):
+            #return HttpResponseRedirect(self.success_url)
+            obj = self.get_object()
+            u = obj.user
+
+            if 'org_id' in self.kwargs:
+                return HttpResponseRedirect(reverse('organisation_details_actions', args=(self.kwargs['org_id'],'address')))
+            else:
+                return HttpResponseRedirect(reverse('person_details_actions', args=(u.id,'address')))
+        #if self.request.user.is_staff is True:
+        #    obj = self.get_object()
+        #    u = obj.user
+        #    return HttpResponseRedirect(reverse('person_details_actions', args=(u.id,'address')))
+        #else:
+        return super(OrganisationAddressUpdate, self).post(request, *args, **kwargs)
+
+
+    def form_valid(self, form):
+        self.obj = form.save()
+        obj = self.get_object()
+        #u = obj.user
+
+        if 'org_id' in self.kwargs:
+            org =Organisation.objects.get(id= self.kwargs['org_id'])
+            action = Action(
+                content_object=org, category=Action.ACTION_CATEGORY_CHOICES.change, user=self.request.user,
+                action='Organisation address updated')
+            action.save()
+            return HttpResponseRedirect(reverse('organisation_details_actions', args=(self.kwargs['org_id'],'address')))
+
+        else:
+            action = Action(
+                content_object=u, category=Action.ACTION_CATEGORY_CHOICES.change, user=self.request.user,
+                action='Person address updated')
+            action.save()
+
+            return HttpResponseRedirect(reverse('person_details_actions', args=(u.id,'address')))
+
+
+
 
 class AddressUpdate(LoginRequiredMixin, UpdateView):
     model = Address
@@ -8987,7 +9091,7 @@ class OrganisationUpdate(LoginRequiredMixin, UpdateView):
         return context
 
     def get_success_url(self):
-        return reverse('organisation_detail', args=(self.get_object().pk,))
+        return reverse('organisation_details_actions', args=(self.kwargs['pk'],'company'))
 
     def post(self, request, *args, **kwargs):
         if request.POST.get('cancel'):
@@ -9093,9 +9197,13 @@ class OrganisationContactUpdate(LoginRequiredMixin, UpdateView):
 
 
 
-class OrganisationAddressCreate(AddressCreate):
+class OrganisationAddressCreate(LoginRequiredMixin, CreateView):
     """A view to create a new address for an Organisation.
     """
+    model = OrganisationAddress
+    form_class = apps_forms.OrganisationAddressForm2
+    template_name = 'accounts/address_form.html'
+
     def get_context_data(self, **kwargs):
         context = super(OrganisationAddressCreate, self).get_context_data(**kwargs)
         org = Organisation.objects.get(pk=self.kwargs['pk'])
@@ -9103,15 +9211,21 @@ class OrganisationAddressCreate(AddressCreate):
         return context
 
     def form_valid(self, form):
-        self.obj = form.save()
+        self.obj = form.save(commit=False)
         # Attach the new address to the organisation.
         org = Organisation.objects.get(pk=self.kwargs['pk'])
+        # ledger has a manadorary userfield. ( Mandatory should probably be removed)
+        self.obj.user = self.request.user
+        self.obj.organisation = org
+        self.obj.save()
+        
         if self.kwargs['type'] == 'postal':
             org.postal_address = self.obj
         elif self.kwargs['type'] == 'billing':
             org.billing_address = self.obj
         org.save()
-        return HttpResponseRedirect(reverse('organisation_detail', args=(org.pk,)))
+        return HttpResponseRedirect(reverse('organisation_details_actions', args=(self.kwargs['pk'],'address')))
+        #return HttpResponseRedirect(reverse('organisation_detail', args=(org.pk,)))
 
 
 #class RequestDelegateAccess(LoginRequiredMixin, FormView):
@@ -9539,6 +9653,12 @@ def getAppFile(request,file_id,extension):
           the_file = open(file_name_path, 'rb')
           the_data = the_file.read()
           the_file.close()
+          if extension == 'msg': 
+              return HttpResponse(the_data, content_type="application/vnd.ms-outlook")
+          if extension == 'eml':
+              return HttpResponse(the_data, content_type="application/vnd.ms-outlook")
+
+
           return HttpResponse(the_data, content_type=mimetypes.types_map['.'+str(extension)])
 
 

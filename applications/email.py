@@ -7,7 +7,12 @@ from django.core.exceptions import ValidationError
 from ledger.accounts.models import EmailUser
 from applications.models import Referral
 from confy import env
+from applications import models
+from django.core.files import File
+from django.core.files.base import ContentFile
 
+import hashlib
+import datetime
 """
 Email Delivery will only work when EMAIL_DELIVERY is switched on.  To accidently stop invalid emails going out to end users.
 If your local developement area doesn't have a email catch all setup you can use the override flag 'OVERRIDE_EMAIL' to send all email generated to a specfic address.
@@ -28,7 +33,7 @@ def sendHtmlEmail(to,subject,context,template,cc,bcc,from_email,attachment1=None
     override_email = env('OVERRIDE_EMAIL', None)
     context['default_url'] = env('DEFAULT_URL', '')
     context['default_url_internal'] = env('DEFAULT_URL_INTERNAL', '')
-
+    log_hash = int(hashlib.sha1(str(datetime.datetime.now()).encode('utf-8')).hexdigest(), 16) % (10 ** 8)
     if email_delivery != 'on':
         print ("EMAIL DELIVERY IS OFF NO EMAIL SENT -- applications/email.py ")
         return False
@@ -65,13 +70,41 @@ def sendHtmlEmail(to,subject,context,template,cc,bcc,from_email,attachment1=None
           msg.content_subtype = 'html'
           if attachment1:
               msg.attach_file(attachment1)
+        
           msg.send()
+          print ("MESSGE")
+          print (str(msg.message()))
     else:
           msg = EmailMessage(subject, main_template, to=to,cc=cc, from_email=from_email)
           msg.content_subtype = 'html'
           if attachment1:
               msg.attach_file(attachment1)
           msg.send()
+          print ("MESSGE")
+          print (str(msg.message()))
+
+    if 'app' in context:
+       eml_content = msg.message().as_bytes()
+       #file_name = settings.BASE_DIR+"/private-media/tmp/"+str(log_hash)+".msg"
+       #with open(file_name, "wb") as outfile:
+       #   outfile.write(eml_content)
+
+
+       #f = open(file_name, "r")
+#       print(f.read())
+
+       doc = models.Record()
+       doc.upload.save(str(log_hash)+'.eml', ContentFile(eml_content), save=False)
+       doc.name = str(log_hash)+'.eml' 
+       doc.file_group = 2003 
+       doc.file_group_ref_id = context['app'].id
+       doc.extension = '.eml' 
+       doc.save()
+       
+       
+       comms = models.Communication.objects.create(application=context['app'],comms_to=str(to), comms_from=from_email, subject=subject, details='see attachment')
+       comms.records.add(doc)
+       comms.save()
     return True
 
 def emailGroup(subject,context,template,cc,bcc,from_email,group):
