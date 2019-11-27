@@ -9556,7 +9556,10 @@ class ApplicationBooking(LoginRequiredMixin, FormView):
 
         flowcontext = {}
         flowcontext['application_submitter_id']  = app.submitted_by.id
-        if app.applicant.id == request.user.id or Delegate.objects.filter(email_user=request.user).count() > 0:
+        if app.applicant:
+            if app.applicant.id == request.user.id:
+                flowcontext['application_owner'] = True
+        if Delegate.objects.filter(email_user=request.user).count() > 0:
             flowcontext['application_owner'] = True
 
         flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, workflowtype)
