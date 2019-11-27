@@ -4978,6 +4978,8 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
            # Licence Proposal
            pdftool.generate_licence(approval)
            emailcontext['person'] = app.submitted_by
+           emailcontext['vessels'] = app.vessels.all()
+           emailcontext['approval'] = approval
            sendHtmlEmail([app.submitted_by.email], 'Licence Permit - '+app.title, emailcontext, 'application-licence-permit-proposal.html', None, None, None, approval_pdf)
         elif app.app_type == 3:
            # Licence Proposal
