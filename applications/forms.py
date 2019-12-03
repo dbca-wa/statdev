@@ -1372,67 +1372,73 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
         else:
             applicant_info = HTML('{% include "applications/applicant_update_snippet.html" %}')
 
-
-        crispy_boxes.append(crispy_box('applicant_collapse','form_applicant','Applicant', applicant_info, changeapplicantbutton))
+        if self.initial["workflow"]["hidden"]["applicant"] == 'False':
+            crispy_boxes.append(crispy_box('applicant_collapse','form_applicant','Applicant', applicant_info, changeapplicantbutton))
         del self.fields['applicant']
 
 
-        # Title Box
-        if check_fields_exist(self.fields,['title']) is True and may_update == "True":
-             #self.fields['title'].widget.attrs['placeholder'] = "Enter Title, ( Director of Corporate Services )"
-             crispy_boxes.append(crispy_box('title_collapse', 'form_title' , 'Title','title'))
-        else:
-             try:
-                del self.fields['title']
-             except:
-                donothing =''
-             crispy_boxes.append(HTML('{% include "applications/application_title.html" %}'))
+        if self.initial["workflow"]["hidden"]["title"] == 'False':
+            # Title Box
+            if check_fields_exist(self.fields,['title']) is True and may_update == "True":
+                 #self.fields['title'].widget.attrs['placeholder'] = "Enter Title, ( Director of Corporate Services )"
+                 crispy_boxes.append(crispy_box('title_collapse', 'form_title' , 'Title','title'))
+            else:
+                 try:
+                    del self.fields['title']
+                 except:
+                    donothing =''
+                 crispy_boxes.append(HTML('{% include "applications/application_title.html" %}'))
 
 
-        # Certificate of Title Information
-        if check_fields_exist(self.fields,['certificate_of_title_volume','folio','diagram_plan_deposit_number','location','reserve_number','street_number_and_name','town_suburb','lot','nearest_road_intersection']) is True and may_update == "True":
-             crispy_boxes.append(crispy_box('certificate_collapse', 'form_certificate' , 'Certificate of Title Information','certificate_of_title_volume','folio','diagram_plan_deposit_number','lot','location','reserve_number','street_number_and_name','town_suburb','nearest_road_intersection'))
-             donothing =''
-        else:
-            try:
-                del self.fields['certificate_of_title_volume']
-                del self.fields['folio']
-                del self.fields['diagram_plan_deposit_number']
-                del self.fields['lot']
-                del self.fields['location']
-                del self.fields['reserve_number']
-                del self.fields['street_number_and_name']
-                del self.fields['town_suburb']
-                del self.fields['nearest_road_intersection']
 
-            except:
-                donothing =''
-            crispy_boxes.append(HTML('{% include "applications/application_certificate_of_title_information.html" %}'))
+        if self.initial["workflow"]["hidden"]["certificate_of_title"] == 'False':
+             # Certificate of Title Information
+             if check_fields_exist(self.fields,['certificate_of_title_volume','folio','diagram_plan_deposit_number','location','reserve_number','street_number_and_name','town_suburb','lot','nearest_road_intersection']) is True and may_update == "True":
+                  crispy_boxes.append(crispy_box('certificate_collapse', 'form_certificate' , 'Certificate of Title Information','certificate_of_title_volume','folio','diagram_plan_deposit_number','lot','location','reserve_number','street_number_and_name','town_suburb','nearest_road_intersection'))
+                  donothing =''
+             else:
+                 try:
+                     del self.fields['certificate_of_title_volume']
+                     del self.fields['folio']
+                     del self.fields['diagram_plan_deposit_number']
+                     del self.fields['lot']
+                     del self.fields['location']
+                     del self.fields['reserve_number']
+                     del self.fields['street_number_and_name']
+                     del self.fields['town_suburb']
+                     del self.fields['nearest_road_intersection']
 
-        # River Reserve Lease (Swan and Cannning Management Act 2006 - section 29
-        if check_fields_exist(self.fields,['river_lease_require_river_lease','river_lease_scan_of_application']) is True and may_update == "True":
-             crispy_boxes.append(crispy_box('riverleasesection29_collapse', 'form_riverleasesection29' , 'River Reserve Lease (Swan and Cannning Management Act 2006 - section 29',riverleasedesc,InlineRadios('river_lease_require_river_lease'),attachpdf,'river_lease_scan_of_application'))
-        else:
-             try:
-                del self.fields['river_lease_require_river_lease']
-                del self.fields['river_lease_scan_of_application']
-             except:
-                donothing =''
-
-             crispy_boxes.append(HTML('{% include "applications/application_river_lease_29.html" %}'))
-
-        if check_fields_exist(self.fields,['river_lease_reserve_licence','river_lease_application_number']) is True and may_update == "True":
-        # River Reserve Lease (Swan and Cannning Management Act 2006 - section 32
-             crispy_boxes.append(crispy_box('riverleasesection32_collapse', 'form_riverleasesection32' , 'River Reserve Lease (Swan and Cannning Management Act 2006 - section 32',InlineRadios('river_lease_reserve_licence'),'river_lease_application_number'))
-        else:
-             try:
-                del self.fields['river_lease_reserve_licence']
-                del self.fields['river_lease_application_number']
-             except:
-                donothing =''
+                 except:
+                     donothing =''
+                 crispy_boxes.append(HTML('{% include "applications/application_certificate_of_title_information.html" %}'))
 
 
-             crispy_boxes.append(HTML('{% include "applications/application_river_lease_32.html" %}'))
+        if self.initial["workflow"]["hidden"]["river_lease_section_29"] == 'False':
+            # River Reserve Lease (Swan and Cannning Management Act 2006 - section 29
+            if check_fields_exist(self.fields,['river_lease_require_river_lease','river_lease_scan_of_application']) is True and may_update == "True":
+                 crispy_boxes.append(crispy_box('riverleasesection29_collapse', 'form_riverleasesection29' , 'River Reserve Lease (Swan and Cannning Management Act 2006 - section 29',riverleasedesc,InlineRadios('river_lease_require_river_lease'),attachpdf,'river_lease_scan_of_application'))
+            else:
+                 try:
+                    del self.fields['river_lease_require_river_lease']
+                    del self.fields['river_lease_scan_of_application']
+                 except:
+                    donothing =''
+
+                 crispy_boxes.append(HTML('{% include "applications/application_river_lease_29.html" %}'))
+
+        if self.initial["workflow"]["hidden"]["river_lease_section_32"] == 'False':
+            if check_fields_exist(self.fields,['river_lease_reserve_licence','river_lease_application_number']) is True and may_update == "True":
+            # River Reserve Lease (Swan and Cannning Management Act 2006 - section 32
+                 crispy_boxes.append(crispy_box('riverleasesection32_collapse', 'form_riverleasesection32' , 'River Reserve Lease (Swan and Cannning Management Act 2006 - section 32',InlineRadios('river_lease_reserve_licence'),'river_lease_application_number'))
+            else:
+                 try:
+                    del self.fields['river_lease_reserve_licence']
+                    del self.fields['river_lease_application_number']
+                 except:
+                    donothing =''
+
+
+                 crispy_boxes.append(HTML('{% include "applications/application_river_lease_32.html" %}'))
 
         # Details of Proposed Developmen
         if check_fields_exist(self.fields,['cost','proposed_development_current_use_of_land','proposed_development_description','proposed_development_plans']) is True and may_update == "True":
@@ -1448,28 +1454,30 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
 
              crispy_boxes.append(HTML('{% include "applications/application_details_of_proposed_development.html" %}'))
 
+        if self.initial["workflow"]["hidden"]["land_owner_consent"] == 'False':
 
-        # Landowner Consent
-        if check_fields_exist(self.fields,['land_owner_consent']) is True and may_update == "True":
-            crispy_boxes.append(crispy_box('land_owner_consent_collapse', 'form_land_owner_consent' , 'Landowner Consent',landownerconsentdesc,landownerconsentdesc2,'land_owner_consent',))
-        else:
-             try:
-                del self.fields['land_owner_consent']
-             except:
-                donothing =''
+            # Landowner Consent
+            if check_fields_exist(self.fields,['land_owner_consent']) is True and may_update == "True":
+                crispy_boxes.append(crispy_box('land_owner_consent_collapse', 'form_land_owner_consent' , 'Landowner Consent',landownerconsentdesc,landownerconsentdesc2,'land_owner_consent',))
+            else:
+                 try:
+                    del self.fields['land_owner_consent']
+                 except:
+                    donothing =''
 
-             crispy_boxes.append(HTML('{% include "applications/application_land_owner_consent.html" %}'))
+                 crispy_boxes.append(HTML('{% include "applications/application_land_owner_consent.html" %}'))
 
-        # Deed
-        if check_fields_exist(self.fields,['deed']) is True and may_update == "True":
-            crispy_boxes.append(crispy_box('deed_collapse', 'form_deed' , 'Deed',deeddesc,'deed'))
-        else:
-            try:
-               del self.fields['deed']
-            except:
-               donothing =''
-
-            crispy_boxes.append(HTML('{% include "applications/application_deed.html" %}'))
+        if self.initial["workflow"]["hidden"]["deed"] == 'False':
+             # Deed
+             if check_fields_exist(self.fields,['deed']) is True and may_update == "True":
+                 crispy_boxes.append(crispy_box('deed_collapse', 'form_deed' , 'Deed',deeddesc,'deed'))
+             else:
+                 try:
+                    del self.fields['deed']
+                 except:
+                    donothing =''
+     
+                 crispy_boxes.append(HTML('{% include "applications/application_deed.html" %}'))
 
         # publication
 #       if 'hide_form_buttons' in self.initial["workflow"]["hidden"]:

@@ -6,17 +6,64 @@
     "1": {
         "title": "Draft",
         "hidden": {
+            "applicant": "True",
+            "title": "True",
+            "certificate_of_title" : "True",
+            "river_lease_section_29" : "True",
+            "river_lease_section_32" : "True",
+            "land_owner_consent": "True",
+            "deed" : "True",
             "holder": "False",
             "address": "False",
-            "emergencyworks": "False"
+            "emergencyworks": "False",
+            "publication": "True",
+            "stakeholdercommunication": "True",
+            "referrals" : "True",
+            "conditions" : "True"
         },
         "actions": [
-            {
+           {
                 "title": "Lodge Application",
                 "route": "2",
-                "routegroup":"lodge"
+                "routegroup":"lodge",
+                "lodgegroup": "assess",
+                "requiredold": ["title","deed","cost","river_lease_require_river_lease","river_lease_reserve_licence","proposed_development_description","certificate_of_title_volume","folio","diagram_plan_deposit_number","proposed_development_plans"],
+                "required": ["proposed_development_plans","proposed_development_description"],
+                "state" : 4,
+                "payment_redirect": "False"
             }
+
         ],
+
+        "condition-based-actions": {
+            "2-prevstep": {
+                "steplabel": "Save",
+                "routeoptions": [{
+                    "field": "2-prevstep",
+                    "fieldvalue": "Save",
+                    "fieldoperator":"equals",
+                    "route": "1",
+                    "routeurl": "application_update",
+                    "required" : [],
+                    "state": "1"
+                }
+                ]
+            },
+            "1-nextstep": {
+                "steplabel": "Lodge Ammendment",
+                "routeoptions": [{
+                    "field": "1-nextstep",
+                    "fieldvalue": "Lodge Ammendment",
+                    "fieldoperator":"equals",
+                    "route": "2",
+                    "routeurl": "application_lodge",
+                    "required" : [],
+                    "state": "15"
+                }
+                ]
+            }
+        },
+
         "formcomponent": {
             "update": {
                 "title": "Make Application Changes"
@@ -33,7 +80,8 @@
             "may_submit_approval": "False",
             "may_issue": "False",
             "may_generate_pdf": "False",
-            "may_assign_to_creator": "False"
+            "may_assign_to_creator": "False",
+            "show_form_buttons": "True"
         },
         "groupaccess": {
             "Processor": {
@@ -56,6 +104,7 @@
             "emergencyworks": "False"
         },
         "fields": {
+            "title" : "hide",
             "description": "hide",
             "cost": "hide",
             "project_no": "hide",
@@ -91,18 +140,28 @@
         }
     },
     "2": {
-        "title": "Pre form complete",
+        "title": "Ammendment Approval",
         "hidden": {
+            "applicant": "True",
+            "title": "True",
+            "certificate_of_title" : "True",
+            "river_lease_section_29" : "True",
+            "river_lease_section_32" : "True",
+            "land_owner_consent": "True",
+            "deed" : "True",
             "holder": "False",
             "address": "False",
-            "emergencyworks": "False"
-
+            "emergencyworks": "False",
+            "publication": "True",
+            "stakeholdercommunication": "True",
+            "referrals" : "True",
+            "conditions" : "True"
         },
         "actions": [
             {
                 "title": "Approve for Ammendment",
                 "route": "3",
-                "routegroup":"admin",
+                "routegroup":"assess",
                 "state": "10"
             },
             {
@@ -120,22 +179,39 @@
             }
         },
         "groupaccess": {
-            "Processor": {
+            "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"False",
-                "may_refer":"False",
-                "may_assign":"False",
+                "may_refer":"True",
+                "may_assign":"True",
+                "may_assign_to_person" : "True",
                 "may_assign_customer": "False",
                 "may_assign_processor": "True",
                 "may_create_condition":"False",
-                "may_submit_approval": "False",
-                "may_assign_to_creator": "True",
+                "may_submit_approval": "True",
+                "may_assign_assessor": "True",
+                "may_send_for_referral": "True",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "may_assign_assessor": "True"
-
+                "may_update_publication_newspaper": "True",
+                "may_update_publication_website": "True",
+                "may_publish_website": "True",
+                "may_update_publication_feedback_draft" : "True",
+                "may_publish_feedback_draft": "False",
+                "may_update_publication_feedback_final": "False",
+                "may_publish_feedback_final": "False",
+                "may_recall_resend": "False",
+                "may_assign_to_creator": "True",
+                "may_referral_delete": "True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "show_form_buttons": "True",
+                "may_assign_to_person": "True",
+                "may_create_condition":"True",
+                "may_update_condition": "True"
             },
-            "Assessor": {
+            "Statdev Approver": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -145,10 +221,12 @@
                 "may_create_condition":"False",
                 "may_submit_approval": "False",
                 "may_issue": "False",
-                "may_generate_pdf": "False"
-
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True"
             },
-            "Approver": {
+            "Statdev Director": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -158,8 +236,43 @@
                 "may_create_condition":"False",
                 "may_submit_approval": "False",
                 "may_issue": "False",
-                "may_generate_pdf": "False"
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True"
             }
+
 
         },
         "collapse": {
@@ -168,6 +281,39 @@
             "emergencyworks": "False" 
         },
         "fields": {
+            "title" : "hide",
+            "description": "hide",
+            "cost": "hide",
+            "project_no": "hide",
+            "river_lease_require_river_lease":"hide",
+            "river_lease_reserve_licence": "hide",
+            "river_lease_application_number":"hide",
+            "proposed_development_current_use_of_land":"hide",
+            "certificate_of_title_volume":"hide",
+            "folio":"hide",
+            "diagram_plan_deposit_number":"hide",
+            "location":"hide",
+            "reserve_number":"hide",
+            "street_number_and_name":"hide",
+            "town_suburb":"hide",
+            "lot":"hide",
+            "nearest_road_intersection":"hide",
+            "land_owner_consent":"hide",
+            "document_final":"hide",
+            "document_completion":"hide",
+            "river_lease_scan_of_application":"hide",
+            "deed":"hide",
+            "document_determination":"hide",
+            "document_new_draft": "hide",
+            "document_draft_signed" : "hide",
+            "swan_river_trust_board_feedback": "hide",
+            "document_final_signed": "hide",
+            "document_new_draft_v3" : "hide",
+            "document_memo" : "hide",
+            "document_briefing_note" : "hide",
+            "document_determination_approved" :"hide",
+            "assessment_start_date" : "hide",
+            "document_draft" : "hide"
         }
     },
     "3": {

@@ -122,7 +122,7 @@ class Application(models.Model):
         (3, 'part5', ('Part 5')),
         (4, 'emergency', ('Emergency works')),
         (5, 'part5cr', ('Part 5 - Amendment Request')),
-        (6, 'part5amend', ('Part 5 - Amendment Application')),
+        (6, 'part5amend', ('Section 84')),
         (7, 'test', ('Test - Application')),
         (8, 'permitamend', ('Amend Permit')),
         (9, 'licenceamend', ('Amend Licence')),

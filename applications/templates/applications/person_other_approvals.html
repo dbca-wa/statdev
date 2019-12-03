@@ -104,6 +104,10 @@
 												<li><A HREF='{% url 'application_change' app_obj.app.pk 'amend' %}'>Amend</A></li>
 												
 												{% endif %}
+                                                                                                {% if app_obj.app.app_type == 3 %}
+                                                                                                <li><a href="{% url 'application_change' app_obj.app.pk 'requestamendment' %}">Request Amendment</a></li>
+                                                                                                {% endif %}
+
 												<li><A HREF=''>Renew</A></li>
 												{% if app_obj.app.get_status_display == "Current" or app_obj.app.get_status_display == "Suspended" %}
 												<li><A HREF='{% url 'approval_status_change' app_obj.app.pk 'surrendered' %}'>Surrender</A></li>

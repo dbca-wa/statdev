@@ -1111,7 +1111,7 @@ class ApplicationList(LoginRequiredMixin,ListView):
         APP_TYPE_CHOICES = []
         APP_TYPE_CHOICES_IDS = []
         for i in Application.APP_TYPE_CHOICES:
-            if i[0] in [4,5,6,7,8,9,10,11]:
+            if i[0] in [4,7,8,9,10,11]:
                skip = 'yes'
             else:
                APP_TYPE_CHOICES.append(i)
@@ -3048,8 +3048,102 @@ class OrganisationCommsCreate(LoginRequiredMixin,CreateView):
 class ApplicationChange(LoginRequiredMixin, CreateView):
     """This view is for changes or ammendents to existing applications
     """
+    #@model = Application
     form_class = apps_forms.ApplicationChange
     template_name = 'applications/application_change_form.html'
+
+
+    def get(self, request, *args, **kwargs):
+        context_processor = template_context(self.request)
+        action = self.kwargs['action']
+        approval = Approval.objects.get(id=self.kwargs['approvalid'])
+        application = Application.objects.get(id=approval.application.id)
+
+        if action == 'requestamendment':
+             app = Application.objects.create(applicant=self.request.user,
+                                              assignee=self.request.user,
+                                              submitted_by=self.request.user,
+                                              app_type=5,
+                                              submit_date=date.today(),
+                                              state=Application.APP_STATE_CHOICES.new,
+                                              approval_id=approval.id
+                                             )
+             return HttpResponseRedirect(reverse('application_update', args=(app.id,)))
+        if action == 'amend':
+            if approval.ammendment_application:
+
+                 a1 = approval.application.river_lease_scan_of_application.all()
+                 multifilelist = []
+                 for b1 in a1:
+                     fileitem = {}
+                     fileitem['fileid'] = b1.id
+                     fileitem['path'] = b1.upload.name
+                     fileitem['name'] = b1.name
+                     fileitem['extension']  = b1.extension
+                     multifilelist.append(fileitem)
+
+
+                 app = Application.objects.create(applicant=approval.application.applicant,
+                                              title=approval.application.title,
+                                              assignee=self.request.user,
+                                              submitted_by=self.request.user,
+                                              app_type=6,
+                                              submit_date=date.today(),
+                                              state=Application.APP_STATE_CHOICES.new,
+                                              approval_id=approval.id,
+                                              river_lease_require_river_lease=approval.application.river_lease_require_river_lease,
+                                              river_lease_reserve_licence=approval.application.river_lease_reserve_licence, 
+                                              cost=approval.application.cost,
+                                              proposed_development_current_use_of_land=approval.application.proposed_development_current_use_of_land,
+                                              proposed_development_description=approval.application.proposed_development_description
+                                             )
+
+                 a1 = approval.application.river_lease_scan_of_application.all()
+                 for b1 in a1:
+                     app.river_lease_scan_of_application.add(b1)
+
+                 a1 = approval.application.proposed_development_plans.all()
+                 for b1 in a1:
+                     app.proposed_development_plans.add(b1)
+
+                 a1 = approval.application.land_owner_consent.all()
+                 for b1 in a1:
+                     app.land_owner_consent.add(b1)
+
+                 a1 = approval.application.deed.all()
+                 for b1 in a1:
+                     app.deed.add(b1)
+
+
+                 app.save()
+                 locobj = Location.objects.get(application_id=application.id)
+                 new_loc = Location()
+                 new_loc.application_id = app.id
+                 new_loc.title_volume = locobj.title_volume
+                 new_loc.folio = locobj.folio
+                 new_loc.dpd_number = locobj.dpd_number
+                 new_loc.location = locobj.location
+                 new_loc.reserve = locobj.reserve
+                 new_loc.street_number_name = locobj.street_number_name
+                 new_loc.suburb = locobj.suburb
+                 new_loc.lot = locobj.lot
+                 new_loc.intersection = locobj.intersection
+                 new_loc.local_government_authority = locobj.local_government_authority
+                 new_loc.save()
+                 print (new_loc) 
+
+                 #self.object.applicant = self.request.user
+                 #self.object.assignee = self.request.user
+                 #self.object.submitted_by = self.request.user
+                 #self.object.assignee = self.request.user
+                 #self.object.submit_date = date.today()
+                 #self.object.state = self.object.APP_STATE_CHOICES.new
+                 #self.object.approval_id = approval.id
+                 #self.object.save()
+                 print ("APPLICATION")
+                 print (app)
+                 return HttpResponseRedirect(reverse('application_update', args=(app.id,)))
+        return super(ApplicationChange, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(ApplicationChange, self).get_context_data(**kwargs)
@@ -5001,7 +5095,6 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
            # Permit & Licence Renewal 
            emailcontext['person'] = app.submitted_by
            sendHtmlEmail([app.submitted_by.email], 'Draft Report - Part 5 - '+str(app.id)+' - location - description of works - applicant', emailcontext, 'application-licence-permit-proposal.html', None, None, None)
-         
 
         ####################
         # Disabling compliance creationg after approval ( this is now handle by cron script as we are not creating all future compliance all at once but only the next due complaince.
@@ -9565,7 +9658,7 @@ class ApplicationBooking(LoginRequiredMixin, FormView):
         flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, workflowtype)
         flowcontext = flow.getRequired(flowcontext, app.routeid, workflowtype)
         if flowcontext['may_payment'] == "False":
-           messages.error(self.request, 'You do not have permission to perform this action.')
+           messages.error(self.request, 'You do not have permission to perform this action. AB')
            return HttpResponseRedirect('/')
 
         
