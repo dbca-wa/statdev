@@ -351,11 +351,29 @@ class Flow():
                               a["required"]= []
                            return a
         return None
+    def getNextRouteObjViaId(self,actionid,route,flow):
+        json_obj = self.json_obj
+        if json_obj[str(route)]:
+            if json_obj[str(route)]['actions']:
+               a = json_obj[str(route)]['actions'][actionid]
+               if "required" not in a:
+                  a["required"]= []
+               return a
 
+        return None
     def getAllRouteActions(self,route,flow):
         json_obj = self.json_obj
         if json_obj[str(route)]:
             if json_obj[str(route)]['actions']:
+               print ("WorkFlow Actions")
+               print (len(json_obj[str(route)]['actions']))
+               i =0
+               while i < len(json_obj[str(route)]['actions']):
+                     json_obj[str(route)]['actions'][i]['actionid'] = i
+                     print (json_obj[str(route)]['actions'][i])
+                     i += 1 
+               #for a in json_obj[str(route)]['actions']:
+               #     print (a)
                return json_obj[str(route)]['actions']
 
     def getAllConditionBasedRouteActions(self,route):

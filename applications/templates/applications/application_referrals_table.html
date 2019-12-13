@@ -6,6 +6,8 @@
                                                 <th>Period (days)</th>
                                                 <th>Status</th>
                                                 <th>Feedback</th>
+                                                <th>Proposed Conditions</th>
+                                                <th>Documents</th>
                                                 <th>Actions</th>
                                         </tr>
                                 </thead>
@@ -17,6 +19,15 @@
                                                 <td>{{ ref.period }}</td>
                                                 <td>{{ ref.get_status_display }}</td>
                                                 <td>{{ ref.feedback }}</td>
+                                                <td>{{ ref.proposed_conditions }}</td>
+                                                <td>
+                                                      {% if ref.records.exists %}
+                                                                 {% for doc in ref.records.all %}
+                                                                         <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target='comms_attachment_{{ doc.id }}'>{{ doc.name }}</A></div>
+                                                                 {% endfor %}
+                                                      {% endif %}
+
+                                                </td>
                                                 <td>
                                                         {% if may_referral_delete == "True" and mode == 'update'  %}
                                                                     <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'referral_delete' ref.pk %}');" type="button">Delete</button>
@@ -27,7 +38,7 @@
                                                                         {% if ref.status == ref.REFERRAL_STATUS_CHOICES.referred %}
                                                                         <a class="btn btn-primary btn-sm" role="button" href="{% url 'referral_recall' ref.pk %}">Recall</a>
                                                                         <a class="btn btn-primary btn-sm" role="button" href="{% url 'referral_remind' ref.pk %}">Remind</a>
-                                                        {% endif %}
+                                                             {% endif %}
                                              {% endif %}
                                     {% endif %}
                                         {% comment %}{% endcomment %}
@@ -37,7 +48,7 @@
                                                              {# TODO: Referral resend function #}
                                  <a class="btn btn-primary btn-sm" role="button" href="{% url 'referral_resend' ref.pk %}">Resend</a>
                                                            {% endif %}
-                           {% endif %}
+                            {% endif %}
                                                 </td>
                                         </tr>
                                         {% endfor %}

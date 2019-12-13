@@ -20,6 +20,11 @@
                                                 <td>
                                                     {% if workflow_actions or condactions %}
                                                         {% if may_update_condition == "True" %}
+                                                                                <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_update' cond.pk %}');" type="button">Update</button>
+                                                                                <button class="btn btn-danger btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_delete' cond.pk %}');" type="button">Delete</button>
+
+                                                            {% if condition_accept %}
+
                                                             {% if may_accept_condition and cond.status == cond.CONDITION_STATUS_CHOICES.proposed %}
                                                                     <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_update' cond.pk 'apply' %}');" type="button">Apply</button>
                                                                     <a class="btn btn-primary btn-sm" role="button" href="{% url 'condition_update' cond.pk 'apply' %}">Apply</a>
@@ -35,7 +40,9 @@
                                                                      {% endif %}
                                                         {% endif %}
                                                         {% endif %}
+                                                        {% endif %}
                                                     {% endif %}
+
                                                     {% if object.state == 14 %}
                                                                  {% if admin_staff == True %}
                                                                  {% if cond.suspend == True %}
@@ -45,6 +52,8 @@
 								 {% endif %}
 								 {% endif %}
 						    {% endif %}
+ 
+
                                                 </td>
                                         </tr>
                                         {% endfor %}

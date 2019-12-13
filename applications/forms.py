@@ -1941,7 +1941,7 @@ class ApplicationAssignNextAction(ModelForm):
 
     class Meta:
         model = Application
-        fields = ['id','details','submitter_comment','records']
+        fields = ['id','details','submitter_comment','referral_comment','records']
 
     def __init__(self, *args, **kwargs):
         super(ApplicationAssignNextAction, self).__init__(*args, **kwargs)
@@ -1954,11 +1954,13 @@ class ApplicationAssignNextAction(ModelForm):
         submitter_input = None
         if self.initial['action'] != 'creator':
             del self.fields['submitter_comment']
+        if self.initial['action'] != 'referral':
+            del self.fields['referral_comment']
 #            submitter_input = 'sumbitter_comment'
 
         self.helper.layout = Layout(
             HTML('<p>Application Next Action</p>'),
-            'details','submitter_comment','records',
+            'details','submitter_comment','records','referral_comment',
             FormActions(
                 Submit('assign', 'Submit', css_class='btn-lg'),
                 Submit('cancel', 'Cancel')

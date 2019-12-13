@@ -800,10 +800,11 @@
         "actions": [
             {
                 "title": "Approve",
-                "route": "6",
-                "routegroup": "assess",
-                "state": "10"
+                "route": "9",
+                "routegroup":"assess",
+                "state":"14"
             },
+
             {
                 "title": "Decline & Close Application",
                 "route": "8",
@@ -811,7 +812,7 @@
                 "state": "8"
             },
             {
-                "title": "Send back to Statdev Assessor",
+                "title": "Send back to Assessor",
                 "route": "2",
                 "routegroup": "assess",
                 "state": "4"

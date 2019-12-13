@@ -4743,6 +4743,7 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
             return HttpResponseRedirect(app.get_absolute_url())
 
         action = self.kwargs['action']
+        actionid = self.kwargs['actionid']
 
         flow = Flow()
         workflowtype = flow.getWorkFlowTypeFromApp(app)
@@ -4751,8 +4752,8 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
         flowcontext = {}
         flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, workflowtype)
         flowcontext = flow.getRequired(flowcontext, app.routeid, workflowtype)
-        route = flow.getNextRouteObj(action, app.routeid, workflowtype)
-
+        #route = flow.getNextRouteObj(action, app.routeid, workflowtype)
+        route = flow.getNextRouteObjViaId(int(actionid), app.routeid, workflowtype)
         if action is "creator":
             if flowcontext['may_assign_to_creator'] != "True":
                 messages.error(self.request, 'This application cannot be reassigned, Unknown Error')
@@ -4820,6 +4821,7 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
         forms_data = form.cleaned_data
         app = self.get_object()
         action = self.kwargs['action']
+        actionid = self.kwargs['actionid']
 
         # Upload New Files
         # doc = None
@@ -4847,7 +4849,8 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
             assessed_by = self.request.user 
             groupassignment = Group.objects.get(name=DefaultGroups['grouplink'][action])
 
-        route = flow.getNextRouteObj(action, app.routeid, workflowtype)
+        #route = flow.getNextRouteObj(action, app.routeid, workflowtype)
+        route = flow.getNextRouteObjViaId(int(actionid), app.routeid, workflowtype)   
         if route is None:
             messages.error(self.request, 'Error In Assigning Next Route, No routes Found')
             return HttpResponseRedirect(app.get_absolute_url())
@@ -4876,11 +4879,15 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
            comms.comms_to = "Form Creator"
         else:
            comms.comms_to = FriendlyGroupList['grouplink'][action] 
-        comms.subject = route["title"]
-        comms.details = forms_data['details']
-        comms.state = route["state"]
-        comms.comms_type = 4
-        comms.save()
+        
+        if self.object.state == '8':
+             pass
+        else:
+            comms.subject = route["title"]
+            comms.details = forms_data['details']
+            comms.state = route["state"]
+            comms.comms_type = 4
+            comms.save()
 
         if 'records_json' in self.request.POST:
             if is_json(self.request.POST['records_json']) is True:
@@ -4928,6 +4935,9 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
             self.complete_application(app)
         if self.object.state == '10': 
             self.ammendment_approved(app) 
+        if self.object.state == '8':
+            self.decline_notification(app, forms_data)
+ 
         if 'process' in route:
             if 'draft_completed' in route['process']:
                 self.draft_completed(app)
@@ -5037,6 +5047,16 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
             emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
             emailcontext['person'] = app.submitted_by 
             sendHtmlEmail([app.submitted_by.email], 'Final Report - Part  - '+str(app.id), emailcontext, 'application-part5-final-report.html', None, None, None)
+
+    def decline_notification(self,app,forms_data):
+         emailcontext = {}
+         emailcontext['app'] = app
+
+         emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
+         emailcontext['person'] = app.submitted_by
+         emailcontext['communication_details'] =  forms_data['details']
+         sendHtmlEmail([app.submitted_by.email], Application.APP_TYPE_CHOICES[app.app_type]+' application declined - '+str(app.id), emailcontext, 'application-declined.html', None, None, None)
+
 
     def complete_application(self,app): 
         """Once and application is complete and approval needs to be created in the approval model.

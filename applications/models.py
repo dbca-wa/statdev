@@ -64,7 +64,9 @@ class Record(models.Model):
     extension = models.CharField(max_length=5, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
-    def file_url(self): 
+    def file_url(self):
+         if self.extension is None: 
+                self.extension = ''
          return settings.PRIVATE_MEDIA_URL+str(self.pk)+'-file'+self.extension
 
     def __str__(self):
@@ -258,7 +260,8 @@ class Application(models.Model):
     type_of_crafts = models.ForeignKey(Craft, null=True, blank=True, related_name='craft') 
     number_of_crafts  = models.IntegerField(null=True, blank=True)
     route_status = models.CharField(null=True, blank=True, default='Draft', max_length=256)
-    submitter_comment = models.TextField(null=True, blank=True, default='', max_length=256)
+    submitter_comment = models.TextField(null=True, blank=True, default='', max_length=1000)
+    referral_comment = models.TextField(null=True, blank=True, default='', max_length=1000)
 
     def __str__(self):
         return 'Application {}: {} - {} ({})'.format(
