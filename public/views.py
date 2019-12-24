@@ -22,12 +22,18 @@ class PublicApplicationsList(TemplateView):
         search = None
         query_obj = None
 
-        if action == 'draft':
+        if action == 'review':
             query_obj = Q(publish_documents__isnull=False,publish_draft_report__isnull=True) & Q(app_type__in=[3])
-        elif action == 'final':
+            context['home_nav_review'] = 'active'
+        elif action == 'draft':
             query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=True) & Q(app_type__in=[3])
+            context['home_nav_draft'] = 'active'
+        elif action == 'final':
+            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=False, publish_determination_report__isnull=True) & Q(app_type__in=[3])
+            context['home_nav_final'] = 'active'
         elif action == 'determination':
-            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False, publish_final_report__isnull=False,publish_determination_report__isnull=True) & Q(app_type__in=[3])
+            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False, publish_final_report__isnull=False,publish_determination_report__isnull=False) & Q(app_type__in=[3])
+            context['home_nav_determination'] = 'active'
         else:
             query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=False) & Q(app_type__in=[3])
             #query_obj = Q(publish_documents__isnull=False) & Q(app_type__in=[3])
