@@ -438,6 +438,7 @@ class FormsList():
         for app in approval:
             row = {}
             row['app'] = app
+            row['approval_url'] = app.approval_url
             if app.applicant:
                 if app.applicant.id in context['app_applicants']:
                     donothing = ''

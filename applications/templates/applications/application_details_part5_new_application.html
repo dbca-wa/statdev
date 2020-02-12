@@ -417,11 +417,12 @@
                                     <label>Current Version of Report</label>
                                 </div>
                                 <div class="col-lg-9">
-                                    {% if object.document_new_draft %}
-                                            <A HREF='{{ object.document_new_draft.file_url }}' target="_draft_report_part_5" >Assessment Report Version 2.PDF</A>
+                                    {% if object.document_new_draft.exists %}
+                                           {% for doc in object.document_new_draft.all %}<a href="{{ doc.file_url }}">Assessment Report 2 - {{ doc }}</a><br>{% endfor %}
+
                                     {% else %}
-                                    {% if object.document_draft %}
-                                    <A HREF='{{ object.document_draft.file_url }}' target="_draft_report_part_5" >Assessment Report.PDF</A>
+                                    {% if object.document_draft.exists %}
+                                        {% for doc in object.document_draft.all %}<a href="{{ doc.file_url }}">Assessment Report - {{ doc }}</a><br>{% endfor %}
                                     {% else %}
                                     No Attachment
                                     {% endif %}
@@ -436,8 +437,8 @@
                                     <label>Swan River Trust Board Feedback</label>
                                 </div>
                                 <div class="col-lg-9">
-                                    {% if object.swan_river_trust_board_feedback %}
-                                    <A HREF='{{ object.swan_river_trust_board_feedback.file_url }}'>Feedback.PDF</A>
+                                    {% if object.swan_river_trust_board_feedback.exists %}
+                                       {% for doc in object.swan_river_trust_board_feedback.all %}<a href="{{ doc.file_url }}">Feedback - {{ doc }}</a><br>{% endfor %}
                                     {% else %}
                                     No Attachment
                                     {% endif %}
@@ -547,8 +548,8 @@
                                     Attach new version of draft report
                                 </div>
                                 <div class="col-lg-9">
-                                    {% if object.document_new_draft_v3 %}
-                                    <A HREF='{{ object.document_new_draft_v3.file_url }}'>Assessment Report Version 3.PDF</A>
+                                    {% if object.document_new_draft_v3.exists %}
+                                           {% for doc in object.document_new_draft_v3.all %}<a href="{{ doc.file_url }}">Assessment Report Version 3 - {{ doc }}</a><br>{% endfor %}
                                     {% else %}
                                     <A HREF="{% url 'application_update' object.pk %}">{% if may_update == "True" %}Attach File{% else %}No Attachment{% endif %}</A>
                                     {% endif %}
@@ -561,8 +562,8 @@
                                     Memo
                                 </div>
                                 <div class="col-lg-9">
-                                    {% if object.document_memo %}
-                                        <A HREF='{{ object.document_memo.file_url }}'>Memo.PDF</A>
+                                    {% if object.document_memo.exists %}
+                                        {% for doc in object.document_memo.all %}<a href="{{ doc.file_url }}">Memo - {{ doc }}</a><br>{% endfor %}
                                     {% else %}
                                         <A HREF="{% url 'application_update' object.pk %}">{% if may_update == "True" %}Attach File{% else %}No Attachment{% endif %}</A>
                                     {% endif %}
@@ -591,8 +592,8 @@
                                     Determination
                                 </div>
                                 <div class="col-lg-9">
-                                    {% if object.document_determination %}
-                                       <A HREF='{{ object.document_determination.file_url }}'>Determination.PDF</A>
+                                    {% if object.document_determination.exists %}
+                                       {% for doc in object.document_memo_exists.all %}<a href="{{ doc.file_url }}">Determination - {{ doc }}</a><br>{% endfor %}
                                     {% else %}
                                         <A HREF="{% url 'application_update' object.pk %}">{% if may_update == "True" %}Attach File{% else %}No Attachment{% endif %}</A>
                                     {% endif %}
@@ -605,8 +606,8 @@
                                     Briefing Note
                                 </div>
                                 <div class="col-lg-9">
-									{% if object.document_briefing_note %}
-                                       <A HREF='{{ object.document_briefing_note.file_url }}'>Briefing.PDF</A>
+			            {% if object.document_briefing_note.exists %}
+                                          {% for doc in object.document_briefing_note.all %}<a href="{{ doc.file_url }}">Briefing - {{ doc }}</a><br>{% endfor %}
                                     {% else %}
                                         <A HREF="{% url 'application_update' object.pk %}">{% if may_update == "True" %}Attach File{% else %}No Attachment{% endif %}</A>
                                     {% endif %}
@@ -618,9 +619,8 @@
                                    	Final Report
                                 </div>
                                 <div class="col-lg-9">
-									{% if object.document_final_signed %}
-                                    <A HREF='{{ object.document_final_signed.file_url }}'>Signed Document.pdf</A>
-
+				    {% if object.document_final_signed.exists %}
+                                          {% for doc in object.document_final_signed.all %}<a href="{{ doc.file_url }}">Signed Document - {{ doc }}</a><br>{% endfor %}
                                     {% else %}
                                             No Attachment
                                     {% endif %}

@@ -52,6 +52,7 @@ from ledger.basket.models import Basket
 from applications.invoice_pdf import create_invoice_pdf_bytes
 from ledger.payments.mixins import InvoiceOwnerMixin
 from django.views.generic.base import View, TemplateView
+import pathlib
 
 class HomePage(TemplateView):
     # preperation to replace old homepage with screen designs..
@@ -2954,21 +2955,32 @@ class ReferralConditions(UpdateView):
         referral.response_date = date.today() 
         referral.status = Referral.REFERRAL_STATUS_CHOICES.responded
 
-        records = referral.records.all()
-        for la_co in records:
-            if 'records-clear_multifileid-' + str(la_co.id) in form.data:
-                referral.records.remove(la_co)
+#        records = referral.records.all()
+#        for la_co in records:
+#            if 'records-clear_multifileid-' + str(la_co.id) in form.data:
+#                referral.records.remove(la_co)
 
-        if self.request.FILES.get('records'):
-            if Attachment_Extension_Check('multi', self.request.FILES.getlist('records'), None) is False:
-                raise ValidationError('Documents attached contains and unallowed attachment extension.')
 
-            for f in self.request.FILES.getlist('records'):
-                doc = Record()
-                doc.upload = f
-                doc.name = f.name
-                doc.save()
-                referral.records.add(doc)
+
+        if 'records_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['records_json'])
+             referral.records.remove()
+             for d in referral.records.all():
+                 referral.records.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 referral.records.add(doc)
+
+#        if self.request.FILES.get('records'):
+#            if Attachment_Extension_Check('multi', self.request.FILES.getlist('records'), None) is False:
+#                raise ValidationError('Documents attached contains and unallowed attachment extension.')
+#
+#            for f in self.request.FILES.getlist('records'):
+#                doc = Record()
+#                doc.upload = f
+#                doc.name = f.name
+#                doc.save()
+#                referral.records.add(doc)
         referral.save()
 
         refnextaction = Referrals_Next_Action_Check()
@@ -3720,7 +3732,9 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
                 context['local_government_authority'] = LocObj.local_government_authority
         except ObjectDoesNotExist:
             donothing = ''
-
+        context['application_approval'] = " fdadsfdsa"
+        if Approval.objects.filter(application=app).count() > 0:
+              context['application_approval'] = Approval.objects.filter(application=app)[0]
 
         return context
 
@@ -4080,8 +4094,14 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
             multifilelist.append(fileitem)
         initial['supporting_info_demonstrate_compliance_trust_policies'] = multifilelist
 
+        if app.approval_document_signed:
+            initial['approval_document_signed'] = app.approval_document_signed
 
+        if app.approval_document:
+            initial['approval_document'] = app.approval_document
 
+#        if Approval.objects.filter(application=app).count() > 1:
+#              initial['application_approval'] = Approval.objects.filter(application=app)
 
         #initial['publication_newspaper'] = PublicationNewspaper.objects.get(application_id=self.object.id)
 
@@ -4221,6 +4241,7 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
              for i in json_data:
                  doc = Record.objects.get(id=i['doc_id'])
                  self.object.document_final.add(doc)
+
 
 
         if 'safety_mgmt_procedures_json' in self.request.POST:
@@ -4363,6 +4384,21 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
              for i in json_data:
                  doc = Record.objects.get(id=i['doc_id'])
                  self.object.document_draft.add(doc)
+
+
+        if 'approval_document_json' in self.request.POST:
+           self.object.approval_document = None
+           if is_json(self.request.POST['approval_document_json']) is True:
+                json_data = json.loads(self.request.POST['approval_document_json'])
+                new_doc = Record.objects.get(id=json_data['doc_id'])
+                self.object.approval_document = new_doc
+
+        if 'approval_document_signed_json' in self.request.POST:
+           self.object.approval_document_signed = None
+           if is_json(self.request.POST['approval_document_signed_json']) is True:
+                json_data = json.loads(self.request.POST['approval_document_signed_json'])
+                new_doc = Record.objects.get(id=json_data['doc_id'])
+                self.object.approval_document_signed = new_doc
 
 
         if 'certificate_of_title_volume' in forms_data:
@@ -4943,6 +4979,8 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
                 self.draft_completed(app)
             if 'final_completed' in route['process']:
                 self.final_completed(app)
+            if 'temp_approval' in route['process']:
+                self.temp_approval(app)
 
         # Record an action on the application:
         action = Action(
@@ -5058,21 +5096,80 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
          sendHtmlEmail([app.submitted_by.email], Application.APP_TYPE_CHOICES[app.app_type]+' application declined - '+str(app.id), emailcontext, 'application-declined.html', None, None, None)
 
 
+    def temp_approval(self,app):
+        approval = Approval.objects.create(
+                                  app_type=app.app_type,
+                                  title=app.title,
+                                  applicant=app.applicant,
+                                  organisation=app.organisation,
+                                  application=app,
+                                  start_date=app.assessment_start_date,
+                                  expiry_date=app.expire_date,
+                                  status=7
+                                  )
+
+    def complete_application_part5(self,app):
+
+        if Approval.objects.filter(application=app).count() > 0:
+              approval = Approval.objects.filter(application=app)[0]
+              approval.approval_document = app.approval_document_signed 
+              approval.save()
+
+
     def complete_application(self,app): 
         """Once and application is complete and approval needs to be created in the approval model.
         """
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   
-        approval = Approval.objects.create(
-                                          app_type=app.app_type,
-                                          title=app.title,
-                                          applicant=app.applicant,
-                                          organisation=app.organisation,
-                                          application=app,
-                                          start_date=app.assessment_start_date,
-                                          expiry_date=app.expire_date,
-                                          status=1
-                                          )
 
+        approval = None
+        if Approval.objects.filter(application=app).count() > 0:
+              from django.core.files.base import ContentFile
+              from django.core.files.base import File 
+              approval = Approval.objects.filter(application=app)[0]
+              print (app.approval_document_signed.upload.path)
+              r = Record.objects.create(upload=app.approval_document_signed.upload.path, 
+                                        name=app.approval_document_signed.name, 
+                                        category=9, 
+                                        metadata=app.approval_document_signed.metadata,
+                                        text_content=app.approval_document_signed.text_content,
+                                        file_group=2005,
+                                        file_group_ref_id=approval.id, 
+                                        extension=app.approval_document_signed.extension
+                                       ) 
+
+              import pathlib
+              app_file_bytes = pathlib.Path(os.path.join(app.approval_document_signed.upload.path)).read_bytes()
+
+              #app_file = open(os.path.join(app.approval_document_signed.upload.path), 'rb'             )
+              #with open(os.path.join(app.approval_document_signed.upload.path), "rb") as f:
+              #f = open(os.path.join(app.approval_document_signed.upload.path), "rb")
+              #     app_file_bytes = f.read(1)
+              #     while app_file_bytes != "":
+              #         # Do stuff with byte.
+              #         app_file_bytes = f.read(1)
+
+              #app_file_bytes = app_file.encode(encoding='UTF-8')
+
+
+              r.upload.save(app.approval_document_signed.name, ContentFile(app_file_bytes), save=False)
+
+              approval.approval_document = r
+              approval.status = 1
+              approval.save()
+              
+
+        else:
+             approval = Approval.objects.create(
+                                               app_type=app.app_type,
+                                               title=app.title,
+                                               applicant=app.applicant,
+                                               organisation=app.organisation,
+                                               application=app,
+                                               start_date=app.assessment_start_date,
+                                               expiry_date=app.expire_date,
+                                               status=1
+                                               )
+     
         emailcontext = {}
         emailcontext['app'] = app
         emailcontext['approval'] = approval
@@ -5096,21 +5193,19 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
            emailcontext['approval'] = approval
            sendHtmlEmail([app.submitted_by.email], 'Licence Permit - '+app.title, emailcontext, 'application-licence-permit-proposal.html', None, None, None, approval_pdf)
         elif app.app_type == 3:
-           # Licence Proposal
-           pdftool.generate_part5(approval)
-           location_count = Location.objects.filter(application=app).count()
-           location = ''
-           if location_count > 0:
-              location = Location.objects.filter(application=app)[0].location
-           applicant = ''
-           if app.organisation:
-                 applicant = app.organisation.name
-           else:
-                 if app.applicant:
-                     applicant = app.applicant.first_name+' '+app.applicant.last_name
- 
+
            emailcontext['person'] = app.submitted_by
-           sendHtmlEmail([app.submitted_by.email], 'Determination - Part 5 - '+str(app.id)+' - '+str(location)+' - '+applicant, emailcontext, 'application-determination.html', None, None, None, approval_pdf)
+           emailcontext['approval'] = approval
+           approval_pdf = approval.approval_document.upload.path
+           sendHtmlEmail([app.submitted_by.email], 'Part 5 - '+app.title, emailcontext, 'application-licence-permit-proposal.html', None, None, None, approval_pdf)
+
+        elif app.app_type == 6:            
+
+           emailcontext['person'] = app.submitted_by
+           emailcontext['approval'] = approval
+           approval_pdf = approval.approval_document.upload.path
+           sendHtmlEmail([app.submitted_by.email], 'Section 84 - '+app.title, emailcontext, 'application-licence-permit-proposal.html', None, None, None, approval_pdf)
+
         elif app.app_type == 10 or app.app_type == 11:
            # Permit & Licence Renewal 
            emailcontext['person'] = app.submitted_by
@@ -9025,6 +9120,7 @@ class OrganisationOther(LoginRequiredMixin, DetailView):
                  for app in approval:
                      row = {}
                      row['app'] = app
+                     row['approval_url'] = app.approval_url
                      if app.applicant:
                          if app.applicant.id in context['app_applicants']:
                              donothing = ''
@@ -9757,27 +9853,46 @@ def getPDFapplication(request,application_id):
 
 
 def getAppFile(request,file_id,extension):
-
+  allow_access = False
   #if request.user.is_superuser:
   file_record = Record.objects.get(id=file_id)
   app_id = file_record.file_group_ref_id 
 
   app = Application.objects.get(id=app_id)
+  if file_record.file_group > 0 and file_record.file_group < 12:
+      if app.id == file_record.file_group_ref_id:
+            flow = Flow()
+            workflowtype = flow.getWorkFlowTypeFromApp(app)
+            flow.get(workflowtype)
+            flowcontext = {}
+            if app.assignee:
+                flowcontext['application_assignee_id'] = app.assignee.id
+            if app.submitted_by:
+                flowcontext['application_submitter_id'] = app.submitted_by.id
+
+            #flowcontext['application_owner'] = app.
+            flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, workflowtype)
+            print (flowcontext['allow_access_attachments'])
+            if flowcontext['allow_access_attachments'] == "True":
+                allow_access = True
+
+  
+  if allow_access == True:
+      file_record = Record.objects.get(id=file_id)
+      file_name_path = file_record.upload.path
+      if os.path.isfile(file_name_path) is True:
+              the_file = open(file_name_path, 'rb')
+              the_data = the_file.read()
+              the_file.close()
+              if extension == 'msg': 
+                  return HttpResponse(the_data, content_type="application/vnd.ms-outlook")
+              if extension == 'eml':
+                  return HttpResponse(the_data, content_type="application/vnd.ms-outlook")
 
 
-  file_record = Record.objects.get(id=file_id)
-  file_name_path = file_record.upload.path
-  if os.path.isfile(file_name_path) is True:
-          the_file = open(file_name_path, 'rb')
-          the_data = the_file.read()
-          the_file.close()
-          if extension == 'msg': 
-              return HttpResponse(the_data, content_type="application/vnd.ms-outlook")
-          if extension == 'eml':
-              return HttpResponse(the_data, content_type="application/vnd.ms-outlook")
-
-
-          return HttpResponse(the_data, content_type=mimetypes.types_map['.'+str(extension)])
+              return HttpResponse(the_data, content_type=mimetypes.types_map['.'+str(extension)])
+  else:
+              return
 
 
 

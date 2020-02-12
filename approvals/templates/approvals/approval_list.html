@@ -128,13 +128,13 @@
 								<td>{{ app_obj.app.get_status_display }}</td>
 								<td>{{ app_obj.app.start_date|date:"d-M-Y" }}</td>
 								<td>{{ app_obj.app.expiry_date|date:"d-M-Y" }}</td>
-								<td align='center' valign='center'><A HREF='{% url "approvals_view_pdf" app_obj.app.pk %}'><img src='{% static "images/pdf.png" %}' title="Click to Download PDF"></A></td>
+								<td align='center' valign='center'>{% if app_obj.approval_url %}<A HREF='{{ app_obj.approval_url }}'><img src='{% static "images/pdf.png" %}' title="Click to Download PDF"></A>{% endif %}</td>
 								<td>
 									<ul class="nav navbar-nav">
 										<li class="dropdown">
 											<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true">Actions<span class="caret"></span></a>
 											<ul class="dropdown-menu" role="menu">
-                                                                                                <li><a href="{% url 'approval_detail' app_obj.app.pk %}">View Approval</a></li>
+                                                                                                <li><a href="{{ app_obj.approval_url }}">View Approval</a></li>
                                                                                                 <li><a href="{% url 'application_detail' app_obj.app.application.id %}">View Application</a></li>
                                                                                                 {% if app_obj.app.status == 1 %}
 												{% if app_obj.app.app_type == 3 %}

@@ -136,7 +136,8 @@ class Flow():
             context['may_assign_to_person'] = "False"
         if "may_payment" not in context:
             context['may_payment'] = "False"
-
+        if "allow_access_attachments" not in context:
+            context['allow_access_attachments'] = "False"       
 
         # Form Components
         if "form_component_update" not in context:
@@ -153,10 +154,21 @@ class Flow():
     def getAccessRights(self,request,context,route,flow):
         context = self.setAccessDefaults(context)
         context = self.getAllGroupAccess(request,context,route)
+        if context['application_assignee_id'] is None:
+              context['application_assignee_id'] = -100000
+        if context['application_submitter_id'] is None:
+              context['application_submitter_id'] = -100000
+        print ("REQIEST ID")
+        print (request.user)
+        print (request.user.id)
+        print (context['application_assignee_id'])
+        print (context['application_submitter_id'])
         if context['application_assignee_id'] == request.user.id:
             context = self.getAssignToAccess(context,route)
+            print ("ASSSI")
         if context['application_submitter_id'] == request.user.id:
             context = self.getSubmitterAccess(context,route)
+            print ("Submit")
         if context['application_owner'] is True:
             context = self.getOwnerAccess(context,route)
         return context

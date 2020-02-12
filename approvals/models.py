@@ -19,7 +19,8 @@ class Approval(models.Model):
         (3, 'cancelled', ('Cancelled')),
         (4, 'surrendered', ('Surrendered')),
         (5, 'suspended', ('Suspended')),
-        (6, 'reinstate', ('Reinstate'))
+        (6, 'reinstate', ('Reinstate')),
+        (7, 'pending', ('Pending')),
      )
 
      app_type = models.IntegerField(choices=Application.APP_TYPE_CHOICES)
@@ -39,6 +40,17 @@ class Approval(models.Model):
      cancellation_date = models.DateField(null=True, blank=True)
      surrender_date = models.DateField(null=True, blank=True)
      details = models.TextField(null=True, blank=True)
+
+     @property
+     def approval_url(self):
+        print ("APPROVAL URL")
+        if self.app_type == 3 or self.app_type == 6:
+               if self.approval_document:
+                   return ("/private-media/view/"+str(self.approval_document.id)+"-file"+str(self.approval_document.extension)) 
+               return None 
+        else:
+           return str("/approvals/viewpdf-"+str(self.id)+".pdf")
+
 
      def __str__(self):
         return 'Approvals {}: {} - {} ({})'.format(

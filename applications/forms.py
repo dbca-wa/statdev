@@ -1313,11 +1313,12 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
     river_lease_require_river_lease = ChoiceField(choices=Application.APP_YESNO ,widget=RadioSelect(attrs={'class':'radio-inline'}), label='Does the development require a River reserve lease?')
     river_lease_reserve_licence = ChoiceField(choices=Application.APP_YESNO ,widget=RadioSelect(attrs={'class':'radio-inline'}), label='Does the proposed development involve an activity in the River reserve that will require a River reserve licence?')
     river_lease_application_number = CharField(required=False, label='Application number')
-
+    approval_document = FileField(required=False, max_length=128, widget=AjaxFileUploader(attrs={}), label='New Approval')
+    approval_document_signed = FileField(required=False, max_length=128, widget=AjaxFileUploader(attrs={}), label='Approval Document Signed')
 
     class Meta:
         model = Application
-        fields = ['applicant','title', 'description','cost', 'river_lease_require_river_lease','river_lease_reserve_licence','river_lease_application_number','proposed_development_description','proposed_development_current_use_of_land','assessment_start_date']
+        fields = ['applicant','title', 'description','cost', 'river_lease_require_river_lease','river_lease_reserve_licence','river_lease_application_number','proposed_development_description','proposed_development_current_use_of_land','assessment_start_date','landowner','land_description','approval_document','approval_document_signed']
 
     def __init__(self, *args, **kwargs):
         super(ApplicationPart5Form, self).__init__(*args, **kwargs)
@@ -1478,7 +1479,6 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
                     donothing =''
      
                  crispy_boxes.append(HTML('{% include "applications/application_deed.html" %}'))
-
         # publication
 #       if 'hide_form_buttons' in self.initial["workflow"]["hidden"]:
         if self.initial["workflow"]["hidden"]["publication"] == 'False':
@@ -1508,6 +1508,48 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
 
         if check_fields_exist(self.fields,["document_briefing_note","document_determination"]) is True and may_update == "True":
             crispy_boxes.append(crispy_box('determination_collapse','form_determination','Attached Deterimination & Breifing Notes','document_briefing_note','document_determination'))
+
+        if "landowner_information" in self.initial["workflow"]["hidden"]:
+             if self.initial["workflow"]["hidden"]["landowner_information"] == 'False':
+                  # Landowner Information 
+                  if check_fields_exist(self.fields,['landowner']) is True and may_update == "True":
+                      crispy_boxes.append(crispy_box('landowner_info_collapse', 'form_landowner_info' , 'Landowner Information','landowner','land_description'))
+                  else:
+                      try:
+                         del self.fields['landowner']
+                         del self.fields['landowner_description']
+                      except:
+                         donothing =''
+
+                      #crispy_boxes.append(HTML('{% include "applications/application_deed.html" %}'))
+
+
+        if "approval_document" in self.initial["workflow"]["hidden"]:
+             if self.initial["workflow"]["hidden"]["approval_document"] == 'False':
+                  # Landowner Information
+                  if check_fields_exist(self.fields,['approval_document']) is True and may_update == "True":
+                      crispy_boxes.append(crispy_box('approval_document_info_collapse', 'form_approval_document_info' , 'Approval Document',HTML('{% include "applications/application_approval.html" %}'),'approval_document'))
+                      pass
+                  else:
+                      try:
+                         del self.fields['approval_document']
+                      except:
+                         donothing =''
+
+        if "approval_document_signed" in self.initial["workflow"]["hidden"]:
+             if self.initial["workflow"]["hidden"]["approval_document_signed"] == 'False':
+                  # Landowner Information
+                  if check_fields_exist(self.fields,['approval_document_signed']) is True and may_update == "True":
+                      crispy_boxes.append(crispy_box('approval_document_signed_info_collapse', 'form_approval_document_signed_info' , 'Approval Document Unsigned',HTML('{% include "applications/application_approval_unsigned.html" %}'),'approval_document_signed'))
+                      pass
+                  else:
+                      try:
+                         del self.fields['approval_document_signed']
+                      except:
+                         donothing =''
+
+                      #crispy_boxes.append(HTML('{% include "applications/application_deed.html" %}'))
+
  
         if check_fields_exist(self.fields,['document_determination_approved']) is True and may_update == "True":
             crispy_boxes.append(crispy_box('determination_approved_collapse','form_determination_approved','Determination Approved','document_determination_approved'))
@@ -1650,8 +1692,9 @@ class ApplicationReferralConditionsPart5(ModelForm):
 
     comments = CharField(required=False,max_length=255, widget=Textarea)
     proposed_conditions = CharField(required=False,max_length=255, widget=Textarea)
-    records = FileField(required=False, max_length=128, widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'})) 
+    #records = FileField(required=False, max_length=128, widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'})) 
     #records = FileField(required=False, max_length=128, widget=AjaxClearableFileInput())
+    records = FileField(required=False, max_length=128, widget=AjaxFileUploader(attrs={})) 
 
     class Meta:
         model = Application

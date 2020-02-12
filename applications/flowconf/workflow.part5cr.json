@@ -81,7 +81,8 @@
             "may_issue": "False",
             "may_generate_pdf": "False",
             "may_assign_to_creator": "False",
-            "show_form_buttons": "True"
+            "show_form_buttons": "True",
+            "allow_access_attachments": "True"
         },
         "groupaccess": {
             "Processor": {
@@ -95,7 +96,8 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "may_assign_to_creator": "False"
+                "may_assign_to_creator": "False",
+                "allow_access_attachments": "True"
             }
         },
         "collapse": {
@@ -136,7 +138,12 @@
             "document_briefing_note" : "hide",
             "document_determination_approved" :"hide",
             "assessment_start_date" : "hide",
-            "document_draft" : "hide"
+            "document_draft" : "hide",
+            "landowner": "hide",
+            "land_description": "hide",
+            "approval_document" : "hide",
+            "approval_document_signed" : "hide"
+
         }
     },
     "2": {
@@ -209,7 +216,8 @@
                 "show_form_buttons": "True",
                 "may_assign_to_person": "True",
                 "may_create_condition":"True",
-                "may_update_condition": "True"
+                "may_update_condition": "True",
+                "allow_access_attachments": "True"
             },
             "Statdev Approver": {
                 "may_update": "False",
@@ -224,7 +232,8 @@
                 "may_generate_pdf": "False",
                 "may_view_action_log": "True",
                 "may_view_comm_log": "True",
-                "allow_admin_side_menu" : "True"
+                "allow_admin_side_menu" : "True",
+                "allow_access_attachments": "True"
             },
             "Statdev Director": {
                 "may_update": "False",
@@ -239,7 +248,8 @@
                 "may_generate_pdf": "False",
                 "may_view_action_log": "True",
                 "allow_admin_side_menu" : "True",
-                "may_view_comm_log": "True"
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
             },
             "Statdev Executive": {
                 "may_update": "False",
@@ -254,7 +264,8 @@
                 "may_generate_pdf": "False",
                 "may_view_action_log": "True",
                 "allow_admin_side_menu" : "True",
-                "may_view_comm_log": "True"
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
             },
             "Statdev Processor": {
                 "may_update": "False",
@@ -270,7 +281,8 @@
                 "may_view_action_log": "True",
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
-                "allow_admin_side_menu" : "True"
+                "allow_admin_side_menu" : "True",
+                "allow_access_attachments": "True"
             }
 
 
@@ -313,7 +325,12 @@
             "document_briefing_note" : "hide",
             "document_determination_approved" :"hide",
             "assessment_start_date" : "hide",
-            "document_draft" : "hide"
+            "document_draft" : "hide",
+            "landowner": "hide",
+            "land_description": "hide",
+            "approval_document" : "hide",
+            "approval_document_signed" : "hide"
+
         }
     },
     "3": {
@@ -342,7 +359,8 @@
                 "may_issue": "False",
                 "may_generate_pdf": "False",
                 "may_assign_assessor": "True",
-                "may_assign_to_person" : "False"
+                "may_assign_to_person" : "False",
+                "allow_access_attachments": "True"
 
             },
             "Assessor": {
@@ -355,7 +373,8 @@
                 "may_create_condition":"False",
                 "may_submit_approval": "False",
                 "may_issue": "False",
-                "may_generate_pdf": "False"
+                "may_generate_pdf": "False",
+                "allow_access_attachments": "True"
 
             },
             "Approver": {
@@ -368,7 +387,8 @@
                 "may_create_condition":"False",
                 "may_submit_approval": "False",
                 "may_issue": "False",
-                "may_generate_pdf": "False"
+                "may_generate_pdf": "False",
+                "allow_access_attachments": "True"
             }
         },
         "collapse": {
@@ -410,7 +430,8 @@
             "may_submit_approval": "False",
             "may_issue": "False",
             "may_generate_pdf": "False",
-            "may_assign_to_creator": "False"
+            "may_assign_to_creator": "False",
+            "allow_access_attachments": "True"
         },
         "groupaccess": {
             "Processor": {
@@ -424,7 +445,8 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "may_assign_to_creator": "False"
+                "may_assign_to_creator": "False",
+                "allow_access_attachments": "True"
             }
         },
         "collapse": {

@@ -102,6 +102,7 @@ class ApprovalList(ListView):
         for app in objlist.order_by('title'):
             row = {}
             row['app'] = app
+            row['approval_url'] = app.approval_url
         #    if app.group is not None:
 
             if app.applicant:
@@ -290,7 +291,9 @@ def getPDF(request,approval_id):
       #app = ApprovalModel.objects.get(id=approval_id)
       BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
       filename = BASE_DIR+'/pdfs/approvals/'+str(app.id)+'-approval.pdf'
-      if os.path.isfile(filename) is False:
+
+      if app.status == 7 or os.path.isfile(filename) is False:
+      #if os.path.isfile(filename) is False:
 #      if app.id:
           pdftool = PDFtool()
           if app.app_type == 1:
@@ -301,7 +304,7 @@ def getPDF(request,approval_id):
               pdftool.generate_part5(app)
           elif app.app_type == 4:
               pdftool.generate_emergency_works(app)
-          elif app.app_type == 5:
+          elif app.app_type == 6:
               pdftool.generate_section_84(app)
 
       if os.path.isfile(filename) is True:

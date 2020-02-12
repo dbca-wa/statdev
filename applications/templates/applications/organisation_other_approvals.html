@@ -92,7 +92,7 @@
                                 <td>{{ app_obj.app.get_status_display }}</td>
                                 <td>{{ app_obj.app.start_date|date:"d-M-Y" }}</td>
                                 <td>{{ app_obj.app.expiry_date|date:"d-M-Y" }}</td>
-                                <td align='center' valign='center'><img src='{% static "images/pdf.png" %}'></td>
+                                <td align='center' valign='center'>{% if app_obj.approval_url %}<A href='{{ app_obj.approval_url }}'><img src='{% static "images/pdf.png" %}'></a> {% endif %}</td>
                             </tr>
                             {% endfor %}
                         </tbody>

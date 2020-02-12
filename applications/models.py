@@ -50,6 +50,7 @@ class Record(models.Model):
         (2002, 'organisation', ('Organistion')),
         (2003, 'application_comms', ('Application Communication Logs')),    
         (2004, 'account_comms', ('Account Communication Logs')),
+        (2005, 'approval', ('Approval'))
         
     )
 
@@ -262,6 +263,10 @@ class Application(models.Model):
     route_status = models.CharField(null=True, blank=True, default='Draft', max_length=256)
     submitter_comment = models.TextField(null=True, blank=True, default='', max_length=1000)
     referral_comment = models.TextField(null=True, blank=True, default='', max_length=1000)
+    landowner = models.TextField(null=True, blank=True) 
+    land_description = models.TextField(null=True, blank=True)
+    approval_document = models.ForeignKey(Record, null=True, blank=True, related_name='application_approval_document')
+    approval_document_signed = models.ForeignKey(Record, null=True, blank=True, related_name='application_approval_document_signed')
 
     def __str__(self):
         return 'Application {}: {} - {} ({})'.format(

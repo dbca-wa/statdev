@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from .models import Location, Record, PublicationNewspaper, PublicationWebsite, PublicationFeedback,Referral,Application, Delegate, Compliance
+from .models import Location, Record, PublicationNewspaper, PublicationWebsite, PublicationFeedback,Referral,Application, Delegate, Compliance, Condition
 from django.utils.safestring import SafeText
 from django.contrib.auth.models import Group
 from django.db.models import Q
@@ -149,6 +149,36 @@ class PDFtool(FPDF):
 #        pdf.cell(6, 5, ' ',0,0,'L')
  #       pdf.cell(column1width, 5, column1 ,0,0,'L')
   #      pdf.cell(6, 5, column2 ,0,1,'L')
+        return pdf
+
+    def column_para_flexi(self,pdf,column1,column2,column1width,column1fs='',column2fs=''):
+        if column1width is None:
+           column1width = 60
+        current_font_family = pdf.font_family
+        current_font_size = pdf.font_size_pt
+        current_font_style = pdf.font_style
+
+        loop = 1
+        para_split =  textwrap.wrap(column2, 118 - column1width)
+        for p in para_split:
+
+            if loop > 1:
+                pdf.set_font('Arial', column1fs, current_font_size)
+                pdf.cell(6, 5, ' ',0,0,'L')
+                pdf.cell(column1width, 5, ' ' ,0,0,'L')
+                pdf.cell(6, 5, ' ',0,0,'L')
+                pdf.set_font(current_font_family,column2fs,current_font_size)
+                pdf.cell(6, 5, p ,0,1,'L')
+            else:
+                pdf.set_font('Arial', '', current_font_size)
+                pdf.cell(6, 5, ' ',0,0,'L')
+                pdf.cell(column1width, 5, column1 ,0,0,'L')
+                pdf.cell(6, 5, ':',0,0,'L')
+                pdf.set_font(current_font_family,column2fs,current_font_size)
+                pdf.cell(6, 5, p ,0,1,'L')
+            loop = loop + 1
+
+        pdf.set_font(current_font_family,current_font_style,current_font_size)
         return pdf
 
 
@@ -700,60 +730,41 @@ class PDFtool(FPDF):
          else:
              holder_name = app.applicant.first_name + ' ' + app.applicant.last_name
              holder_address = app.applicant.postal_address
-       
-         pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'APPLICANT',0,0,'L')
-         pdf.cell(6, 5, ':',0,0,'L')
-         pdf.cell(6, 5, holder_name,0,1,'L')
+         landowner = '----'
+         land_description = '----'
+         if app.application.landowner:
+                landowner = app.application.landowner
+         if app.application.land_description:
+                land_description = app.application.land_description
 
-         pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'APPLICANT\'S ADDRESS',0,0,'L')
-         pdf.cell(6, 5, ':',0,0,'L')
-         pdf.cell(6, 5, str(holder_address) ,0,1,'L')
 
-         #pdf.cell(6, 5, ' ',0,0,'L')
-         #pdf.cell(60, 5, 'LANDOWNER',0,0,'L')
-         #pdf.cell(6, 5, ':',0,0,'L')
-         #pdf.cell(6, 5, 'Bob Stans',0,1,'L')
+         pdf = self.column_para_flexi(pdf,'FILE NUMBER','AP-'+str(app.id),None)
+         pdf = self.column_para_flexi(pdf,'APPLICANT',holder_name,None)
+         pdf = self.column_para_flexi(pdf,'APPLICANT\'S ADDRESS',str(holder_address),None)
 
-         #pdf.cell(6, 5, ' ',0,0,'L')
-         #pdf.cell(60, 5, 'LAND DESCRIPTION',0,0,'L')
-         #pdf.cell(6, 5, ':',0,0,'L')
-         #pdf.cell(6, 5, 'Its a park',0,1,'L')
+         pdf = self.column_para_flexi(pdf,'LANDOWNER',landowner,None)
+         pdf = self.column_para_flexi(pdf,'LAND DESCRIPTION',land_description,None)
+         pdf = self.column_para_flexi(pdf,'DEVELOPMENT','yes developement allowed',None)
 
-         pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'DEVELOPMENT',0,0,'L')
-         pdf.cell(6, 5, ':',0,0,'L')
-         pdf.cell(6, 5, 'yes developement allowed',0,1,'L')
+         pdf = self.column_para_flexi(pdf,'VALID FORM 1 RECEIVED','Form 1 received yes',None)
+         pdf = self.column_para_flexi(pdf,'DETERMINATION','APPROVAL WITH CONDITIONS',None,'','B')
 
-         pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'VALID FORM 1 RECEIVED',0,0,'L')
-         pdf.cell(6, 5, ':',0,0,'L')
-         pdf.cell(6, 5, 'Form 1 received yes',0,1,'L')
-
-         pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'DETERMINATION',0,0,'L')
-         pdf.cell(6, 5, ':',0,0,'L')
-         pdf.set_font('Arial', 'B', 9)
-         pdf.cell(6, 5, 'APPROVAL WITH CONDITIONS',0,1,'L')
-         pdf.set_font('Arial', '', 9)
 
          # group spacer
          pdf.cell(0,5,' ', 0,1,'L')
 
          pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'The application to commence development in accordance with the information received on XX XX is',0,1,'L')
+         pdf.cell(60, 5, 'The application to commence development in accordance with the information received on '+app.application.submit_date.strftime("%d %b %Y")+' is',0,1,'L')
          pdf.cell(6, 5, ' ',0,0,'L')
          pdf.cell(60, 5, 'APPROVED subject to the following conditions:',0,1,'L')
          # group spacer
          pdf.cell(0,5,' ', 0,1,'L')
 
-         pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.set_font('Arial', 'B', 10)
-         pdf.cell(60, 5, 'Prior to the commencement of works',0,1,'L')
-         pdf.set_font('Arial', '', 9)
-
-         pdf.cell(0,2,' ', 0,1,'L')
+         #pdf.cell(6, 5, ' ',0,0,'L')
+         #pdf.set_font('Arial', 'B', 10)
+         #pdf.cell(60, 5, 'Prior to the commencement of works',0,1,'L')
+         #pdf.set_font('Arial', '', 9)
+         #pdf.cell(0,2,' ', 0,1,'L')
 
          pdf.cell(6, 5, ' ',0,0,'L')
          pdf.cell(10, 5, '1.',0,0,'L')
@@ -764,6 +775,31 @@ class PDFtool(FPDF):
          pdf.cell(6, 5, ' ',0,0,'L')
          pdf.cell(10, 5, ' ',0,0,'L')
          pdf.cell(60, 5, 'or completing the development.',0,1,'L')
+
+         # group spacer
+         pdf.cell(0,5,' ', 0,1,'L')
+
+         pdf.cell(6, 5, ' ',0,0,'L')
+         pdf.set_font('Arial', 'B', 9)
+         pdf.cell(60, 5, 'ADVISE TO APPLICANT',0,1,'L')
+         pdf.set_font('Arial', '', 9)
+
+         application_condition = Condition.objects.filter(application=app.application)
+
+         condition_count = 1
+         for c in application_condition:
+              #condition
+              pdf = self.column_para_no_seperator(pdf,str(condition_count)+'.', c.condition,10,1)
+              # group spacer
+              pdf.cell(0,5,' ', 0,1,'L')
+              #advise
+              pdf = self.column_para_no_seperator(pdf,'  ', c.advise,10,1)
+              pdf = self.space(pdf)
+              condition_count = condition_count + 1
+
+
+
+
 
          pdf.cell(0,30,' ', 0,1,'L')
          pdf.cell(6, 5, ' ',0,0,'L')
@@ -854,37 +890,36 @@ class PDFtool(FPDF):
 #         pdf.line(7, 110, 205, 110)
 
 
+         # group spacer
          pdf.cell(0,5,' ', 0,1,'L')
-         pdf.set_font('Arial', 'B', 10)
 
-         pdf.cell(30, 8, 'CONDITIONS',0,1,'L')
-         pdf.cell(10, 8, ' 1.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         pdf.cell(6, 5, ' ',0,0,'L')
+         pdf.set_font('Arial', 'B', 9)
+         pdf.cell(60, 5, 'ADVISE TO APPLICANT',0,1,'L')
+         pdf.set_font('Arial', '', 9)
 
-         pdf.cell(10, 8, ' 2.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         application_condition = Condition.objects.filter(application=app.application)
 
-         pdf.cell(10, 8, ' 3.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         condition_count = 1
+         for c in application_condition:
+              #condition
+              pdf = self.column_para_no_seperator(pdf,str(condition_count)+'.', c.condition,10,1)
+              # group spacer
+              pdf.cell(0,5,' ', 0,1,'L')
+              #advise
+              pdf = self.column_para_no_seperator(pdf,'  ', c.advise,10,1)
+              pdf = self.space(pdf)
+              condition_count = condition_count + 1
 
 
-         pdf.cell(30, 8, 'ADVICE TO APPLICANT',0,1,'L')
 
-         pdf.cell(10, 8, ' 1.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         pdf.cell(6, 5, ' ',0,0,'L')
+         pdf.set_font('Arial', 'B', 9)
+         pdf.cell(60, 5, 'PERMIT APPROVED',0,1,'L')
+         pdf.set_font('Arial', '', 9)
 
-         pdf.cell(10, 8, ' 2.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
-
-         pdf.cell(10, 8, ' 3.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
-
+         # group spacer
+         pdf.cell(0,5,' ', 0,1,'L')
 
          pdf.cell(0,15,' ', 0,1,'L')
          pdf.set_font('Arial', '', 10)
