@@ -1694,7 +1694,7 @@ class ApplicationReferralConditionsPart5(ModelForm):
     proposed_conditions = CharField(required=False,max_length=255, widget=Textarea)
     #records = FileField(required=False, max_length=128, widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'})) 
     #records = FileField(required=False, max_length=128, widget=AjaxClearableFileInput())
-    records = FileField(required=False, max_length=128, widget=AjaxFileUploader(attrs={})) 
+    records = FileField(required=False, max_length=128, widget=AjaxFileUploader(attrs={'multiple':'multiple'})) 
 
     class Meta:
         model = Application
@@ -1737,7 +1737,7 @@ class ApplicationReferralConditionsPart5(ModelForm):
             crispy_boxes.append(crispy_box('feedback_collapse','form_feecback','Feedback',crispy_para(self.initial['referral_name'] + ' (' + self.initial['referral_email'] + ') '),'comments','proposed_conditions','records',Submit('submitfeedback', 'Submit', css_class='btn-lg')))
         else:
             if self.initial['referral_status'] != 5:
-                crispy_boxes.append(crispy_box('feedback_completed_collapse','form_completed_feecback','Feedback Completed',crispy_para_with_label('Comments',self.initial['comments']),crispy_para_with_label('Proposed Conditions',self.initial['proposed_conditions'])))
+                crispy_boxes.append(crispy_box('feedback_completed_collapse','form_completed_feecback','Feedback Completed',crispy_para_with_label('Comments',self.initial['comments']),crispy_para_with_label('Proposed Conditions',self.initial['proposed_conditions']),  HTML('{% include "public/referral_attachments.html" %}')))
 
         self.helper = BaseFormHelper()
         self.helper.layout = Layout(crispy_boxes,)

@@ -2894,6 +2894,20 @@ class ReferralConditions(UpdateView):
         context['left_sidebar'] = 'yes'
         #context['action'] = self.kwargs['action']
         app = self.get_object()
+
+        referral = Referral.objects.get(application=app,referee=self.request.user)
+        multifilelist = []
+        a1 = referral.records.all()
+        for b1 in a1:
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['extension']  = b1.extension
+            fileitem['file_url'] = b1.file_url()
+            fileitem['file_name'] = b1.name
+            multifilelist.append(fileitem)
+        context['records'] = multifilelist
+
         context['referral']  = Referral.objects.get(application=app,referee=self.request.user)
         return context
 
@@ -2964,10 +2978,13 @@ class ReferralConditions(UpdateView):
 
         if 'records_json' in self.request.POST:
              json_data = json.loads(self.request.POST['records_json'])
+             print (json_data)
              referral.records.remove()
              for d in referral.records.all():
                  referral.records.remove(d)
              for i in json_data:
+                 print ("RECORD REFERRALS")
+                 print (i)
                  doc = Record.objects.get(id=i['doc_id'])
                  referral.records.add(doc)
 
@@ -9857,9 +9874,10 @@ def getAppFile(request,file_id,extension):
   #if request.user.is_superuser:
   file_record = Record.objects.get(id=file_id)
   app_id = file_record.file_group_ref_id 
+  app_group = file_record.file_group
 
-  app = Application.objects.get(id=app_id)
-  if file_record.file_group > 0 and file_record.file_group < 12:
+  if (file_record.file_group > 0 and file_record.file_group < 12) or (file_record.file_group == 2003):
+      app = Application.objects.get(id=app_id)
       if app.id == file_record.file_group_ref_id:
             flow = Flow()
             workflowtype = flow.getWorkFlowTypeFromApp(app)
@@ -9872,10 +9890,25 @@ def getAppFile(request,file_id,extension):
 
             #flowcontext['application_owner'] = app.
             flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, workflowtype)
-            print (flowcontext['allow_access_attachments'])
             if flowcontext['allow_access_attachments'] == "True":
                 allow_access = True
+            if allow_access is False:
+                refcount = Referral.objects.filter(application=app,referee=request.user).exclude(status=5).count()
+                if refcount == 1:
+                   ref = Referral.objects.filter(application=app,referee=request.user).exclude(status=5)[0]
+                   for i in ref.records.all():
+                       if int(file_id) == i.id:
+                          allow_access = True
+ 
 
+  if file_record.file_group == 2005:
+      app = Approval.objects.get(id=app_id)
+      if app.applicant:
+           if app.applicant.id == request.user.id or request.user.is_staff is True:
+                  allow_access = True
+
+  
+ 
   
   if allow_access == True:
       file_record = Record.objects.get(id=file_id)

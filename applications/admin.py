@@ -11,7 +11,7 @@ from .models import (
 
 @register(Record)
 class RecordAdmin(ModelAdmin):
-    list_display = ('name', 'category', 'upload')
+    list_display = ('name', 'category', 'file_group','file_group_ref_id', 'upload')
     list_filter = ('category',)
     search_fields = ('name',)
 

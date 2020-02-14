@@ -21,6 +21,7 @@
                                                 <td>{{ ref.feedback }}</td>
                                                 <td>{{ ref.proposed_conditions }}</td>
                                                 <td>
+
                                                       {% if ref.records.exists %}
                                                                  {% for doc in ref.records.all %}
                                                                          <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target='comms_attachment_{{ doc.id }}'>{{ doc.name }}</A></div>
