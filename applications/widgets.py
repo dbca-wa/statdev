@@ -587,3 +587,28 @@ class RadioSelectWithCaptions(RendererMixin, Select):
     renderer = RadioFieldRenderer
     _empty_value = ''
 
+
+#class CaptchaImages(Widget):
+#
+#     #def __str__(self):
+#     #   return self.render()
+#
+#     def __init__(self, *args, **kwargs):
+#         pass
+#         #self.name = name
+#         #self.value = value
+#         self.attrs = {'test': 'test'} 
+#         print ("INITIAL")
+#         print (self)
+#
+#
+#     def render(self, name, value, *args, **kwargs):
+#     #def render(self, name=None, value=None, attrs=None, caption=None):
+#
+#         print ("RENDER 1")
+#         print (self.attrs)
+#         print (name)
+#         print (value) 
+#         return format_html("HELLO THIS IS IMAGE <input type='' name='"+name+"'>")
+
+

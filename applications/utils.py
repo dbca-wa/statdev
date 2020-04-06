@@ -8,7 +8,9 @@ from oscar.apps.order.models import Order
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
-
+from django.contrib import messages
+from applications.email import sendHtmlEmail, emailGroup, emailApplicationReferrals
+from applications import models
 import random
 import re
 import string
@@ -116,4 +118,28 @@ def checkout(request, booking, lines, invoice_text=None, vouchers=[], internal=F
     #    )
 
     return response
+
+
+def application_lodgment_info(request,app):
+
+        # Success message.
+        msg = """Your {0} application has been successfully submitted. The application
+        number is: <strong>WO-{1}</strong>.<br>
+        Please note that routine applications take approximately 4-6 weeks to process.<br>
+        If any information is unclear or missing, Parks and Wildlife may return your
+        application to you to amend or complete.<br>
+        The assessment process includes a 21-day external referral period. During this time
+        your application may be referred to external departments, local government
+        agencies or other stakeholders. Following this period, an internal report will be
+        produced by an officer for approval by the Manager, Rivers and Estuaries Division,
+        to determine the outcome of your application.<br>
+        You will be notified by email once your {0} application has been determined and/or
+        further action is required.""".format(app.get_app_type_display(), app.pk)
+        messages.success(request, msg)
+        emailcontext = {}
+        emailcontext['app'] = app
+        emailcontext['application_name'] = models.Application.APP_TYPE_CHOICES[app.app_type]
+        emailcontext['person'] = app.submitted_by
+        emailcontext['body'] = msg
+        sendHtmlEmail([app.submitted_by.email], emailcontext['application_name'] + ' application submitted ', emailcontext, 'application-lodged.html', None, None, None)
 

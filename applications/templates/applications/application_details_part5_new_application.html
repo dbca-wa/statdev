@@ -23,6 +23,7 @@
 <div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>&nbsp;&nbsp;{{ object.submitter_comment }}</div>
 {% endif %}
 {% endif %}
+
             <!-- Applicant panel -->
             {% if hidden.applicant == "False" %}
             <div class="panel panel-default">
@@ -351,6 +352,7 @@
                 </div>
             </div>
             {% endif %}
+            {% if is_staff == True %}
             {% if hidden.deed == "False" %}
             <div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="deed_heading">
@@ -642,6 +644,7 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
             {% endif %}
 
 <script>

@@ -2319,7 +2319,7 @@ class ApplicationDetail(DetailView):
 
         context['may_update'] = "False"
         context['allow_admin_side_menu'] = "False"
-
+        context['is_staff'] = self.request.user.is_staff
         # if app.group is not None:
         emailcontext = {'user': 'Jason'}
         if  Location.objects.filter(application_id=self.object.id).exists(): 
@@ -9690,26 +9690,28 @@ class BookingSuccessView(TemplateView):
             app.route_status = flow.json_obj[route["route"]]['title']
             app.save()
 
-        # Success message.
-        msg = """Your {0} application has been successfully submitted. The application
-        number is: <strong>WO-{1}</strong>.<br>
-        Please note that routine applications take approximately 4-6 weeks to process.<br>
-        If any information is unclear or missing, Parks and Wildlife may return your
-        application to you to amend or complete.<br>
-        The assessment process includes a 21-day external referral period. During this time
-        your application may be referred to external departments, local government
-        agencies or other stakeholders. Following this period, an internal report will be
-        produced by an officer for approval by the Manager, Rivers and Estuaries Division,
-        to determine the outcome of your application.<br>
-        You will be notified by email once your {0} application has been determined and/or
-        further action is required.""".format(app.get_app_type_display(), app.pk)
-        messages.success(self.request, msg)
-        emailcontext = {}
-        emailcontext['app'] = app
-        emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
-        emailcontext['person'] = app.submitted_by
-        emailcontext['body'] = msg
-        sendHtmlEmail([app.submitted_by.email], emailcontext['application_name'] + ' application submitted ', emailcontext, 'application-lodged.html', None, None, None)
+        
+        utils.application_lodgment_info(self.request,app)
+        ## Success message.
+        #msg = """Your {0} application has been successfully submitted. The application
+        #number is: <strong>WO-{1}</strong>.<br>
+        #Please note that routine applications take approximately 4-6 weeks to process.<br>
+        #If any information is unclear or missing, Parks and Wildlife may return your
+        #application to you to amend or complete.<br>
+        #The assessment process includes a 21-day external referral period. During this time
+        #your application may be referred to external departments, local government
+        #agencies or other stakeholders. Following this period, an internal report will be
+        #produced by an officer for approval by the Manager, Rivers and Estuaries Division,
+        #to determine the outcome of your application.<br>
+        #You will be notified by email once your {0} application has been determined and/or
+        #further action is required.""".format(app.get_app_type_display(), app.pk)
+        #messages.success(self.request, msg)
+        #emailcontext = {}
+        #emailcontext['app'] = app
+        #emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
+        #emailcontext['person'] = app.submitted_by
+        #emailcontext['body'] = msg
+        #sendHtmlEmail([app.submitted_by.email], emailcontext['application_name'] + ' application submitted ', emailcontext, 'application-lodged.html', None, None, None)
 
         return render(request, self.template_name, context)
 
@@ -9759,6 +9761,7 @@ class ApplicationBooking(LoginRequiredMixin, FormView):
         app = Application.objects.get(pk=pk)
         booking = {'app': app}
         fee_total = '0.00'
+
         print (ApplicationLicenceFee.objects.filter(app_type=booking['app'].app_type,start_dt__lte=to_date, end_dt__gte=to_date))
         if ApplicationLicenceFee.objects.filter(app_type=booking['app'].app_type,start_dt__lte=to_date, end_dt__gte=to_date).count() > 0:
             print ("APLICATIO FEE")
@@ -9772,6 +9775,9 @@ class ApplicationBooking(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         context_processor = template_context(self.request)
+        context_data = self.get_context_data(**kwargs)
+        print ("CCCC")
+        print (context_data)
         #app = self.get_object()
         pk=self.kwargs['pk']
         app = Application.objects.get(pk=pk)
@@ -9785,6 +9791,7 @@ class ApplicationBooking(LoginRequiredMixin, FormView):
         if app.applicant:
             if app.applicant.id == request.user.id:
                 flowcontext['application_owner'] = True
+
         if Delegate.objects.filter(email_user=request.user).count() > 0:
             flowcontext['application_owner'] = True
 
@@ -9793,12 +9800,46 @@ class ApplicationBooking(LoginRequiredMixin, FormView):
         if flowcontext['may_payment'] == "False":
            messages.error(self.request, 'You do not have permission to perform this action. AB')
            return HttpResponseRedirect('/')
-
         
         booking = {'app': app}
         form = apps_forms.PaymentDetailForm 
         print ("TEMPLATE")
         print (self.template_name,)
+        # if amount is zero automatically push appplication step.
+        print ("APPLCIATION FEES GET")
+        if float(context_data['application_fee']) > 0:
+           pass
+           # continue with rest of code logic
+        else:
+           # We dont need to ask for any money,  proceed to next step automatically
+           flow = Flow()
+           workflowtype = flow.getWorkFlowTypeFromApp(app)
+           flow.get(workflowtype)
+           DefaultGroups = flow.groupList()
+           flowcontext = {}
+           flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, workflowtype)
+           flowcontext = flow.getRequired(flowcontext, app.routeid, workflowtype)
+           actions = flow.getAllRouteActions(app.routeid, workflowtype)
+
+           route = {}
+           for a in actions:
+                if a['payment'] == 'success':
+                    route = a
+
+           reverse('payment_success')
+           groupassignment = Group.objects.get(name=DefaultGroups['grouplink'][route['routegroup']])
+           app.routeid = route["route"]
+           app.state = route["state"]
+           app.group = groupassignment
+           app.assignee = None
+           app.route_status = flow.json_obj[route["route"]]['title']
+           app.save()
+           utils.application_lodgment_info(self.request,app)
+           return HttpResponseRedirect('/')
+           #####        
+
+
+
         return super(ApplicationBooking, self).get(request, *args, **kwargs)
         return self.render_page(request, booking, form)
 
@@ -9889,6 +9930,14 @@ def getAppFile(request,file_id,extension):
                 flowcontext['application_submitter_id'] = app.submitted_by.id
 
             #flowcontext['application_owner'] = app.
+            if app.applicant:
+                if app.applicant.id == request.user.id:
+                   flowcontext['application_owner'] = True
+
+            if Delegate.objects.filter(email_user=request.user).count() > 0:
+                flowcontext['application_owner'] = True
+
+
             flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, workflowtype)
             if flowcontext['allow_access_attachments'] == "True":
                 allow_access = True

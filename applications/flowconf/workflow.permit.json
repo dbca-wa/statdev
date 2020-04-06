@@ -579,6 +579,38 @@
                 "title": "Make Application Changes"
             }
         },
+        "owneraccess": {
+            "may_update": "False",
+            "may_lodge":"False",
+            "may_refer":"False",
+            "may_assign":"False",
+            "may_assign_customer": "False",
+            "may_assign_processor": "False",
+            "may_create_condition":"False",
+            "may_submit_approval": "False",
+            "may_issue": "False",
+            "may_generate_pdf": "False",
+            "may_assign_to_creator": "False",
+            "may_payment": "True",
+            "show_form_buttons": "True",
+            "allow_access_attachments": "True"
+        },
+        "submitteraccess": {
+            "may_update": "False",
+            "may_lodge":"False",
+            "may_refer":"False",
+            "may_assign":"False",
+            "may_assign_customer": "False",
+            "may_assign_processor": "False",
+            "may_create_condition":"False",
+            "may_submit_approval": "False",
+            "may_issue": "False",
+            "may_generate_pdf": "False",
+            "may_assign_to_creator": "False",
+            "may_payment": "True",
+            "show_form_buttons": "True",
+            "allow_access_attachments": "True"
+        },
         "groupaccess": {
             "Statdev Assessor": {
                 "may_update": "True",

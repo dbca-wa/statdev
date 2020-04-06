@@ -1,6 +1,7 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from applications import views
 from applications import uploads
+from django_crispy_jcaptcha import urls as jcaptchaurls
 from . import api
 
 urlpatterns = [
@@ -152,4 +153,5 @@ urlpatterns = [
     url(r'^organisations/access-requests/$', views.OrganisationAccessRequest.as_view(), name='organisation_access_requests'),
     url(r'^organisations/(?P<pk>\d+)/comms-create/$', views.OrganisationCommsCreate.as_view(), name='organisation_comms_create'),
     url(r'^organisations/(?P<pk>\d+)/comms/$', views.OrganisationComms.as_view(), name='organisation_comms'),
+    url(r'^', include(jcaptchaurls))
 ]

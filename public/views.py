@@ -115,6 +115,8 @@ class PublicApplicationFeedback(UpdateView):
        
         initial['application_id'] = self.kwargs['pk']
         initial['organisation'] = app.organisation
+        initial['captcha'] = 'CaPtA'
+
         if app.river_lease_scan_of_application:
             pub_web = None
             try:

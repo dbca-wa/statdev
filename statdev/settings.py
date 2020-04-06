@@ -21,6 +21,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 BOOKING_TIMEOUT = 1200
 
+JCAPTCHA_EXPIRY_MINUTES=15
+JCAPTCHA_CLEANUP_MINUTES=100
+
 # Define the following in the environment:
 DEBUG = env('DEBUG', False)
 SECRET_KEY = env('SECRET_KEY')
@@ -43,6 +46,7 @@ INSTALLED_APPS += [
     'public',
     'rest_framework',
     'rest_framework_gis',
+    'django_crispy_jcaptcha'
 ##    'ajax_upload'
 ]
 REST_FRAMEWORK = {
@@ -212,9 +216,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 
+#STATICFILES_DIR = (
+#    os.path.join(BASE_DIR, "applications/static"),
+#)
+
 STATICFILES_DIR = (
-    os.path.join(BASE_DIR, "applications/static"),
+    "static",
 )
+
  
 # Logging settings
 # Ensure that the logs directory exists:

@@ -357,14 +357,14 @@
                 </div>
             </div>
             {% endif %}
-
+            {% if is_staff == True %}
 
             <!-- Referrals panel -->
             {% include "applications/application_referrals.html" %}
 
             <!-- Conditions panel -->
             {% include "applications/application_conditions.html" %}
-
+            {% endif %}
         </div>
     </div>
 </div>

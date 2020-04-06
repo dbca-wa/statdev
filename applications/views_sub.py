@@ -345,6 +345,8 @@ class FormsList():
 
         context['app_appstatus'] = list(Application.APP_STATE_CHOICES)
         search_filter = Q(applicant=userid) | Q(organisation__in=delegate)
+        exclude_search_filter = Q(state=17)
+
         if 'searchaction' in self_view.request.GET and self_view.request.GET['searchaction']:
             query_str = self_view.request.GET['q']
             if self_view.request.GET['apptype'] != '':
@@ -352,9 +354,9 @@ class FormsList():
             else:
                 end = ''
 
-
-            if self_view.request.GET['appstatus'] != '':
-                search_filter &= Q(state=int(self_view.request.GET['appstatus']))
+            if 'appstatus' in self_view.request.GET:
+                if self_view.request.GET['appstatus'] != '':
+                   search_filter &= Q(state=int(self_view.request.GET['appstatus']))
 
             context['query_string'] = self_view.request.GET['q']
 
@@ -364,14 +366,28 @@ class FormsList():
                 if self_view.request.GET['appstatus'] != '':
                     context['appstatus'] = int(self_view.request.GET['appstatus'])
 
+            if 'appstatus_limited' in self_view.request.GET:
+                if self_view.request.GET['appstatus_limited'] != '':
+                    context['appstatus_limited'] = self_view.request.GET['appstatus_limited']
+                    if context['appstatus_limited'] == 'draft':
+                         search_filter &= Q(state=int(1))
+                    if context['appstatus_limited'] == 'submitted':
+                         search_filter &= Q(state__gt=1)
+                         exclude_search_filter &= Q(state=14) 
+                         #search_filter &= Q(state__ne=14) 
+                    if context['appstatus_limited'] == 'completed':
+                         search_filter &= Q(state=14)
+
             if 'q' in self_view.request.GET and self_view.request.GET['q']:
                 query_str = self_view.request.GET['q']
                 query_str_split = query_str.split()
                 for se_wo in query_str_split:
                     search_filter &= Q(Q(pk__icontains=se_wo) | Q(title__icontains=se_wo))
 
+        print ("SEARCH FILTER")
+        print (search_filter)
 #        applications = Application.objects.filter(Q(app_type__in=APP_TYPE_CHOICES_IDS) & Q(search_filter) ).exclude(state=17)[:200]
-        applications = Application.objects.filter(Q(search_filter) ).exclude(state=17)[:200]
+        applications = Application.objects.filter(Q(search_filter) ).exclude(exclude_search_filter).order_by('-id')[:200]
         usergroups = self_view.request.user.groups.all()
         context['app_list'] = []
         print (' AM I HERE ')
