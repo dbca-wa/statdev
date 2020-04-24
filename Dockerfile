@@ -27,7 +27,13 @@ RUN pip3 install --no-cache-dir -r requirements.txt \
 FROM python_libs_docker
 COPY gunicorn.ini manage.py ./
 RUN touch /app/.env
-COPY taskmanagement ./taskmanagement
+# StatDev Dirs
+COPY statdev ./statdev
+COPY actions ./actions
+COPY applications ./applications
+COPY approvals ./approvals
+COPY public ./public
+# Statdev Dirs
 COPY cron /etc/cron.d/dockercron
 COPY startup.sh /
 RUN python manage.py collectstatic --noinput

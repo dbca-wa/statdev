@@ -37,7 +37,8 @@ class InputMultiFile(Widget):
     def render(self, name, value, attrs=None):
         if value is None:
             value = ''
-        final_attrs = self.build_attrs(attrs, type=self.input_type, name=name, )
+#        final_attrs = self.build_attrs(attrs, type=self.input_type, name=name, )
+        final_attrs = self.build_attrs(self.attrs, attrs)
         if value != '':
             # Only add the 'value' attribute if a value is non-empty.
             final_attrs['value'] = force_text(self.format_value(value))
@@ -206,7 +207,8 @@ class AjaxFileUploader(FileInput):
         }
 
         #if 'multiple' in attrs:
-        final_attrs = self.build_attrs(attrs, type=self.input_type, name=name,)
+        #final_attrs = self.build_attrs(attrs, type=self.input_type, name=name,)
+        final_attrs = self.build_attrs(self.attrs, attrs)
         upload_type = 'single'
 
         if 'multiple' in final_attrs:

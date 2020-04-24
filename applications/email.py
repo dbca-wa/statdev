@@ -53,9 +53,9 @@ def sendHtmlEmail(to,subject,context,template,cc,bcc,from_email,attachment1=None
 
     context['version'] = settings.APPLICATION_VERSION_NO
     # Custom Email Body Template
-    context['body'] = get_template(template).render(Context(context))
+    context['body'] = get_template(template).render(context)
     # Main Email Template Style ( body template is populated in the center
-    main_template = get_template('email-dpaw-template.html').render(Context(context))
+    main_template = get_template('email-dpaw-template.html').render(context)
 
     if override_email is not None:
         to = override_email.split(",")

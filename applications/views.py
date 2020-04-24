@@ -67,7 +67,7 @@ class HomePage(TemplateView):
                return HttpResponseRedirect(reverse('first_login_info_steps', args=(self.request.user.id,1)))
 
         template = get_template(self.template_name)
-        context = RequestContext(self.request, context)
+        #context = RequestContext(self.request, context)
         context['csrf_token_value'] = get_token(self.request)
         return HttpResponse(template.render(context))
 
@@ -1990,7 +1990,7 @@ class SearchReference(ListView):
         # print self
         #context['messages'] = self.messages
         template = get_template(self.template_name)
-        context = RequestContext(self.request, context)
+        #context = RequestContext(self.request, context)
         return HttpResponse(template.render(context))
 
     def get_context_data(self, **kwargs):
@@ -9823,10 +9823,9 @@ class ApplicationBooking(LoginRequiredMixin, FormView):
 
            route = {}
            for a in actions:
-                if a['payment'] == 'success':
-                    route = a
-
-           reverse('payment_success')
+                if 'payment' in a:
+                    if a['payment'] == 'success':
+                        route = a
            groupassignment = Group.objects.get(name=DefaultGroups['grouplink'][route['routegroup']])
            app.routeid = route["route"]
            app.state = route["state"]
