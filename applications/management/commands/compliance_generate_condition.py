@@ -11,7 +11,7 @@ class Command(BaseCommand):
     help = 'Iterates over current Conditions and creates a complaince which is due to for action'
 
     def handle(self, *args, **options):
-	approvals = Approval.objects.filter(expiry_date__gt=date.today())
+        approvals = Approval.objects.filter(expiry_date__gt=date.today())
         
         for apps in approvals:
               #print apps.application.id
@@ -68,8 +68,8 @@ class Command(BaseCommand):
                                   print ("WEEK CREATE NEXT")
                                   week_date_plus = timedelta(weeks = c.recur_freq)
                                   new_week_date = compliance.due_date + week_date_plus
-                                  print apps.expiry_date
-                                  print new_week_date
+                                  print (apps.expiry_date)
+                                  print (new_week_date)
                                   print ("END")
                                   if apps.expiry_date >= new_week_date:
                                       print ("CREATE WEEK")
