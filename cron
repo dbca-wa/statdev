@@ -1,0 +1,2 @@
+*/10 * * * * root export $(grep -v '^#' /etc/.cronenv | xargs -d '\n') && python /app/manage.py compliance_status_checks >>  /dev/null 2>&1
+*/10 * * * * root export $(grep -v '^#' /etc/.cronenv | xargs -d '\n') && python /app/manage.py compliance_generate_condition >>  /dev/null 2>&1
