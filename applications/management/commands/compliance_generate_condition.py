@@ -21,7 +21,7 @@ class Command(BaseCommand):
               # print "END DATE"
               # print end_date
               if date.today() > end_date:
-                  print "Approval Has Expired"
+                  print ("Approval Has Expired")
                   continue;
 
               
@@ -30,14 +30,14 @@ class Command(BaseCommand):
               for c in conditions:
                    start_date = c.due_date
                    loop_start_date = start_date
-                   print c.id
-                   print c.due_date
+                   print (c.id)
+                   print (c.due_date)
                    if c.due_date is None:
-                        print "MISSED"
+                        print ("MISSED")
                         # No due defined no business requirement to create condition.
                         continue;
                    if c.suspend is True:
-                        print "Condition Suspended"
+                        print ("Condition Suspended")
                         continue;
 
                    if c.recur_pattern == 1:
@@ -58,21 +58,21 @@ class Command(BaseCommand):
                         
                         if Compliance.objects.filter(condition__id=c.id).exists():
                            compliance = Compliance.objects.filter(condition__id=c.id).order_by('-due_date')[0]
-                           print "COMPL"
+                           print ("COMPL")
 
                            week_date_plus = timedelta(weeks = c.recur_freq)
                            new_week_date = loop_start_date + week_date_plus
 
 
                            if date.today() > compliance.due_date:
-                                  print "WEEK CREATE NEXT"
+                                  print ("WEEK CREATE NEXT")
                                   week_date_plus = timedelta(weeks = c.recur_freq)
                                   new_week_date = compliance.due_date + week_date_plus
                                   print apps.expiry_date
                                   print new_week_date
-                                  print "END"
+                                  print ("END")
                                   if apps.expiry_date >= new_week_date:
-                                      print "CREATE WEEK" 
+                                      print ("CREATE WEEK")
                                       compliance = Compliance.objects.create(
                                           app_type=apps.application.app_type,
                                           title=apps.application.title,
@@ -87,7 +87,7 @@ class Command(BaseCommand):
                                          status=Compliance.COMPLIANCE_STATUS_CHOICES.due
                                       )
                                   else:
-                                      print "CREATE WEEK NEW"
+                                      print ("CREATE WEEK NEW")
  #                                     compliance = Compliance.objects.create(
  #                                         app_type=apps.application.app_type,
  #                                         title=apps.application.title,
@@ -102,7 +102,7 @@ class Command(BaseCommand):
  #                                     )
   
                         else:
-                                  print "CREATE WEEK NEW (out)"
+                                  print ("CREATE WEEK NEW (out)")
                                   compliance = Compliance.objects.create(
                                       app_type=apps.application.app_type,
                                       title=apps.application.title,
@@ -122,30 +122,29 @@ class Command(BaseCommand):
 
                         if Compliance.objects.filter(condition__id=c.id).exists():
                            compliance = Compliance.objects.filter(condition__id=c.id).order_by('-due_date')[0]
-                           print "MONTH COMPL"
 #                           months_date_plus = loop_start_date + relativedelta(months=c.recur_freq)
 #                           new_month_date = loop_start_date + months_date_plus
-                           print "MONTH START" 
-                           print loop_start_date
+                           print ("MONTH START") 
+                           print (loop_start_date)
  
 #                           months_date_plus = loop_start_date + relativedelta(months=c.recur_freq)
 #                           loop_start_date = months_date_plus
-                           print "MONTH FINISH"
-                           print c.recur_freq
-                           print loop_start_date 
+                           print ("MONTH FINISH")
+                           print (c.recur_freq)
+                           print (loop_start_date)
 
                            if date.today() > compliance.due_date:
-                                  print "CREATE NEXT"
+                                  print ("CREATE NEXT")
                                   months_date_plus = compliance.due_date + relativedelta(months=c.recur_freq)
                                   new_month_date = months_date_plus
 
                                   #week_date_plus = timedelta(weeks = c.recur_freq)
-                                  print "NEXT M "
-                                  print new_month_date
-                                  print compliance.due_date
+                                  print ("NEXT M ")
+                                  print (new_month_date)
+                                  print (compliance.due_date)
                                   #print loop_start_date
                                   if apps.expiry_date >= new_month_date: 
-                                      print "CREATE MONTH"
+                                      print ("CREATE MONTH")
                                       compliance = Compliance.objects.create(
                                           app_type=apps.application.app_type,
                                           title=apps.application.title,
@@ -160,7 +159,7 @@ class Command(BaseCommand):
                                           status=Compliance.COMPLIANCE_STATUS_CHOICES.due
                                       )
                                   else:
-                                      print "CREATE MONTH NEW"
+                                      print ("CREATE MONTH NEW")
   #                                    compliance = Compliance.objects.create(
   #                                        app_type=apps.application.app_type,
   #                                        title=apps.application.title,
@@ -178,10 +177,10 @@ class Command(BaseCommand):
 
 
                            else:
-                                  print "NOT EXPIRED"
+                                  print ("NOT EXPIRED")
 
                         else:
-                                  print "CREATE MONTH NEW (out)"
+                                  print ("CREATE MONTH NEW (out)")
                                   compliance = Compliance.objects.create(
                                       app_type=apps.application.app_type,
                                       title=apps.application.title,
@@ -206,13 +205,13 @@ class Command(BaseCommand):
                            compliance = Compliance.objects.filter(condition__id=c.id).order_by('-due_date')[0]
 
                            if date.today() > compliance.due_date:
-                                  print "CREATE NEXT"
+                                  print ("CREATE NEXT")
                                   months_date_plus = compliance.due_date + relativedelta(months=c.recur_freq)
                                   years_date_plus = compliance.due_date + relativedelta(years=c.recur_freq)
                                   new_year_date = years_date_plus
 
                                   if apps.expiry_date >= new_year_date:
-                                       print "CREATE YEAR"
+                                       print ("CREATE YEAR")
                                        compliance = Compliance.objects.create(
                                            app_type=apps.application.app_type,
                                            title=apps.application.title,
@@ -227,7 +226,7 @@ class Command(BaseCommand):
                                            status=Compliance.COMPLIANCE_STATUS_CHOICES.due
                                        )
                                   else:
-                                      print "CREATE  NEW YEAR"
+                                      print ("CREATE  NEW YEAR")
 #                                      compliance = Compliance.objects.create(
 #                                          app_type=apps.application.app_type,
 #                                          title=apps.application.title,
@@ -246,10 +245,10 @@ class Command(BaseCommand):
 
 
                            else:
-                                  print "NOT EXPIRED"
+                                  print ("NOT EXPIRED")
 
                         else:
-                                  print "CRETE NEW YEAR (out)"
+                                  print ("CRETE NEW YEAR (out)")
                                   compliance = Compliance.objects.create(
                                       app_type=apps.application.app_type,
                                       title=apps.application.title,
@@ -264,14 +263,14 @@ class Command(BaseCommand):
                                       status=Compliance.COMPLIANCE_STATUS_CHOICES.due
                                   )
 
-                   print "RECURE"
-                   print c.recur_pattern
+                   print ("RECURE")
+                   print (c.recur_pattern)
                    if c.recur_pattern is None:  
-                           print "NONE" 
+                           print ("NONE")
                            if Compliance.objects.filter(condition__id=c.id).exists():
                               pass
                            else:
-                                 print "CREATE ONE RECORD" 
+                                 print ("CREATE ONE RECORD")
                                  compliance = Compliance.objects.create(
                                       app_type=apps.application.app_type,
                                       title=apps.application.title,
@@ -296,7 +295,7 @@ class Command(BaseCommand):
 #                                   print "EXPIRED"
 #                               else:
 #                                   print "STILL MORE"
-                   print c
+                   print (c)
 
 
 
