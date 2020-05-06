@@ -72,16 +72,16 @@ def sendHtmlEmail(to,subject,context,template,cc,bcc,from_email,attachment1=None
               msg.attach_file(attachment1)
         
           msg.send()
-          print ("MESSGE")
-          print (str(msg.message()))
+          #print ("MESSGE")
+          #print (str(msg.message()))
     else:
           msg = EmailMessage(subject, main_template, to=to,cc=cc, from_email=from_email)
           msg.content_subtype = 'html'
           if attachment1:
               msg.attach_file(attachment1)
           msg.send()
-          print ("MESSGE")
-          print (str(msg.message()))
+          #print ("MESSGE")
+          #print (str(msg.message()))
 
     if 'app' in context:
        eml_content = msg.message().as_bytes()
