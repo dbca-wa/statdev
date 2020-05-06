@@ -27,11 +27,11 @@ JCAPTCHA_CLEANUP_MINUTES=100
 # Define the following in the environment:
 DEBUG = env('DEBUG', False)
 SECRET_KEY = env('SECRET_KEY')
-if not DEBUG:
-    ALLOWED_HOSTS = [env('ALLOWED_DOMAIN'), ]
-else:
-    ALLOWED_HOSTS = ['*']
-GIT_COMMIT_DATE = os.popen('git log -1 --format=%cd').read()
+#if not DEBUG:
+#    ALLOWED_HOSTS = [env('ALLOWED_DOMAIN'), ]
+#else:
+#    ALLOWED_HOSTS = ['*']
+#GIT_COMMIT_DATE = os.popen('git log -1 --format=%cd').read()
 # Application definition
 #AUTH_USER_MODEL = 'accounts.EmailUser'
 INSTALLED_APPS += [
@@ -295,6 +295,17 @@ SOCIAL_AUTH_RAISE_EXCEPTIONS = True
 RAISE_EXCEPTIONS = True
 SYSTEM_NAME = env('SYSTEM_NAME', 'Statdev System')
 SYSTEM_NAME_SHORT = env('SYSTEM_NAME_SHORT', 'statdev')
+
+# Use git commit hash for purging cache in browser for deployment changes
+GIT_COMMIT_HASH = ''
+GIT_COMMIT_DATE = ''
+if  os.path.isdir(BASE_DIR+'/.git/') is True:
+    GIT_COMMIT_DATE = os.popen('cd '+BASE_DIR+' ; git log -1 --format=%cd').read()
+    GIT_COMMIT_HASH = os.popen('cd  '+BASE_DIR+' ; git log -1 --format=%H').read()
+if len(GIT_COMMIT_HASH) == 0: 
+    GIT_COMMIT_HASH = os.popen('cat /app/git_hash').read()
+    if len(GIT_COMMIT_HASH) == 0:
+       print ("ERROR: No git hash provided")
 
 
 PS_PAYMENT_SYSTEM_ID = env('PS_PAYMENT_SYSTEM_ID', 'S516')
