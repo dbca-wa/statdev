@@ -801,9 +801,16 @@ class ApplicationLicencePermitForm(ApplicationFormMixin, ModelForm):
 #            del self.fields['applicant']
 
         organisation = self.initial['organisation']
-        if 'submitter_comment' in self.initial:
-             if len(self.initial['submitter_comment']) > 1:
-                 crispy_boxes.append(crispy_alert(self.initial['submitter_comment']))
+
+        if self.initial['state'] == 1:
+             if 'submitter_comment' in self.initial:
+                 if len(self.initial['submitter_comment']) > 1:
+                      crispy_boxes.append(crispy_alert(self.initial['submitter_comment']))
+
+
+        #if 'submitter_comment' in self.initial:
+        #     if len(self.initial['submitter_comment']) > 1:
+        #         crispy_boxes.append(crispy_alert(self.initial['submitter_comment']))
 
         if self.initial["may_change_application_applicant"] == "True":
             changeapplicantbutton = crispy_button_link('Change Applicant',reverse('applicant_change', args=(self.initial['application_id'],)))
@@ -1100,10 +1107,14 @@ class ApplicationPermitForm(ApplicationFormMixin, ModelForm):
         #self.fields['applicant'].disabled = True
         organisation = self.initial['organisation']
 
+        if self.initial['state'] == 1:
+             if 'submitter_comment' in self.initial:
+                 if len(self.initial['submitter_comment']) > 1:
+                      crispy_boxes.append(crispy_alert(self.initial['submitter_comment']))
 
-        if 'submitter_comment' in self.initial and may_update == "True":
-             if len(self.initial['submitter_comment']) > 1:
-                 crispy_boxes.append(crispy_alert(self.initial['submitter_comment']))
+        #if 'submitter_comment' in self.initial and may_update == "True":
+        #     if len(self.initial['submitter_comment']) > 1:
+        #         crispy_boxes.append(crispy_alert(self.initial['submitter_comment']))
 
         if self.initial["may_change_application_applicant"] == "True":
             changeapplicantbutton = crispy_button_link('Change Applicant',reverse('applicant_change', args=(self.initial['application_id'],)))
@@ -1362,7 +1373,9 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
 #            changeapplicantbutton = HTML('')
 #        crispy_boxes.append(crispy_box('applicant_collapse','form_applicant','Applicant','applicant', changeapplicantbutton))
         organisation = self.initial['organisation']
-
+        if self.initial['state'] == 1:
+            if 'submitter_comment' in self.initial: 
+               crispy_boxes.append(crispy_alert(self.initial['submitter_comment']))
         if self.initial["may_change_application_applicant"] == "True":
             changeapplicantbutton = crispy_button_link('Change Applicant',reverse('applicant_change', args=(self.initial['application_id'],)))
         else:
@@ -2544,7 +2557,9 @@ class VesselForm(ModelForm):
 
 class NewsPaperPublicationCreateForm(ModelForm):
 
-    records = Field(required=False, widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'}))
+    #records = Field(required=False, widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'}))
+    records = FileField(required=False, widget=AjaxFileUploader(attrs={'multiple':'multiple'}), label='Documents')
+
     class Meta:
         model = PublicationNewspaper
         fields = ['application','date','newspaper']
@@ -2555,7 +2570,9 @@ class NewsPaperPublicationCreateForm(ModelForm):
 #        self.helper.form_id = 'id_form_create_newspaperpublication'
         self.helper.form_id = 'id_form_modals' 
         self.helper.attrs = {'novalidate': ''}
+
         self.fields['application'].widget = HiddenInput()
+        self.fields['date'].widget.attrs['autocomplete'] = 'off'
         self.helper.add_input(Submit('save', 'Save', css_class='btn-lg ajax-submit'))
         self.helper.add_input(Submit('cancel', 'Cancel' , css_class='ajax-close'))
 
@@ -2604,7 +2621,8 @@ class WebsitePublicationForm(ModelForm):
 
 class FeedbackPublicationCreateForm(ModelForm):
 
-    records = FileField(required=False, max_length=128 , widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'}))
+    #records = FileField(required=False, max_length=128 , widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'}))
+    records = FileField(required=False, widget=AjaxFileUploader(attrs={'multiple':'multiple'}), label='Documents')
 
     class Meta:
         model = PublicationFeedback

@@ -46,6 +46,14 @@
                });
 
                $.ajax({
+                    url: '{% url 'application_feedbackpublication_table' object.pk 'review' %}',
+                    async: false,
+                    success: function(data) {
+                          $('#feedback_review_table').html(data);
+                    }
+               });
+
+               $.ajax({
                     url: '{% url 'application_feedbackpublication_table' object.pk 'draft' %}',
                     async: false,
                     success: function(data) {

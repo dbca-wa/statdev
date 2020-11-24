@@ -3587,8 +3587,9 @@ class FeedbackTable(LoginRequiredMixin, DetailView):
         context = flow.getAccessRights(request, context, app.routeid, workflowtype)
         context['action'] = self.kwargs['action']
 
-
-        if context['action'] == 'draft':
+        if context['action'] == 'review':
+             self.template_name = 'applications/application_feedback_draft_review.html'
+        elif context['action'] == 'draft':
              self.template_name = 'applications/application_feedback_draft_table.html'
         elif context['action'] == 'final':
              self.template_name = 'applications/application_feedback_final_table.html'
@@ -6777,7 +6778,7 @@ class ComplianceCreate(LoginRequiredMixin, ModelFormSetView):
 class WebPublish(LoginRequiredMixin, UpdateView):
     model = Application
     form_class = apps_forms.ApplicationWebPublishForm
-
+    
     def get(self, request, *args, **kwargs):
         app = Application.objects.get(pk=self.kwargs['pk'])
         return super(WebPublish, self).get(request, *args, **kwargs)
@@ -6789,6 +6790,9 @@ class WebPublish(LoginRequiredMixin, UpdateView):
         context = super(WebPublish,
                         self).get_context_data(**kwargs)
         context['application'] = Application.objects.get(pk=self.kwargs['pk'])
+        #context['file_group'] =  '2003'
+        #context['file_group_ref_id'] = self.kwargs['pk']
+
         return context
 
     def get_initial(self):
@@ -6908,12 +6912,23 @@ class NewsPaperPublicationCreate(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         forms_data = form.cleaned_data
         self.object = form.save(commit=True)
-        if self.request.FILES.get('records'):
-            for f in self.request.FILES.getlist('records'):
-                doc = Record()
-                doc.upload = f
-                doc.save()
-                self.object.records.add(doc)
+        #if self.request.FILES.get('records'):
+        #    for f in self.request.FILES.getlist('records'):
+        #        doc = Record()
+        #        doc.upload = f
+        #        doc.save()
+        #        self.object.records.add(doc)
+
+        if 'records_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['records_json'])
+             self.object.records.remove()
+             for d in self.object.records.all():
+                 self.object.records.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.records.add(doc)
+
+
 
         action = Action(
             content_object=self.object.application, user=self.request.user, category=Action.ACTION_CATEGORY_CHOICES.create,
@@ -6929,6 +6944,7 @@ class NewsPaperPublicationUpdate(LoginRequiredMixin, UpdateView):
 
     def get(self, request, *args, **kwargs):
         #app = self.get_object().application_set.first()
+
         PubNew = PublicationNewspaper.objects.get(pk=self.kwargs['pk'])
         app = Application.objects.get(pk=PubNew.application.id)
         flow = Flow()
@@ -6937,6 +6953,7 @@ class NewsPaperPublicationUpdate(LoginRequiredMixin, UpdateView):
         DefaultGroups = flow.groupList()
         flowcontext = {}
         flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, workflowtype)
+
         if flowcontext["may_update_publication_newspaper"] != "True":
             messages.error(self.request, "Can't update newspaper publication to this application")
             return HttpResponseRedirect(app.get_absolute_url())
@@ -6951,22 +6968,23 @@ class NewsPaperPublicationUpdate(LoginRequiredMixin, UpdateView):
     def get_initial(self):
         initial = super(NewsPaperPublicationUpdate, self).get_initial()
 #       initial['application'] = self.kwargs['pk']
-
+        pub_news = None
         try:
             pub_news = PublicationNewspaper.objects.get(pk=self.kwargs['pk'])
         except:
             pub_news = None
-
+        
         multifilelist = []
-        if pub_news:
-            records = pub_news.records.all()
-            for b1 in records:
-                fileitem = {}
-                fileitem['fileid'] = b1.id
-                fileitem['path'] = b1.upload.name
-                fileitem['extension']  = b1.extension
-                multifilelist.append(fileitem)
+        a1 = pub_news.records.all() 
+        for b1 in a1:
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
         initial['records'] = multifilelist
+        
         return initial
 
     def get_context_data(self, **kwargs):
@@ -6992,12 +7010,23 @@ class NewsPaperPublicationUpdate(LoginRequiredMixin, UpdateView):
             if 'records-clear_multifileid-' + str(filelist.id) in form.data:
                  pub_news.records.remove(filelist)
 
-        if self.request.FILES.get('records'):
-            for f in self.request.FILES.getlist('records'):
-                doc = Record()
-                doc.upload = f
-                doc.save()
-                self.object.records.add(doc)
+        #if self.request.FILES.get('records'):
+        #    for f in self.request.FILES.getlist('records'):
+        #        doc = Record()
+        #        doc.upload = f
+        #        doc.save()
+        #        self.object.records.add(doc)
+
+
+        if 'records_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['records_json'])
+             self.object.records.remove()
+             for d in self.object.records.all():
+                 self.object.records.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.records.add(doc)
+
 
         action = Action(
             content_object=self.object.application, user=self.request.user, category=Action.ACTION_CATEGORY_CHOICES.change,
@@ -7031,6 +7060,7 @@ class NewsPaperPublicationDelete(LoginRequiredMixin, DeleteView):
         #      return HttpResponseRedirect(condition.application.get_absolute_url())
     def get_success_url(self):
         return reverse('application_detail', args=(self.get_object().application.pk,))
+
     def post(self, request, *args, **kwargs):
         if request.POST.get('cancel'):
            return HttpResponseRedirect(self.get_success_url())
@@ -7042,9 +7072,11 @@ class NewsPaperPublicationDelete(LoginRequiredMixin, DeleteView):
         action.save()
         messages.success(self.request, 'Newspaper Publication {} has been deleted'.format(modelobject.pk))
         return super(NewsPaperPublicationDelete, self).post(request, *args, **kwargs)
+
 class WebsitePublicationChange(LoginRequiredMixin, CreateView):
     model = PublicationWebsite
     form_class = apps_forms.WebsitePublicationForm
+
     def get(self, request, *args, **kwargs):
         app = Application.objects.get(pk=self.kwargs['pk'])
         flow = Flow()
@@ -7189,8 +7221,9 @@ class FeedbackPublicationCreate(LoginRequiredMixin, CreateView):
         DefaultGroups = flow.groupList()
         flowcontext = {}
         flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, workflowtype)
-
-        if flowcontext["may_update_publication_feedback_draft"] == "True":
+        if flowcontext["may_update_publication_feedback_review"] == "True":
+           return super(FeedbackPublicationCreate, self).get(request, *args, **kwargs)
+        elif flowcontext["may_update_publication_feedback_draft"] == "True":
            return super(FeedbackPublicationCreate, self).get(request, *args, **kwargs)
         elif flowcontext["may_update_publication_feedback_final"] == "True":
            return super(FeedbackPublicationCreate, self).get(request, *args, **kwargs)
@@ -7220,7 +7253,9 @@ class FeedbackPublicationCreate(LoginRequiredMixin, CreateView):
         initial = super(FeedbackPublicationCreate, self).get_initial()
         initial['application'] = self.kwargs['pk']
 
-        if self.kwargs['status'] == 'final':
+        if self.kwargs['status'] == 'review':
+            initial['status'] = 'review'
+        elif self.kwargs['status'] == 'final':
             initial['status'] = 'final'
         elif self.kwargs['status'] == 'determination':
             initial['status'] = 'determination'
@@ -7237,12 +7272,23 @@ class FeedbackPublicationCreate(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=True)
 #       print self.object.records
-        if self.request.FILES.get('records'):
-            for f in self.request.FILES.getlist('records'):
-                doc = Record()
-                doc.upload = f
-                doc.save()
-                self.object.records.add(doc)
+
+        if 'records_json' in self.request.POST:
+             if is_json(self.request.POST['records_json']) is True:
+                  json_data = json.loads(self.request.POST['records_json'])
+                  self.object.records.remove()
+                  for d in self.object.records.all():
+                      self.object.records.remove(d)
+                  for i in json_data:
+                      doc = Record.objects.get(id=i['doc_id'])
+                      self.object.records.add(doc)
+
+        #if self.request.FILES.get('records'):
+        #    for f in self.request.FILES.getlist('records'):
+        #        doc = Record()
+        #        doc.upload = f
+        #        doc.save()
+        #        self.object.records.add(doc)
 
         return super(FeedbackPublicationCreate, self).form_valid(form)
 
@@ -7283,8 +7329,9 @@ class FeedbackPublicationUpdate(LoginRequiredMixin, UpdateView):
         DefaultGroups = flow.groupList()
         flowcontext = {}
         flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, workflowtype)
-
-        if flowcontext["may_update_publication_feedback_draft"] == "True":
+        if flowcontext["may_update_publication_feedback_review"] == "True":
+           return super(FeedbackPublicationUpdate, self).get(request, *args, **kwargs) 
+        elif flowcontext["may_update_publication_feedback_draft"] == "True":
            return super(FeedbackPublicationUpdate, self).get(request, *args, **kwargs)
         elif flowcontext["may_update_publication_feedback_final"] == "True":
            return super(FeedbackPublicationUpdate, self).get(request, *args, **kwargs)
@@ -7320,16 +7367,30 @@ class FeedbackPublicationUpdate(LoginRequiredMixin, UpdateView):
         except:
             pub_feed = None
 
+        #multifilelist = []
+        #if pub_feed:
+        #    records = pub_feed.records.all()
+        #    for b1 in records:
+        #        fileitem = {}
+        #        fileitem['fileid'] = b1.id
+        #        fileitem['path'] = b1.upload.name
+        #        fileitem['extension']  = b1.extension
+        #        multifilelist.append(fileitem)
+        #initial['records'] = multifilelist
+
+
+
         multifilelist = []
-        if pub_feed:
-            records = pub_feed.records.all()
-            for b1 in records:
-                fileitem = {}
-                fileitem['fileid'] = b1.id
-                fileitem['path'] = b1.upload.name
-                fileitem['extension']  = b1.extension
-                multifilelist.append(fileitem)
+        a1 = pub_feed.records.all()
+        for b1 in a1:
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
         initial['records'] = multifilelist
+
         return initial
 
     def post(self, request, *args, **kwargs):
@@ -7344,17 +7405,27 @@ class FeedbackPublicationUpdate(LoginRequiredMixin, UpdateView):
 
         pub_feed = PublicationFeedback.objects.get(pk=self.kwargs['pk'])
 
-        records = pub_feed.records.all()
-        for filelist in records:
-            if 'records-clear_multifileid-' + str(filelist.id) in form.data:
-                pub_feed.records.remove(filelist)
+        if 'records_json' in self.request.POST:
+             if is_json(self.request.POST['records_json']) is True:
+                  json_data = json.loads(self.request.POST['records_json'])
+                  self.object.records.remove()
+                  for d in self.object.records.all():
+                      self.object.records.remove(d)
+                  for i in json_data:
+                      doc = Record.objects.get(id=i['doc_id'])
+                      self.object.records.add(doc)
 
-        if self.request.FILES.get('records'):
-            for f in self.request.FILES.getlist('records'):
-                doc = Record()
-                doc.upload = f
-                doc.save()
-                self.object.records.add(doc)
+        #records = pub_feed.records.all()
+        #for filelist in records:
+        #    if 'records-clear_multifileid-' + str(filelist.id) in form.data:
+        #        pub_feed.records.remove(filelist)
+
+        #if self.request.FILES.get('records'):
+        #    for f in self.request.FILES.getlist('records'):
+        #        doc = Record()
+        #        doc.upload = f
+        #        doc.save()
+        #        self.object.records.add(doc)
 
         return super(FeedbackPublicationUpdate, self).form_valid(form)
 
@@ -7374,11 +7445,11 @@ class FeedbackPublicationDelete(LoginRequiredMixin, DeleteView):
         flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, workflowtype)
 
         if flowcontext["may_update_publication_feedback_draft"] == "True":
-           return super(FeedbackPublicationUpdate, self).get(request, *args, **kwargs)
+           return super(FeedbackPublicationDelete, self).get(request, *args, **kwargs)
         elif flowcontext["may_update_publication_feedback_final"] == "True":
-           return super(FeedbackPublicationUpdate, self).get(request, *args, **kwargs)
+           return super(FeedbackPublicationDelete, self).get(request, *args, **kwargs)
         elif flowcontext["may_update_publication_feedback_determination"] == "True":
-           return super(FeedbackPublicationUpdate, self).get(request, *args, **kwargs)
+           return super(FeedbackPublicationDelete, self).get(request, *args, **kwargs)
         else:
              messages.error(
                  self.request, "Can't change feedback publication for this application")

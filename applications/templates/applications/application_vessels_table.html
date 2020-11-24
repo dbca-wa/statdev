@@ -14,7 +14,7 @@
         <td>{{ vessel.vessel_id }}</td>
         <td>
             {% if vessel.registration.exists %}
-            {% for doc in vessel.registration.all %}<a href="{{ doc.file_url }}">{{ doc }}</a><br>{% endfor %}
+	    {% for doc in vessel.registration.all %}<a href="{{ doc.file_url }}" target="new_tab_{{ doc.id }}">{{ doc }}</a><br>{% endfor %}
             {% endif %}
         </td>
         <td>{% if vessel.size %}{{ vessel.size }}{% endif %}</td>

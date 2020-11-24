@@ -127,6 +127,7 @@ class Application_Part5():
                 fileitem['fileid'] = doc.id
                 fileitem['path'] = doc.upload.name
                 fileitem['name'] = doc.name
+                fileitem['file_url'] = doc.file_url()
                 new_documents_to_publish[pub_doc.original_document_id] = fileitem
 
         orignaldoclist = []
@@ -184,16 +185,18 @@ class Application_Part5():
             fileitem['name'] = doc.name
             fileitem['path_short'] = SafeText(doc.upload.name)[19:]
             fileitem['group_name'] = "Proposed Development Plans"
+            fileitem['file_url'] = doc.file_url()
 
             if doc.id in new_documents_to_publish:
                 fileitem['publish_doc'] = new_documents_to_publish[doc.id]['path']
                 fileitem['publish_doc_name'] = new_documents_to_publish[doc.id]['name']
                 fileitem['publish_doc_short'] = SafeText(new_documents_to_publish[doc.id]['path'])[19:]
-                
+                fileitem['publish_file_url'] = new_documents_to_publish[doc.id]['file_url']
             else:
                 fileitem['publish_doc'] = ""
                 fileitem['publish_doc_name'] = ""
                 fileitem['publish_doc_short'] = ""
+                fileitem['publish_file_url'] = ""
             orignaldoclist.append(fileitem)
 
         context['original_document_list'] = orignaldoclist
@@ -206,6 +209,7 @@ class Application_Part5():
             fileitem['path'] = doc.upload.name
             fileitem['path_short'] = SafeText(doc.upload.name)[19:]
             fileitem['name'] = doc.name
+            fileitem['file_url'] = doc.file_url()
             context['proposed_development_plans_list'].append(fileitem)
 
         return context

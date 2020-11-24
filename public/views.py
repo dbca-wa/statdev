@@ -7,6 +7,8 @@ from django.db.models import Q
 from public import forms as apps_forms
 from django.core.urlresolvers import reverse
 from django.utils.safestring import SafeText
+from applications.validationchecks import Attachment_Extension_Check, is_json
+import json
 
 class PublicApplicationsList(TemplateView):
     #model = appmodel.Application
@@ -150,13 +152,15 @@ class PublicApplicationFeedback(UpdateView):
         action = self.kwargs['action']
         status=None
         application = Application.objects.get(id=app_id)
-      
-        if action == 'draft':
+     
+        if action == 'review':
+             status= 'review'
+        elif action == 'draft':
              status='draft'
         elif action == 'final': 
              status='final' 
         elif action == 'determination':
-             status=='determination'
+             status='determination'
 
         # ToDO remove dupes of this line below. doesn't need to be called
         # multiple times
@@ -172,13 +176,23 @@ class PublicApplicationFeedback(UpdateView):
                                                       status=status
 	)
 
+        if 'records_json' in self.request.POST:
+             if is_json(self.request.POST['records_json']) is True:
+                  json_data = json.loads(self.request.POST['records_json'])
+                  self.object.records.remove()
+                  for d in self.object.records.all():
+                      self.object.records.remove(d)
+                  for i in json_data:
+                      doc = Record.objects.get(id=i['doc_id'])
+                      self.object.records.add(doc)
 
-        if self.request.FILES.get('records'):
-            for f in self.request.FILES.getlist('records'):
-                doc = Record()
-                doc.upload = f
-                doc.save()
-                pfcreate.records.add(doc)
+
+        #if self.request.FILES.get('records'):
+        #    for f in self.request.FILES.getlist('records'):
+        #        doc = Record()
+        #        doc.upload = f
+        #        doc.save()
+        #        pfcreate.records.add(doc)
 
 
 

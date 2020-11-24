@@ -53,7 +53,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     {% for doc in proposed_development_plans_list %}
-                                    <div class="col-sm-12 col-md-12 col-lg-12"><img src='{% static "images/pdf.png" %}'>&nbsp;<A HREF='{{ doc.file_url }}'>{{ doc.path_short }}</A></div>
+				    <div class="col-sm-12 col-md-12 col-lg-12"><img src='{% static "images/pdf.png" %}'>&nbsp;<A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc.path_short }}</A></div>
                                     {% endfor %}
                                 </div>
                             </div> 

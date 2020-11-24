@@ -256,7 +256,8 @@ openUploader: function(input_id,upload_type) {
 		      // bindForm('#upload_form',input_id,upload_type);
 		      ajax_loader_django.showFiles(input_id,upload_type);
 	      },
-showFiles: function(input_id,upload_type) { 
+showFiles: function(input_id,upload_type) {
+	           console.log("IN"+input_id)
 		   var input_id_obj = $('#'+input_id+'_json').val();
 		   var input_array = [];
 		   var htmlvalue = "<BR>";
@@ -271,7 +272,7 @@ showFiles: function(input_id,upload_type) {
 					   htmlvalue += '<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">';
                                             
 					   //htmlvalue += filecount+'. <A HREF="/media/'+input_array[file].path+'">';
-                                           htmlvalue += filecount+'. <A HREF="/private-media/view/'+input_array[file].doc_id+'-file'+input_array[file].extension+'">';
+                                           htmlvalue += filecount+'. <A HREF="/private-media/view/'+input_array[file].doc_id+'-file'+input_array[file].extension+'" target="new_tab_'+input_array[file].doc_id+'">';
                                            if (input_array[file].name.length > 2) {
                                                htmlvalue += input_array[file].name;
                                            }  else  {
@@ -291,7 +292,7 @@ showFiles: function(input_id,upload_type) {
 
 				   htmlvalue += '<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">';
                                    //htmlvalue += '<A HREF="/media/'+input_array.path+'">';
-                                   htmlvalue += '<A HREF="/private-media/view/'+input_array.doc_id+'-file'+input_array.extension+'">';
+                                   htmlvalue += '<A HREF="/private-media/view/'+input_array.doc_id+'-file'+input_array.extension+'" target="new_tab_'+input_array.doc_id+'">';
                                            if (input_array.name.length > 2) {
                                                htmlvalue += input_array.name;
                                            }  else  {

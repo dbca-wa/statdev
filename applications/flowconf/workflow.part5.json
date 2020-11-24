@@ -445,7 +445,7 @@
                 "routegroup":"lodge",
                 "lodgegroup": "assess",
                 "required": ["title","deed","cost","river_lease_require_river_lease","river_lease_reserve_licence","proposed_development_description","certificate_of_title_volume","folio","diagram_plan_deposit_number","proposed_development_plans"],
-                "state" : 14,
+                "state" : 4,
                 "payment_redirect": "True"
             }
 
@@ -765,7 +765,8 @@
                 "may_update_publication_newspaper": "True",
                 "may_update_publication_website": "True",
                 "may_publish_website": "True",
-                "may_update_publication_feedback_draft" : "True",
+		"may_update_publication_feedback_review": "True",
+                "may_update_publication_feedback_draft" : "False",
                 "may_publish_feedback_draft": "False",
                 "may_update_publication_feedback_final": "False",
                 "may_publish_feedback_final": "False",

@@ -126,9 +126,9 @@ class OrganisationExtras(ModelAdmin):
     search_fields = ('organisation','pin1','pin2')
 
 @register(PublicationFeedback)
-class OrganisationExtras(ModelAdmin):
-    list_display = ('name','address','suburb')
-    search_fields = ('name','address','suburb')
+class PublicationFeedback(ModelAdmin):
+    list_display = ('name','status','address','suburb')
+    search_fields = ('name','status','address','suburb')
 
 @register(PublicationWebsite)
 class PublicationWebsite(ModelAdmin):

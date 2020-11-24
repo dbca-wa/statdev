@@ -280,7 +280,7 @@ class AjaxFileUploader(FileInput):
                      substitutions['ajax_uploader'] += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">'
                      substitutions['ajax_uploader'] += '<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">'
                      #substitutions['ajax_uploader'] += str(count)+'. <A HREF="/media/'+fi['path']+'">'
-                     substitutions['ajax_uploader'] += str(count)+'. <A HREF="/private-media/view/'+str(fi['doc_id'])+'-file'+str(fi['extension'])+'">'
+                     substitutions['ajax_uploader'] += str(count)+'. <A HREF="/private-media/view/'+str(fi['doc_id'])+'-file'+str(fi['extension'])+'" target="new_tab_'+str(fi['doc_id'])+'">'
 
                      if 'name' in fi:
                            substitutions['ajax_uploader'] += fi['name']
@@ -301,7 +301,7 @@ class AjaxFileUploader(FileInput):
 
                      substitutions['ajax_uploader'] += '<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">'
                      #substitutions['ajax_uploader'] += '<A HREF="/media/'+value['path']+'">'
-                     substitutions['ajax_uploader'] += '<A HREF="/private-media/view/'+str(value['doc_id'])+'-file'+str(value['extension'])+'">'
+                     substitutions['ajax_uploader'] += '<A HREF="/private-media/view/'+str(value['doc_id'])+'-file'+str(value['extension'])+'"  target="new_tab_'+str(value['doc_id'])+'">'
                     
                      if 'name' in value:
                          substitutions['ajax_uploader'] += value['name']

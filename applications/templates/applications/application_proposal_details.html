@@ -53,7 +53,7 @@
                                     {% endif %}
                                     <h4>Location/route and access points (mark clearly on map):</h4>
                                     {% if object.location_route_access %}
-                                    <p><a href="{{ object.location_route_access.file_url }}">{{ object.location_route_access }}</a></p>
+				    <p><a href="{{ object.location_route_access.file_url }}" target="new_tab_{{ object.location_route_access.id }}">{{ object.location_route_access }}</a></p>
                                     {% else %}
                                     <p>Not stated</p>
                                     {% endif %}

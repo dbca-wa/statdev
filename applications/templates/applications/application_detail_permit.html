@@ -232,7 +232,7 @@
                                 <div class='col-sm-12 col-lg-6'>
                                 {% if object.proposed_development_plans %}
                                 	{% for doc in object.proposed_development_plans.all %}
-		                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}'>{{ doc }}</A></div>
+					<div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
                 	                {% endfor %}
                        	        {% else %}
                                		No Attachments
@@ -246,7 +246,7 @@
                                 <div class='col-sm-12 col-lg-6'>
                                 {% if object.supporting_info_demonstrate_compliance_trust_policies %}
                                         {% for doc in object.supporting_info_demonstrate_compliance_trust_policies.all %}
-                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}'>{{ doc }}</A></div>
+					<div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
                                         {% endfor %}
                                 {% else %}
                                 No Attachments
@@ -276,7 +276,7 @@
                                 {% if  object.land_owner_consent %}
 
                                 {% for doc in object.land_owner_consent.all %}
-                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}'>{{ doc }}</A></div>
+				<div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
                                 {% endfor %}
                                 {% else %}
                                 No Attachments Added
@@ -307,7 +307,7 @@
                                 Print <a href=''>this deed</a>, sign it and attach it to this application<BR>
                             </div>
                             <div class="col-lg-12">
-                                <A HREF='{{ object.deed.file_url }}'>{{ deed_short }}</A>
+				    <A HREF='{{ object.deed.file_url }}' target="new_tab_{{ object.deed.id }}">{{ deed_short }}</A>
                             </div>
                         </div>
                     </div>

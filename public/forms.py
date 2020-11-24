@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django import forms
 from django.forms import Form, ModelForm, ChoiceField, FileField, CharField, Textarea, ClearableFileInput, HiddenInput, Field, EmailField
-from applications.widgets import ClearableMultipleFileInput
+from applications.widgets import ClearableMultipleFileInput, RadioSelectWithCaptions, AjaxFileUploader
 from django_crispy_jcaptcha.widget import CaptchaImages, CaptchaValidation
 from multiupload.fields import MultiFileField
 from ledger.accounts.models import EmailUser, Address, Organisation
@@ -31,7 +31,8 @@ class ApplicationPart5(ModelForm):
     email = EmailField(required=False,max_length=255)
     email_confirm = EmailField(required=False,max_length=255)
     comments = CharField(required=False,max_length=255, widget=Textarea)
-    records = FileField(required=False, max_length=128 , widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'})) 
+    #records = FileField(required=False, max_length=128 , widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'})) 
+    records = FileField(required=False, max_length=128, widget=AjaxFileUploader(attrs={'multiple':'multiple'}))
     captcha = CharField(required=False,widget=CaptchaImages(attrs={}))
 
     class Meta:

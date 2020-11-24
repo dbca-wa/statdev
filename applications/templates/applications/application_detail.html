@@ -249,31 +249,31 @@
                         <div class="col-xs-12">
                             <h4>Certificate of survey:</h4>
                             {% if object.cert_survey %}
-                            <p><a href="{{ object.cert_survey.file_url }}">{{ object.cert_survey }}</a></p>
+			    <p><a href="{{ object.cert_survey.file_url }}" target="new_tab_{{ object.cert_survey.id }}">{{ object.cert_survey }}</a></p>
                             {% else %}
                             <p>None</p>
                             {% endif %}
                             <h4>Public liability insurance certificate:</h4>
                             {% if object.cert_public_liability_insurance %}
-                            <p><a href="{{ object.cert_public_liability_insurance.file_url }}">{{ object.cert_public_liability_insurance }}</a></p>
+			    <p><a href="{{ object.cert_public_liability_insurance.file_url }}" target="new_tab_{{ object.cert_public_liability_insurance.id }}" >{{ object.cert_public_liability_insurance }}</a></p>
                             {% else %}
                             <p>None</p>
                             {% endif %}
                             <h4>Risk management plan (if available):</h4>
                             {% if object.risk_mgmt_plan %}
-                            <p><a href="{{ object.risk_mgmt_plan.file_url }}">{{ object.risk_mgmt_plan }}</a></p>
+			    <p><a href="{{ object.risk_mgmt_plan.file_url }}" target="new_tab_{{ object.risk_mgmt_plan.id }}" >{{ object.risk_mgmt_plan }}</a></p>
                             {% else %}
                             <p>None</p>
                             {% endif %}
                             <h4>Safety management procedures (if available):</h4>
                             {% if object.safety_mgmt_procedures %}
-                            <p><a href="{{ object.safety_mgmt_procedures.file_url }}">{{ object.safety_mgmt_procedures }}</a></p>
+			    <p><a href="{{ object.safety_mgmt_procedures.file_url }}" target="new_tab_{{ object.safety_mgmt_procedures.id }}">{{ object.safety_mgmt_procedures }}</a></p>
                             {% else %}
                             <p>None</p>
                             {% endif %}
                             <h4>Brochures, itineraries or advertisements (if applicable):</h4>
                             {% if object.brochures_itineries_adverts.exists %}
-                            <p>{% for doc in object.brochures_itineries_adverts.all %}<a href="{{ doc.file_url }}">{{ doc }}</a><br>{% endfor %}</p>
+			    <p>{% for doc in object.brochures_itineries_adverts.all %}<a href="{{ doc.file_url }}" target="new_tab_{{ doc.id }}">{{ doc }}</a><br>{% endfor %}</p>
                             {% else %}
                             <p>None</p>
                             {% endif %}
@@ -281,7 +281,7 @@
                             <h4>Other relevant supporting documentation (if available)</h4>
                             {% if other_supporting_docs.exists %}
                             <p>{% for doc in object.other_supporting_docs.all %}
-                                <a href="{{ doc.file_url }}">{{ doc }}</a><br>
+  			        <a href="{{ doc.file_url }}" target="new_tab_{{ doc.id }}">{{ doc }}</a><br>
                             {% endfor %}</p>
                             {% else %}
                             <p>None</p>
@@ -317,7 +317,7 @@
                                 {% if land_owner_consent_list %}
 
                                 {% for doc in land_owner_consent_list %}
-                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}'>{{ doc.path_short }}</A></div>
+				<div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc.path_short }}</A></div>
                                 {% endfor %}
                                 {% else %}
                                 No Attachments Added
@@ -348,7 +348,7 @@
                                 Print <a href=''>this deed</a>, sign it and attach it to this application<BR>
                             </div>
                             <div class="col-lg-12">
-                                <A HREF='{{ object.deed.file_url }}'>{{ deed_short }}</A>
+				    <A HREF='{{ object.deed.file_url }}' target="new_tab_{{ object.deed.id }}">{{ deed_short }}</A>
                             </div>
                         </div>
                     </div>

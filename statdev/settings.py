@@ -126,6 +126,7 @@ ALLOWED_UPLOAD_TYPES = [
     'text/csv',
     'text/plain'
 ]
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 
 #USER_FIELDS = ['email']
 ##SOCIAL_AUTH_STRATEGY = 'social_django.strategy.DjangoStrategy'
