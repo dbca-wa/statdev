@@ -20,21 +20,21 @@
                                                 <td>
                                                     {% if workflow_actions or condactions %}
                                                         {% if may_update_condition == "True" %}
-                                                                                <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_update' cond.pk %}');" type="button">Update</button>
-                                                                                <button class="btn btn-danger btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_delete' cond.pk %}');" type="button">Delete</button>
+                                                                                <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_update' cond.pk %}','Update Condition');" type="button">Update</button>
+                                                                                <button class="btn btn-danger btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_delete' cond.pk %}','Delete Condition');" type="button">Delete</button>
 
                                                             {% if condition_accept %}
 
                                                             {% if may_accept_condition and cond.status == cond.CONDITION_STATUS_CHOICES.proposed %}
-                                                                    <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_update' cond.pk 'apply' %}');" type="button">Apply</button>
+                                                                    <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_update' cond.pk 'apply' %}','Apply Condition');" type="button">Apply</button>
                                                                     <a class="btn btn-primary btn-sm" role="button" href="{% url 'condition_update' cond.pk 'apply' %}">Apply</a>
                                                                     <a class="btn btn-danger btn-sm" role="button" href="{% url 'condition_update' cond.pk 'reject' %}">Reject</a>
                                                             {% else %}
  
                                                                      {% if cond.status == cond.CONDITION_STATUS_CHOICES.applied %}
 
-	                                         				<button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_update' cond.pk %}');" type="button">Update</button>
-                                          		                        <button class="btn btn-danger btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_delete' cond.pk %}');" type="button">Delete</button>
+	                                         				<button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_update' cond.pk %}','Update Condition');" type="button">Update</button>
+                                          		                        <button class="btn btn-danger btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_delete' cond.pk %}','Delete Condition');" type="button">Delete</button>
 
                                                                    
                                                                      {% endif %}
@@ -46,9 +46,9 @@
                                                     {% if object.state == 14 %}
                                                                  {% if admin_staff == True %}
                                                                  {% if cond.suspend == True %}
-                                                                           <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_change_suspension' cond.pk 'unsuspend' %}');" type="button">Unsuspend</button>
+                                                                           <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_change_suspension' cond.pk 'unsuspend' %}','Unsuspend Condition');" type="button">Unsuspend</button>
 								 {% else %}
-                                                                           <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_change_suspension' cond.pk 'suspend' %}');" type="button">Suspend</button>
+                                                                           <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_change_suspension' cond.pk 'suspend' %}','Suspend Condition');" type="button">Suspend</button>
 								 {% endif %}
 								 {% endif %}
 						    {% endif %}

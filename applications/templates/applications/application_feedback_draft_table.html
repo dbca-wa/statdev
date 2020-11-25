@@ -22,9 +22,9 @@
                                         </td>
                                         <td>
                                             {% if may_update_publication_feedback_draft == "True" %}
-                                            <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_update_feedbackpublication' object.pk feedpub.id %}');" type="button">Change</button>
-                                            <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_delete_feedbackpublication' object.pk feedpub.id %}');" type="button">Delete</button>
-                                            <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_view_feedbackpublication' object.pk feedpub.id %}');" type="button">View</button>
+                                            <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_update_feedbackpublication' object.pk feedpub.id %}','Change Feedback');" type="button">Change</button>
+                                            <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_delete_feedbackpublication' object.pk feedpub.id %}','Delete Feedback');" type="button">Delete</button>
+                                            <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_view_feedbackpublication' object.pk feedpub.id %}','View Feedback');" type="button">View</button>
 
 
 

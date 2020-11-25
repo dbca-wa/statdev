@@ -6920,13 +6920,14 @@ class NewsPaperPublicationCreate(LoginRequiredMixin, CreateView):
         #        self.object.records.add(doc)
 
         if 'records_json' in self.request.POST:
-             json_data = json.loads(self.request.POST['records_json'])
-             self.object.records.remove()
-             for d in self.object.records.all():
-                 self.object.records.remove(d)
-             for i in json_data:
-                 doc = Record.objects.get(id=i['doc_id'])
-                 self.object.records.add(doc)
+             if is_json(self.request.POST['records_json']) is True:
+                json_data = json.loads(self.request.POST['records_json'])
+                self.object.records.remove()
+                for d in self.object.records.all():
+                    self.object.records.remove(d)
+                for i in json_data:
+                    doc = Record.objects.get(id=i['doc_id'])
+                    self.object.records.add(doc)
 
 
 
@@ -6989,7 +6990,7 @@ class NewsPaperPublicationUpdate(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(NewsPaperPublicationUpdate, self).get_context_data(**kwargs)
-        context['page_heading'] = 'Update Newspaper Publication details'
+        context['page_heading'] = '' #'Update Newspaper Publication details'
         return context
 
     def post(self, request, *args, **kwargs):
@@ -7444,7 +7445,9 @@ class FeedbackPublicationDelete(LoginRequiredMixin, DeleteView):
         flowcontext = {}
         flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, workflowtype)
 
-        if flowcontext["may_update_publication_feedback_draft"] == "True":
+        if flowcontext["may_update_publication_feedback_review"] == "True":
+           return super(FeedbackPublicationDelete, self).get(request, *args, **kwargs)
+        elif flowcontext["may_update_publication_feedback_draft"] == "True":
            return super(FeedbackPublicationDelete, self).get(request, *args, **kwargs)
         elif flowcontext["may_update_publication_feedback_final"] == "True":
            return super(FeedbackPublicationDelete, self).get(request, *args, **kwargs)
@@ -7452,7 +7455,7 @@ class FeedbackPublicationDelete(LoginRequiredMixin, DeleteView):
            return super(FeedbackPublicationDelete, self).get(request, *args, **kwargs)
         else:
              messages.error(
-                 self.request, "Can't change feedback publication for this application")
+                 self.request, "Can't delete feedback publication for this application")
              return HttpResponseRedirect(app.get_absolute_url())
 
         return super(FeedbackPublicationDelete, self).get(request, *args, **kwargs)
@@ -7504,10 +7507,10 @@ class ConditionCreate(LoginRequiredMixin, CreateView):
                 messages.error(
                     self.request, 'New conditions cannot be created for this application!')
                 return HttpResponseRedirect(app.get_absolute_url())
-        elif app.state not in [app.APP_STATE_CHOICES.with_admin, app.APP_STATE_CHOICES.with_referee, app.APP_STATE_CHOICES.with_assessor]:
-            messages.error(
-                self.request, 'New conditions cannot be created for this application!')
-            return HttpResponseRedirect(app.get_absolute_url())
+        #elif app.state not in [app.APP_STATE_CHOICES.with_admin, app.APP_STATE_CHOICES.with_referee, app.APP_STATE_CHOICES.with_assessor]:
+        #    messages.error(
+        #        self.request, 'New conditions cannot be created for this application!')
+        #    return HttpResponseRedirect(app.get_absolute_url())
         return super(ConditionCreate, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -7614,10 +7617,10 @@ class ConditionUpdate(LoginRequiredMixin, UpdateView):
                 return HttpResponseRedirect(condition.application.get_absolute_url())
             else:
                 return super(ConditionUpdate, self).get(request, *args, **kwargs)
-        elif condition.application.state not in [Application.APP_STATE_CHOICES.with_assessor, Application.APP_STATE_CHOICES.with_referee]:
-            messages.error(
-                self.request, 'You can only change conditions when the application is "with assessor" or "with referee" status')
-            return HttpResponseRedirect(condition.application.get_absolute_url())
+        #elif condition.application.state not in [Application.APP_STATE_CHOICES.with_assessor, Application.APP_STATE_CHOICES.with_referee]:
+        #    messages.error(
+        #        self.request, 'You can only change conditions when the application is "with assessor" or "with referee" status')
+        #    return HttpResponseRedirect(condition.application.get_absolute_url())
         # Rule: can only change a condition if the request user is an Assessor
         # or they are assigned the referral to which the condition is attached
         # and that referral is not completed.
@@ -7712,32 +7715,32 @@ class ConditionDelete(LoginRequiredMixin, DeleteView):
                 self.request, "Can't add new newspaper publication to this application")
             return HttpResponseRedirect(app.get_absolute_url())
 
-
+        return super(ConditionDelete, self).get(request, *args, **kwargs)
         # Rule: can only delete a condition if the parent application is status
         # 'with referral' or 'with assessor'. Can also delete if you are the user assigned
         # to an Emergency Works
-        if condition.application.app_type != Application.APP_TYPE_CHOICES.emergency:
-            if condition.application.state not in [Application.APP_STATE_CHOICES.with_assessor, Application.APP_STATE_CHOICES.with_referee]:
-                messages.warning(self.request, 'You cannot delete this condition')
-                return HttpResponseRedirect(condition.application.get_absolute_url())
-            # Rule: can only delete a condition if the request user is an Assessor
-            # or they are assigned the referral to which the condition is attached
-            # and that referral is not completed.
-            assessor = Group.objects.get(name='Statdev Assessor')
-            ref = condition.referral
-            if assessor in self.request.user.groups.all() or (ref and ref.referee == request.user and ref.status == Referral.REFERRAL_STATUS_CHOICES.referred):
-                return super(ConditionDelete, self).get(request, *args, **kwargs)
-            else:
-                messages.warning(self.request, 'You cannot delete this condition')
-                return HttpResponseRedirect(condition.application.get_absolute_url())
-        else:
+        #if condition.application.app_type != Application.APP_TYPE_CHOICES.emergency:
+        #    if condition.application.state not in [Application.APP_STATE_CHOICES.with_assessor, Application.APP_STATE_CHOICES.with_referee]:
+        #        messages.warning(self.request, 'You cannot delete this condition')
+        #        return HttpResponseRedirect(condition.application.get_absolute_url())
+        #    # Rule: can only delete a condition if the request user is an Assessor
+        #    # or they are assigned the referral to which the condition is attached
+        #    # and that referral is not completed.
+        #    assessor = Group.objects.get(name='Statdev Assessor')
+        #    ref = condition.referral
+        #    if assessor in self.request.user.groups.all() or (ref and ref.referee == request.user and ref.status == Referral.REFERRAL_STATUS_CHOICES.referred):
+        #        return super(ConditionDelete, self).get(request, *args, **kwargs)
+        #    else:
+        #        messages.warning(self.request, 'You cannot delete this condition')
+        #        return HttpResponseRedirect(condition.application.get_absolute_url())
+        #else:
             # Rule: can only delete a condition if the request user is the assignee and the application
             # has not been issued.
-            if condition.application.assignee == request.user and condition.application.state != Application.APP_STATE_CHOICES.issued:
-                return super(ConditionDelete, self).get(request, *args, **kwargs)
-            else:
-                messages.warning(self.request, 'You cannot delete this condition')
-                return HttpResponseRedirect(condition.application.get_absolute_url())
+            #if condition.application.assignee == request.user and condition.application.state != Application.APP_STATE_CHOICES.issued:
+            #    return super(ConditionDelete, self).get(request, *args, **kwargs)
+            #else:
+            #    messages.warning(self.request, 'You cannot delete this condition')
+            #    return HttpResponseRedirect(condition.application.get_absolute_url())
 
     def get_success_url(self):
         return reverse('application_detail', args=(self.get_object().application.pk,))

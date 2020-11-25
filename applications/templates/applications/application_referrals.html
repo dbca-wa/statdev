@@ -22,7 +22,7 @@
                         {% if workflow_actions %}
                                 {% if mode == 'update' %}
 	         		{% if may_refer == "True" %}
-		                    <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_refer' object.pk %}');" type="button">Add Referral</button>
+		                    <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_refer' object.pk %}','Add Referral');" type="button">Add Referral</button>
         			{% endif %}
                                 {% endif %}
                         {% endif %}

@@ -22,8 +22,8 @@
         <td>{% if vessel.passenger_capacity %}{{ vessel.passenger_capacity }}{% endif %}</td>
         <td>
             {% if may_update_vessels_list == "True" %}
-	    <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'vessel_update' vessel.pk %}');" type='button'>Update</button>
-            <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'vessel_delete' vessel.pk %}');" type='button'>Delete</button>
+	    <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'vessel_update' vessel.pk %}','Update Vessel');" type='button'>Update</button>
+            <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'vessel_delete' vessel.pk %}','Delete Vessel');" type='button'>Delete</button>
 
             {% endif %}
         </td>

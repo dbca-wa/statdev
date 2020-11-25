@@ -53,7 +53,7 @@
                         {% endif %}
                         </td>
                     <td>
-                       <input type='button' class='btn btn-primary' onclick="django_ajax_form.OpenForm('/applications/{{ communication.application.id }}/comms-view/{{ communication.id }}/');" value='View'>
+                       <input type='button' class='btn btn-primary' onclick="django_ajax_form.OpenForm('/applications/{{ communication.application.id }}/comms-view/{{ communication.id }}/','View Communication Log');" value='View'>
                     </td>
                 </tr>
                 {% endfor %}

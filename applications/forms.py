@@ -979,7 +979,7 @@ class ApplicationLicencePermitForm(ApplicationFormMixin, ModelForm):
                donothing =''
 
             if self.initial["workflow"]["hidden"]["assessments"] == 'False':
-                crispy_boxes.append(HTML('{% include "applications/application_assessment.html" %}'))
+                  crispy_boxes.append(HTML('{% include "applications/application_assessment.html" %}'))
 
 
         #dynamic_selections = HTML('{% include "applications/application_form_js_dynamics.html" %}')
@@ -1505,16 +1505,24 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
              crispy_boxes.append(HTML('{% include "applications/application_conditions.html" %}'))
 
         # Assessment Update Step
-        if check_fields_exist(self.fields,['assessment_start_date']) is True and may_update == "True":
-            crispy_boxes.append(crispy_box('assessment_collapse', 'form_assessment' , 'Assessment','assessment_start_date','document_draft'))
+        #if check_fields_exist(self.fields,['assessment_start_date']) is True and may_update == "True":
+        if self.initial["workflow"]["hidden"]["assessments"] == 'False':
+            if may_update == "True":
+                crispy_boxes.append(crispy_box('assessment_collapse', 'form_assessment' , 'Assessment','assessment_start_date','document_draft',))
+                crispy_boxes.append(HTML('{% include "applications/application_part5_assessment.html" %}'))
+            else:
+                crispy_boxes.append(HTML('{% include "applications/application_part5_assessment.html" %}'))
+        
 
         if check_fields_exist(self.fields,['swan_river_trust_board_feedback']) is True and may_update == "True":
             crispy_boxes.append(crispy_box('boardfeedback_collapse', 'form_boardfeedback' , 'Attach Swan River Trust Board Feedback','swan_river_trust_board_feedback'))
 
         if check_fields_exist(self.fields,['document_draft_signed']) is True and may_update == "True":
             crispy_boxes.append(crispy_box('boardfeedback_collapse', 'form_boardfeedback' , 'Attach Signed Draft','document_draft_signed'))
+
         if check_fields_exist(self.fields,["document_new_draft_v3","document_memo"]) is True and may_update == "True":
             crispy_boxes.append(crispy_box('draft_new_collapse','form_draft_new','Attach new Draft & Memo','document_new_draft_v3','document_memo'))
+
 
         if check_fields_exist(self.fields,["document_final_signed"]) is True and may_update == "True":
             crispy_boxes.append(crispy_box('final_signed_collapse','form_final_signed','Attach Final Signed Report','document_final_signed'))

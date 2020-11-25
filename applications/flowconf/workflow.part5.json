@@ -703,8 +703,8 @@
             "landowner_consent": "False",
             "deed": "False",
             "publication": "False",
-            "conditions": "True",
-            "assessments": "True",
+            "conditions": "False",
+            "assessments": "False",
             "stakeholdercommunication": "False",
             "referrals": "False",
             "publication_feedback_final": "True",
@@ -721,7 +721,7 @@
                 "route": "5",
                 "routegroup": "manager",
                 "state": "5",
-                "required": ["title","deed","cost","river_lease_require_river_lease","river_lease_reserve_licence","proposed_development_description","certificate_of_title_volume","folio","diagram_plan_deposit_number","proposed_development_plans", "publish_documents","publish_documents","asessment_start_date","document_draft"],
+                "required": ["title","deed","cost","river_lease_require_river_lease","river_lease_reserve_licence","proposed_development_description","certificate_of_title_volume","folio","diagram_plan_deposit_number","proposed_development_plans", "publish_documents","publish_documents","document_draft"],
                 "stake_holder_communication" : "yes"
             },
             {
@@ -756,7 +756,9 @@
                 "may_assign":"True",
                 "may_assign_customer": "False",
                 "may_assign_processor": "False",
-                "may_create_condition":"False",
+                "may_create_condition":"True",
+                "may_update_condition": "True",
+                "may_accept_condition": "True",
                 "may_submit_approval": "True",
                 "may_assign_assessor": "True",
                 "may_send_for_referral": "True",
@@ -779,7 +781,6 @@
                 "may_update": "True",
                 "may_update_assessment_draft": "True",
                 "may_assign_to_person": "True",
-                "may_update_condition": "True",
                 "allow_access_attachments": "True"
             },
 
@@ -863,9 +864,11 @@
             "landowner_consent":"False",
             "publication": "False",
             "referrals": "False",
-            "deed": "False"
+            "deed": "False",
+	    "conditions": "False"
         },
         "fields": {
+	    "assessment_start_date": "hide",
             "document_final": "hide",
             "document_determination": "hide",
             "document_completion": "hide",
@@ -1249,10 +1252,11 @@
         },
         "actions": [
             {
-                "title": "Send to Director",
-                "route": "6",
-                "routegroup": "director",
-                "state": "12"
+                "title": "Post to Swan River Trust",
+                "route": "8",
+                "routegroup": "assess",
+                "state": "2"
+
             },
             {
                 "title": "Reject to Assessor",
@@ -1263,13 +1267,15 @@
         ],
         "groupaccess": {
            "Statdev Approver": {
-                "may_update": "True",
+                "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
                 "may_assign_customer": "False",
                 "may_assign_processor": "False",
                 "may_create_condition":"False",
+		"may_update_condition": "False",
+		"may_accept_condition": "False",
                 "may_submit_approval": "True",
                 "may_assign_director": "True",
                 "may_assign_assessor": "True",
@@ -1768,8 +1774,6 @@
             "document_new_draft": "hide",
             "document_draft_signed": "hide",
             "document_final_signed": "hide",
-            "document_new_draft_v3" : "hide",
-            "document_memo" : "hide",
             "document_briefing_note" : "hide",
             "document_determination_approved" :"hide",
             "landowner": "hide",
@@ -1799,6 +1803,7 @@
             "referrals": "False",
             "assessments_draft_report": "False",
             "assessments_swan_river_trust_board_feedback": "False",
+	    "assessments_draft_report_after_public_consultation": "False",
             "assessments_new_draft": "False",
             "certificate_of_title": "False",
             "river_lease_section_29" : "False",
@@ -1816,7 +1821,7 @@
             },
             {
                 "title": "Reject To Assessor (Swan River)",
-                "route": "9",
+                "route": "8",
                 "routegroup": "assess",
                 "state": "5"
             }
@@ -1989,6 +1994,7 @@
             "referrals": "False",
             "assessments_draft_report": "False",
             "assessments_swan_river_trust_board_feedback": "False",
+	    "assessments_draft_report_after_public_consultation": "False",
             "assessments_new_draft": "False",
             "certificate_of_title": "False",
             "river_lease_section_29" : "False",
@@ -2182,6 +2188,7 @@
             "referrals": "False",
             "assessments_draft_report": "False",
             "assessments_swan_river_trust_board_feedback": "False",
+	    "assessments_draft_report_after_public_consultation": "False",
             "assessments_new_draft": "False",
             "certificate_of_title": "False",
             "river_lease_section_29" : "False",
@@ -2370,6 +2377,7 @@
             "referrals": "False",
             "assessments_draft_report": "False",
             "assessments_swan_river_trust_board_feedback": "False",
+	    "assessments_draft_report_after_public_consultation": "False",
             "assessments_new_draft": "False",
             "assessments_draft_report": "False",
             "publication_feedback_final" : "False",
@@ -2406,6 +2414,7 @@
                 "may_assign_customer": "False",
                 "may_assign_processor": "False",
                 "may_create_condition":"True",
+                "may_update_condition":"True",
                 "may_submit_approval": "True",
                 "may_assign_assessor": "True",
                 "may_issue": "False",
@@ -2600,25 +2609,87 @@
                 "may_assign":"False",
                 "may_assign_customer": "False",
                 "may_assign_processor": "False",
-                "may_create_condition":"True",
+                "may_create_condition": "True",
+		"may_update_condition": "True",
+                "may_accept_condition": "True",
                 "may_submit_approval": "True",
                 "may_assign_assessor": "False",
                 "may_assign_exec": "True",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
                 "may_publish_publication_feedback_draft": "True",
-                "may_update_condition": "True",
-                "may_accept_condition": "True",
                 "allow_admin_side_menu":"True",
                 "show_form_buttons": "True",
                 "allow_access_attachments": "True"
 
             },
-	    "Statdev Processor": {
+
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
                 "may_view_action_log": "True",
-                "allow_admin_side_menu":"True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True",
                 "allow_access_attachments": "True"
             }
+
         },
         "collapse": {
             "applicant": "True",

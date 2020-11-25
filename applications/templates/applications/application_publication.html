@@ -22,7 +22,7 @@
                                 {% if workflow_actions %}
                                        {% if mode == 'update' %}
                                       {% if may_update_publication_newspaper == "True" %}
-                                             <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_add_newspaperpublication' object.pk %}');" type="button">Add News Publication</button>
+                                             <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_add_newspaperpublication' object.pk %}', 'Add Newspaper Publication','Add Publication');" type="button">Add News Publication</button>
                                       {% endif %}
                                        {% endif %}
                                 {% endif %}
@@ -141,7 +141,7 @@
                                 {% if workflow_actions %}
                                     {% if mode == 'update' %}
                                 {% if may_update_publication_feedback_review == "True" %}
-			               <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_add_feedbackpublication_draft' object.pk 'review' %}');" type="button">Add Feedback</button>
+			               <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_add_feedbackpublication_draft' object.pk 'review' %}','Add Feedback');" type="button">Add Feedback</button>
                                 {% endif %}
                                      {% endif %}
 
@@ -208,7 +208,7 @@
 				{% else %}
                                 {% if may_update_publication_feedback_final == "True" %}
                                           {% if mode == 'update' %}
-                                        <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_add_feedbackpublication_draft' object.pk 'final' %}');" type="button">Add Feedback</button>
+                                        <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_add_feedbackpublication_draft' object.pk 'final' %}','Add Feedback');" type="button">Add Feedback</button>
                                          {% endif %} 
                                 {% endif %}
                                 {% endif %}
@@ -283,7 +283,7 @@
                                 {% if workflow_actions %}
                                     {% if may_update_publication_feedback_determination == "True" %}
                                          {% if mode == 'update' %}
-                                        <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_add_feedbackpublication_draft' object.pk 'determination' %}');" type="button">Add Feedback</button>
+                                        <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_add_feedbackpublication_draft' object.pk 'determination' %}','Add Feedback');" type="button">Add Feedback</button>
                                          {% endif %}
                                     {% endif %}
                                 {% endif %}
