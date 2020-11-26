@@ -8,6 +8,7 @@ from public import forms as apps_forms
 from django.core.urlresolvers import reverse
 from django.utils.safestring import SafeText
 from applications.validationchecks import Attachment_Extension_Check, is_json
+from datetime import datetime, date, timedelta
 import json
 
 class PublicApplicationsList(TemplateView):
@@ -23,15 +24,16 @@ class PublicApplicationsList(TemplateView):
         context['action'] = action
         search = None
         query_obj = None
+        current_datetime = datetime.now()
 
         if action == 'review':
-            query_obj = Q(publish_documents__isnull=False,publish_draft_report__isnull=True) & Q(app_type__in=[3])
+            query_obj = Q(publish_documents__isnull=False,publish_draft_report__isnull=True, publish_documents_expiry__gte=current_datetime) & Q(app_type__in=[3])
             context['home_nav_review'] = 'active'
         elif action == 'draft':
-            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=True) & Q(app_type__in=[3])
+            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=True,publish_draft_expiry__gte=current_datetime ) & Q(app_type__in=[3])
             context['home_nav_draft'] = 'active'
         elif action == 'final':
-            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=False, publish_determination_report__isnull=True) & Q(app_type__in=[3])
+            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=False, publish_determination_report__isnull=True,publish_final_expiry__gte=current_datetime) & Q(app_type__in=[3])
             context['home_nav_final'] = 'active'
         elif action == 'determination':
             query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False, publish_final_report__isnull=False,publish_determination_report__isnull=False) & Q(app_type__in=[3])

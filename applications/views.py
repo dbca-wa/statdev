@@ -6778,7 +6778,8 @@ class ComplianceCreate(LoginRequiredMixin, ModelFormSetView):
 class WebPublish(LoginRequiredMixin, UpdateView):
     model = Application
     form_class = apps_forms.ApplicationWebPublishForm
-    
+    template_name = "applications/application_publish_form.html"
+        
     def get(self, request, *args, **kwargs):
         app = Application.objects.get(pk=self.kwargs['pk'])
         return super(WebPublish, self).get(request, *args, **kwargs)
@@ -6802,7 +6803,7 @@ class WebPublish(LoginRequiredMixin, UpdateView):
         current_date = datetime.now().strftime('%d/%m/%Y')
 
         publish_type = self.kwargs['publish_type']
-        if publish_type in 'documents':
+        if publish_type in 'received':
             initial['publish_documents'] = current_date
         elif publish_type in 'draft':
             initial['publish_draft_report'] = current_date
@@ -6832,30 +6833,31 @@ class WebPublish(LoginRequiredMixin, UpdateView):
 
         current_date = datetime.now().strftime('%Y-%m-%d')
 
-        if publish_type in 'documents':
+        if publish_type in 'received':
             self.object.publish_documents = current_date
+           
             action = Action(
                content_object=self.object, user=self.request.user, category=Action.ACTION_CATEGORY_CHOICES.publish,
-               action='Publish Documents')
+               action='Application Publish (Received) expiring ('+self.object.publish_documents_expiry.strftime('%m/%d%Y %H:%M')+')')
             action.save()
 
         elif publish_type in 'draft':
             action = Action(
                content_object=self.object, user=self.request.user, category=Action.ACTION_CATEGORY_CHOICES.publish,
-               action='Publish Draft')
+               action='Application Published (Draft) expiring ('+self.object.publish_draft_expiry.strftime('%m/%d%Y %H:%M')+')')
             action.save()  
 
             self.object.publish_draft_report = current_date
         elif publish_type in 'final': 
             action = Action(
                content_object=self.object, user=self.request.user, category=Action.ACTION_CATEGORY_CHOICES.publish,
-               action='Publish Final')
+               action='Application Published (Final) expiring ('+self.object.publish_final_expiry.strftime('%m/%d%Y %H:%M')+')')
             action.save()
             self.object.publish_final_report = current_date
         elif publish_type in 'determination':
             action = Action(
                content_object=self.object, user=self.request.user, category=Action.ACTION_CATEGORY_CHOICES.publish,
-               action='Publish Determination')
+               action='Application Published (Determination)')
             action.save()
             self.object.publish_determination_report = current_date
 
@@ -7769,7 +7771,7 @@ class ConditionSuspension(LoginRequiredMixin, UpdateView):
         else:
            messages.error(self.request, 'Forbidden Access.')
            return HttpResponseRedirect("/")
-        return super(FeedbackPublicationView, self).get(request, *args, **kwargs)
+        return super(ConditionSuspension, self).get(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse('application_detail', args=(self.get_object().application.pk,))

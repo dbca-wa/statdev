@@ -590,7 +590,7 @@ class ApplicationWebPublishForm(ModelForm):
 
     class Meta:
         model = Application
-        fields = ['publish_documents', 'publish_draft_report', 'publish_final_report', 'publish_determination_report']
+        fields = ['publish_documents', 'publish_draft_report', 'publish_final_report', 'publish_determination_report','publish_documents_expiry','publish_draft_expiry','publish_final_expiry']
 
     def __init__(self, *args, **kwargs):
         super(ApplicationWebPublishForm, self).__init__(*args, **kwargs)
@@ -598,29 +598,58 @@ class ApplicationWebPublishForm(ModelForm):
         self.helper.form_id = 'id_form_web_publish_application'
         self.helper.attrs = {'novalidate': ''}
 
+        self.fields['publish_documents_expiry'].label = "Expiry (Unpublish Date)"
+        self.fields['publish_draft_expiry'].label = "Expiry (Unpublish Date)"
+        self.fields['publish_final_expiry'].label = "Expiry (Unpublish Date)"
+
+        self.fields['publish_documents_expiry'].css_class = 'dateinput'
+        self.fields['publish_draft_expiry'].css_class = 'dateinput'
+        self.fields['publish_final_expiry'].css_class = 'dateinput'
+
         # Delete publish fields not required for update.
-        if kwargs['initial']['publish_type'] in 'records':
+        if kwargs['initial']['publish_type'] in 'received':
             del self.fields['publish_draft_report']
             del self.fields['publish_final_report']
             del self.fields['publish_determination_report']
+            
+            del self.fields['publish_draft_expiry']
+            del self.fields['publish_final_expiry']
+
+            self.fields['publish_documents_expiry'].required = True
             self.fields['publish_documents'].label = "Published Date"
-            self.fields['publish_documents'].widget.attrs['disabled'] = True
+            #self.fields['publish_documents'].widget.attrs['hidden'] = True
+            self.fields['publish_documents'].widget = HiddenInput()
         elif kwargs['initial']['publish_type'] in 'draft':
             del self.fields['publish_final_report']
             del self.fields['publish_documents']
             del self.fields['publish_determination_report']
+
+            del self.fields['publish_documents_expiry']
+            del self.fields['publish_final_expiry']
+
+            self.fields['publish_draft_expiry'].required = True
             self.fields['publish_draft_report'].label = "Published Date"
-            self.fields['publish_draft_report'].widget.attrs['disabled'] = True
+            self.fields['publish_draft_report'].widget = HiddenInput()
         elif kwargs['initial']['publish_type'] in 'final':
             del self.fields['publish_draft_report']
             del self.fields['publish_documents']
             del self.fields['publish_determination_report']
+
+            del self.fields['publish_documents_expiry']
+            del self.fields['publish_draft_expiry']
+
+            self.fields['publish_final_expiry'].required = True
             self.fields['publish_final_report'].label = "Published Date"
-            self.fields['publish_final_report'].widget.attrs['disabled'] = True
+            self.fields['publish_final_report'].widget = HiddenInput()
         elif kwargs['initial']['publish_type'] in 'determination':
             del self.fields['publish_draft_report']
             del self.fields['publish_documents']
             del self.fields['publish_final_report']
+
+            del self.fields['publish_documents_expiry']
+            del self.fields['publish_draft_expiry']
+            del self.fields['publish_final_expiry']
+
             self.fields['publish_determination_report'].label = "Published Date"
             self.fields['publish_determination_report'].widget.attrs['disabled'] = True
         else:
@@ -628,7 +657,10 @@ class ApplicationWebPublishForm(ModelForm):
             del self.fields['publish_final_report']
             del self.fields['publish_documents']
             del self.fields['publish_determination_report']
-
+            del self.fields['publish_documents_expiry']
+            del self.fields['publish_draft_expiry']
+            del self.fields['publish_final_expiry']
+            raise 
         self.helper.add_input(Submit('save', 'Publish to Website', css_class='btn-lg'))
         self.helper.add_input(Submit('cancel', 'Cancel'))
 
@@ -1311,6 +1343,7 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
 
     document_new_draft_v3 = FileField(required=False, max_length=128, widget=AjaxFileUploader(attrs={'multiple':'multiple'}), label='Draft Version 3')
     document_memo = FileField(required=False, max_length=128, widget=AjaxFileUploader(attrs={'multiple':'multiple'}), label='Memo')
+    document_memo_2 = FileField(required=False, max_length=128, widget=AjaxFileUploader(attrs={'multiple':'multiple'}), label='Memo 2')
 
 #    document_determination = FileField(required=False, max_length=128, widget=ClearableFileInput, label='Determination Report')
 #    document_briefing_note = FileField(required=False, max_length=128, widget=ClearableFileInput, label='Briefing Note')
@@ -1324,7 +1357,7 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
     river_lease_require_river_lease = ChoiceField(choices=Application.APP_YESNO ,widget=RadioSelect(attrs={'class':'radio-inline'}), label='Does the development require a River reserve lease?')
     river_lease_reserve_licence = ChoiceField(choices=Application.APP_YESNO ,widget=RadioSelect(attrs={'class':'radio-inline'}), label='Does the proposed development involve an activity in the River reserve that will require a River reserve licence?')
     river_lease_application_number = CharField(required=False, label='Application number')
-    approval_document = FileField(required=False, max_length=128, widget=AjaxFileUploader(attrs={}), label='New Approval')
+    approval_document = FileField(required=False, max_length=128, widget=AjaxFileUploader(attrs={}), label='Signed Approval (minster)')
     approval_document_signed = FileField(required=False, max_length=128, widget=AjaxFileUploader(attrs={}), label='Approval Document Signed')
 
     class Meta:
@@ -1523,12 +1556,13 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
         if check_fields_exist(self.fields,["document_new_draft_v3","document_memo"]) is True and may_update == "True":
             crispy_boxes.append(crispy_box('draft_new_collapse','form_draft_new','Attach new Draft & Memo','document_new_draft_v3','document_memo'))
 
-
         if check_fields_exist(self.fields,["document_final_signed"]) is True and may_update == "True":
             crispy_boxes.append(crispy_box('final_signed_collapse','form_final_signed','Attach Final Signed Report','document_final_signed'))
 
+
         if check_fields_exist(self.fields,["document_briefing_note","document_determination"]) is True and may_update == "True":
             crispy_boxes.append(crispy_box('determination_collapse','form_determination','Attached Deterimination & Breifing Notes','document_briefing_note','document_determination'))
+
 
         if "landowner_information" in self.initial["workflow"]["hidden"]:
              if self.initial["workflow"]["hidden"]["landowner_information"] == 'False':
@@ -1549,7 +1583,8 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
              if self.initial["workflow"]["hidden"]["approval_document"] == 'False':
                   # Landowner Information
                   if check_fields_exist(self.fields,['approval_document']) is True and may_update == "True":
-                      crispy_boxes.append(crispy_box('approval_document_info_collapse', 'form_approval_document_info' , 'Approval Document',HTML('{% include "applications/application_approval.html" %}'),'approval_document'))
+                      crispy_boxes.append(crispy_box('approval_document_info_collapse', 'form_approval_document_info' , 'Approval Document',HTML('{% include "applications/application_approval.html" %}'),))
+                      del self.fields['approval_document']
                       pass
                   else:
                       try:
@@ -1715,7 +1750,7 @@ class ApplicationReferralConditionsPart5(ModelForm):
     proposed_conditions = CharField(required=False,max_length=255, widget=Textarea)
     #records = FileField(required=False, max_length=128, widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'})) 
     #records = FileField(required=False, max_length=128, widget=AjaxClearableFileInput())
-    records = FileField(required=False, max_length=128, widget=AjaxFileUploader(attrs={'multiple':'multiple'})) 
+    records = FileField(required=False, max_length=128, widget=AjaxFileUploader(attrs={'multiple':'multiple'}), label='Documents') 
 
     class Meta:
         model = Application
@@ -2049,8 +2084,6 @@ class AssignPersonForm(ModelForm):
         self.helper = BaseFormHelper(self)
         self.helper.form_id = 'id_form_assign_person_application'
         self.helper.attrs = {'novalidate': ''}
-        print ("INITIAL GROUP")
-        print (self.initial['assigngroup'])
         # Limit the assignee queryset.
         assigngroup = Group.objects.get(name=self.initial['assigngroup'])
         self.fields['assignee'].queryset = User.objects.filter(groups__in=[assigngroup])

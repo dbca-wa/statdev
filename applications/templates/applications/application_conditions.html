@@ -9,9 +9,9 @@
 	</div>
 	<div class="panel-collapse collapse {{ collapse.conditions }}" id="conditions_collapse" role="tabpanel" aria-labelledby="conditions_heading">
             <div class="panel-body">
-                                <div id='conditions_table'>
-		                        {% include "applications/application_conditions_table.html" %}
-				</div>
+            <div id='conditions_table'>
+	            {% include "applications/application_conditions_table.html" %}
+	    </div>
             {% if workflow_actions or condactions %}
                 {% if may_create_condition == "True" %}
                    <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_create' object.pk %}','Add Condition');" type="button">Add Condition/Advice</button> 

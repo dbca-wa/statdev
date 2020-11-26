@@ -871,10 +871,10 @@
         },
         "actions": [
             {
-                "title": "Approve",
-                "route": "6",
-                "routegroup": "assess",
-                "state": "10"
+                    "title": "Approve & Complete Application",
+                "route": "7",
+                "routegroup":"assess",
+                "state":"14"
             },
             {
                 "title": "Decline & Close Application",
@@ -883,7 +883,7 @@
                 "state": "8"
             },
             {
-                "title": "Send back to Statdev Assessor",
+                "title": "Send back to Assessor",
                 "route": "2",
                 "routegroup": "assess",
                 "state": "4"
@@ -900,9 +900,11 @@
                 "may_lodge":"True",
                 "may_refer":"False",
                 "may_assign":"False",
+                "may_create_condition":"True",
+                "may_update_condition": "True",
+                "may_accept_condition": "True",
                 "may_assign_customer": "False",
                 "may_assign_processor": "True",
-                "may_create_condition":"False",
                 "may_submit_approval": "False",
                 "may_assign_assessor": "True", 
                 "may_issue": "False",

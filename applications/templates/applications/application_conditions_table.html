@@ -3,6 +3,7 @@
                                         <tr>
                                                 <th>Number</th>
                                                 <th>Condition</th>
+						<th>Advise</th>
                                                 <th>Recur Pattern</th>
                                                 <th>Recur Freq</th>
                                                 <th>Due Date</th>
@@ -14,6 +15,7 @@
                                         <tr>
                                                 <td>{{ cond.pk }}</td>
                                                 <td>{{ cond.condition }}</td>
+						<td>{{ cond.advise }}</td>
                                                 <td>{{ cond.get_recur_pattern_display }}</td>
                                                 <td>{{ cond.recur_freq }}</td>
                                                 <td>{{ cond.due_date|date:"d-M-Y" }}</td>

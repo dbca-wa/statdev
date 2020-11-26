@@ -98,6 +98,7 @@
                                 <label>Signed copy (signed by DG) of draft report</label>
                             </div>
                             <div class="col-lg-9">
+				 FIX ME --  {{ object.document_draft_signed.all }}
                                 {% if object.document_draft_signed.upload.name %}
 				<A HREF='{{ object.document_draft_signed.file_url }}' target="new_tab_{{  object.document_draft_signed.id }}">Signed Document.pdf</A>
                                 {% else %}
@@ -135,7 +136,7 @@
                          <BR>
                         <div class="col-lg-12">
                             <div class="col-lg-12">
-                                <label><u>Draft Report after public consultation</u></label>
+                                <label><u>Final Report after public consultation</u></label>
                             </div>
 							{% if hidden.reportandmemoprint == "False" %}
 							 <div class="col-lg-12">
@@ -147,7 +148,7 @@
 
                             <div class="col-lg-12">
                                 <div class="col-lg-3">
-                                    Attach new version of draft report
+                                    Final Report 
                                 </div>
                                 <div class="col-lg-9">
                                     {% if object.document_new_draft_v3.exists %}
@@ -161,9 +162,10 @@
 
                             <div class="col-lg-12">
                                 <div class="col-lg-3">
-                                    Memo
+                                    Memo 2
                                 </div>
                                 <div class="col-lg-9">
+			            FIX -- MEMO 2
                                     {% if object.document_memo.exists %}
 				    {% for doc in object.document_memo.all %}<a href="{{ doc.file_url }}" target="new_tab_{{ doc.id }}">Memo - {{ doc }}</a><br>{% endfor %}
                                     {% else %}
@@ -171,6 +173,20 @@
                                     {% endif %}
                                  </div>
                             </div>
+
+                            <div class="col-lg-12">
+                                <div class="col-lg-3">
+                                    Signed Final Report
+                                </div>
+                                <div class="col-lg-9">
+                                    {% if object.document_final_signed.exists %}
+                                    {% for doc in object.document_final_signed.all %}<a href="{{ doc.file_url }}" target="new_tab_{{ doc.id }}">Memo - {{ doc }}</a><br>{% endfor %}
+                                    {% else %}
+                                        <A HREF="{% url 'application_update' object.pk %}">{% if may_update == "True" %}Attach File{% else %}No Attachment{% endif %}</A>
+                                    {% endif %}
+                                 </div>
+                            </div>
+
 
                         </div>
                         {% endif %}
@@ -212,19 +228,6 @@
 				    {% for doc in object.document_briefing_note.all %}<a href="{{ doc.file_url }}" target="new_tab_{{ doc.id }}">Briefing - {{ doc }}</a><br>{% endfor %}
                                     {% else %}
                                         <A HREF="{% url 'application_update' object.pk %}">{% if may_update == "True" %}Attach File{% else %}No Attachment{% endif %}</A>
-                                    {% endif %}
-                                </div>
-
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="col-lg-3">
-                                   	Final Report
-                                </div>
-                                <div class="col-lg-9">
-				    {% if object.document_final_signed.exists %}
-				    {% for doc in object.document_final_signed.all %}<a href="{{ doc.file_url }}" target="new_tab_{{ doc.id }}">Signed Document - {{ doc }}</a><br>{% endfor %}
-                                    {% else %}
-                                            No Attachment
                                     {% endif %}
                                 </div>
 

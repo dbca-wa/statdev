@@ -45,7 +45,7 @@
                                     {% if workflow_actions %}
                                         {% if mode == 'update' %}
                                         {% if may_publish_website == "True" %}
-                                        <a href="{% url 'application_publish_documents' object.pk 'documents' %}" class="btn btn-primary" role="button">
+                                        <a href="{% url 'application_publish_documents' object.pk 'received' %}" class="btn btn-primary" role="button">
                                             Publish
                                         </a>
                                         {% endif %}
@@ -150,6 +150,7 @@
                         </div>
                     </div>
 
+
                     <div class="panel-body">
                         {% if hidden.publish_publication_feedback_draft == "False" %}
                         <div class="col-sm-12 col-md-12 col-lg-12">
@@ -159,7 +160,7 @@
                             <div class="col-lg-4">
                                 {% if object.document_draft_signed %}
                                         {% for doc in object.document_draft_signed.all %}
-					<div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                        <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
                                         {% endfor %}
                                 {% else %}
                                         No Attachments
@@ -191,6 +192,7 @@
                         </div>
                         {% endif %}
                     </div>
+
 
                     {% if hidden.publication_feedback_final == "False" %}
                     <div class="panel-body">
