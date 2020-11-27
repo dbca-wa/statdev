@@ -89,12 +89,14 @@ class PublicApplicationFeedback(UpdateView):
                fileitem['path'] = doc.upload.name
                fileitem['path_short'] = SafeText(doc.upload.name)[19:]
                fileitem['name'] = doc.name
+               fileitem['file_url'] = doc.file_url()
                context['proposed_development_plans_list'].append(fileitem)
             else:
                fileitem['fileid'] = pub_web.published_document.id
                fileitem['path'] = pub_web.published_document.upload.name
                fileitem['path_short'] = SafeText(pub_web.published_document.upload.name)[19:]
                fileitem['name'] = pub_web.published_document.name
+               fileitem['file_url'] = doc.file_url()
                context['proposed_development_plans_list'].append(fileitem)
 
         if app.river_lease_scan_of_application:

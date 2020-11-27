@@ -38,6 +38,15 @@
                                 <label>Attach a full set of plans</Label>
                             </div>
                             <div class="col-lg-12">
+				    <b style='color: red'>THIS NEED FIXING</b>
+                                {% if proposed_development_plans_list.exists %}
+                                        {% for doc in object.proposed_development_plans_list.all %}
+                                        <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                        {% endfor %}
+                                {% else %}
+                                        No Attachments
+                                {% endif %}
+				    
                                 {% if proposed_development_plans_list %}
 
                                 {% for doc in proposed_development_plans_list %}
