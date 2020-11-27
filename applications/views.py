@@ -982,8 +982,8 @@ class ApplicationFlowRoutes(LoginRequiredMixin,TemplateView):
             workflow_steps = flow.json_obj
             if 'options' in workflow_steps:
                 del workflow_steps['options']
-            context['workflow'] = sorted(workflow_steps.items(), key=lambda dct: float(dct[0]))
-
+            #context['workflow'] = sorted(workflow_steps.items(), key=lambda dct: float(dct[0]))
+            context['workflow'] = workflow_steps
             context['workflow_route'] = flow.getAllRouteConf(app_type,route)
             if 'condition_based_actions' in context['workflow_route']:
                 context['workflow_route']['condition_based_actions'] = context['workflow_route']['condition-based-actions']
@@ -1059,7 +1059,8 @@ class ApplicationFlowDiagrams(LoginRequiredMixin,TemplateView):
                           print (a) 
             if 'options' in workflow_steps:
                 del workflow_steps['options']
-            context['workflow'] = sorted(workflow_steps.items(), key=lambda dct: float(dct[0]))
+#            context['workflow'] = sorted(workflow_steps.items(), key=lambda dct: float(dct[0]))
+            context['workflow'] =  workflow_steps.items()
             #context['workflow'][1][0] = '2-22'
             #print (context['workflow'][1][0])
                #b = i[0].replace(".","-")
@@ -3913,6 +3914,17 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
             multifilelist.append(fileitem)
         initial['document_memo'] = multifilelist
 
+        a1 = app.document_memo_2.all()
+        multifilelist = []
+        for b1 in a1:
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['document_memo_2'] = multifilelist
+
         a1 = app.document_new_draft_v3.all()
         multifilelist = []
         for b1 in a1:  
@@ -4346,6 +4358,14 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
                  doc = Record.objects.get(id=i['doc_id'])
                  self.object.document_memo.add(doc)
 
+        if 'document_memo_2_json' in self.request.POST:
+             json_data = json.loads(self.request.POST['document_memo_2_json'])
+             self.object.document_memo_2.remove()
+             for d in self.object.document_memo_2.all():
+                 self.object.document_memo_2.remove(d)
+             for i in json_data:
+                 doc = Record.objects.get(id=i['doc_id'])
+                 self.object.document_memo_2.add(doc)
 
         if 'deed_json' in self.request.POST:
              json_data = json.loads(self.request.POST['deed_json'])
@@ -6838,20 +6858,20 @@ class WebPublish(LoginRequiredMixin, UpdateView):
            
             action = Action(
                content_object=self.object, user=self.request.user, category=Action.ACTION_CATEGORY_CHOICES.publish,
-               action='Application Publish (Received) expiring ('+self.object.publish_documents_expiry.strftime('%m/%d%Y %H:%M')+')')
+               action='Application Publish (Received) expiring ('+self.object.publish_documents_expiry.strftime('%m/%d/%Y %H:%M')+')')
             action.save()
 
         elif publish_type in 'draft':
             action = Action(
                content_object=self.object, user=self.request.user, category=Action.ACTION_CATEGORY_CHOICES.publish,
-               action='Application Published (Draft) expiring ('+self.object.publish_draft_expiry.strftime('%m/%d%Y %H:%M')+')')
+               action='Application Published (Draft) expiring ('+self.object.publish_draft_expiry.strftime('%m/%d/%Y %H:%M')+')')
             action.save()  
 
             self.object.publish_draft_report = current_date
         elif publish_type in 'final': 
             action = Action(
                content_object=self.object, user=self.request.user, category=Action.ACTION_CATEGORY_CHOICES.publish,
-               action='Application Published (Final) expiring ('+self.object.publish_final_expiry.strftime('%m/%d%Y %H:%M')+')')
+               action='Application Published (Final) expiring ('+self.object.publish_final_expiry.strftime('%m/%d/%Y %H:%M')+')')
             action.save()
             self.object.publish_final_report = current_date
         elif publish_type in 'determination':

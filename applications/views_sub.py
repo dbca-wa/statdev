@@ -63,6 +63,7 @@ class Application_Part5():
             fileitem['path'] = doc.upload.name
             fileitem['path_short'] = SafeText(doc.upload.name)[19:]
             fileitem['name'] = doc.name
+            fileitem['file_url'] = doc.file_url()
             context['land_owner_consent_list'].append(fileitem)
 
 
@@ -84,6 +85,7 @@ class Application_Part5():
                 fileitem['fileid'] = doc.id
                 fileitem['path'] = doc.upload
                 fileitem['path_short'] = SafeText(doc.upload.name)[19:]
+                fileitem['file_url'] = doc.file_url()
                 rowitem['documents_short'].append(fileitem)
             context['publication_newspaper_list'].append(rowitem)
 
@@ -111,6 +113,7 @@ class Application_Part5():
                 fileitem['fileid'] = doc.id
                 fileitem['path'] = doc.upload
                 fileitem['path_short'] = SafeText(doc.upload.name)[19:]
+                fileitem['file_url'] = doc.file_url()
                 rowitem['documents_short'].append(fileitem)
             pub_feed_obj.append(rowitem)
 

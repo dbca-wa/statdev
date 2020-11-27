@@ -5,6 +5,7 @@
     },
     "1": {
         "title": "Form Lodgement",
+	"status": "active",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -152,7 +153,9 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "document_memo_2": "hide"
+
 
         }
     },
@@ -160,6 +163,7 @@
 
     "27": {
         "title": "Pending Payment",
+	"status": "active",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -381,13 +385,15 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "document_memo_2": "hide"
 
         }
 },
 
     "28": {
-        "title": "Draft",
+        "title": "Return to Submitter",
+	"status": "active",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -532,15 +538,16 @@
             "document_determination_approved" : "hide",
             "description": "hide",
             "landowner": "hide",
-            "land_description": "hide"
+            "land_description": "hide",
+	    "document_memo_2": "hide"
 
 
         }
     },
 
-
    "282": {
         "title": "Draft",
+	"status": "inactive",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -684,7 +691,8 @@
             "expire_date" : "hide",
             "document_final" :" hide",
             "landowner": "hide",
-            "land_description": "hide"
+            "land_description": "hide",
+	    "document_memo_2": "hide"
         },
         "required" : []
     },
@@ -692,6 +700,7 @@
 
     "2": {
         "title": "Assessor Officer",
+	"status": "active",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -883,7 +892,8 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "document_memo_2": "hide"
 
         },
         "required": [
@@ -893,6 +903,7 @@
     },
     "4": {
         "title": "Referrals",
+	"status": "active",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -1031,7 +1042,8 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "document_memo_2": "hide"
 
 
         }
@@ -1224,12 +1236,14 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "document_memo_2": "hide"
 
         }
     },
     "6": {
         "title": "Director",
+	"status": "inactive",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -1414,13 +1428,15 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "document_memo_2": "hide"
 
 
         }
     },
     "7": {
         "title": "Executive Officer (Swan River)",
+	"status": "inactive",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -1598,7 +1614,8 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "document_memo_2": "hide"
 
         }
     },
@@ -1606,6 +1623,7 @@
 
     "8": {
         "title": "Statdev Assessor Officer - Swan River",
+	"status": "active",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -1785,13 +1803,15 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "document_memo_2": "hide"
 
         },
         "required": []
     },
     "10": {
         "title": "Manager (Swan River)",
+	"status": "active",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -1943,7 +1963,7 @@
         },
 
         "fields": {
-                "title": "hide",
+            "title": "hide",
             "description": "hide",
             "cost": "hide",
             "project_no": "hide",
@@ -1980,13 +2000,14 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
-
+            "approval_document_signed" : "hide",
+            "document_memo_2": "hide"
 
         }
     },
     "11": {
         "title": "Director (Swan River)",
+	"status": "inactive",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -2011,6 +2032,7 @@
             "river_lease_section_32" : "False",
             "land_owner_consent": "False",
             "deed" : "False"
+
 
         },
         "actions": [
@@ -2174,13 +2196,14 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
-
+            "approval_document_signed" : "hide",
+            "document_memo_2": "hide"
 
         }
     },
     "12": {
         "title": "Executive Officer (DG Draft)",
+	"status": "inactive",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -2363,13 +2386,14 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
-
+            "approval_document_signed" : "hide",
+            "document_memo_2": "hide"
 
         }
     },
     "13": {
         "title": "Statdev Assessor Officer - Pending DG Draft",
+	"status": "active",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -2391,7 +2415,7 @@
             "assessments_new_draft": "False",
             "assessments_draft_report": "False",
             "publication_feedback_draft" : "False",
-            "publication_feedback_final" : "False",
+            "publication_feedback_final" : "True",
             "publish_publication_feedback_draft" : "False",
             "publish_publication_feedback_final" : "True",
             "certificate_of_title": "False",
@@ -2432,7 +2456,7 @@
                 "may_generate_pdf": "False",
                 "may_view_action_log": "True",
                 "may_publish_publication_feedback_draft": "True",
-                "may_update_publication_feedback_draft": "False",
+                "may_update_publication_feedback_draft": "True",
                 "may_update_publication_feedback_final": "True",
                 "allow_admin_side_menu":"True",
                 "show_form_buttons": "True",
@@ -2549,7 +2573,6 @@
             "river_lease_scan_of_application":"hide",
             "deed":"hide",
             "document_determination":"hide",
-	    "document_final": "hide",
             "document_draft": "hide",
             "assessment_start_date" : "hide",
             "document_new_draft" : "hide",
@@ -2564,12 +2587,12 @@
             "approval_document" : "hide",
             "approval_document_signed" : "hide"
 
-
         },
         "required": []
     },
     "14": {
         "title": "Statdev Assessor (Public)",
+	"status": "active",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -2590,6 +2613,7 @@
             "assessments_new_draft": "False",
             "assessments_draft_report_after_public_consultation" : "False",
             "publish_publication_feedback_draft": "False",
+	    
             "certificate_of_title": "False",
             "river_lease_section_29" : "False",
             "river_lease_section_32" : "False",
@@ -2756,7 +2780,8 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "document_memo_2": "hide"
 
 
         },
@@ -2765,6 +2790,7 @@
     },
     "15": {
         "title": "Manager (Public)",
+	"status": "active",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -2785,6 +2811,9 @@
             "assessments_new_draft": "False",
             "assessments_draft_report_after_public_consultation" : "False",
             "publish_publication_feedback_draft": "False",
+            "publication_feedback_draft" : "False",
+            "publication_feedback_final" : "True",
+
             "certificate_of_title": "False",
             "river_lease_section_29" : "False",
             "river_lease_section_32" : "False",
@@ -2949,7 +2978,8 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "document_memo_2": "hide"
 
         }
     },
@@ -3133,12 +3163,14 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "document_memo_2": "hide"
 
         }
     },
     "17": {
         "title": "Executive Officer (DG Final)",
+	"status": "active",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -3313,12 +3345,14 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "document_memo_2": "hide"
 
         }
     },
     "18": {
         "title": "Statdev Assessor Officer (DG Final)",
+	"status": "active",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -3342,7 +3376,10 @@
             "publication_feedback_determination" :"True",
             "assessments_draft_report_after_public_consultation": "False",
             "publish_publication_feedback_final" : "False",
-            "publication_feedback_determination" : "False",
+            "publication_feedback_draft" : "False",
+            "publication_feedback_final" : "False",
+ 
+            "publication_feedback_determination" : "True",
             "certificate_of_title": "False",
             "river_lease_section_29" : "False",
             "river_lease_section_32" : "False",
@@ -3381,8 +3418,9 @@
                 "may_issue": "False",
                 "may_generate_pdf": "False",
                 "may_view_action_log": "True",
-                "may_publish_publication_feedback_final" :"False",
-                "may_update_publication_feedback_determination" : "True",
+                "may_publish_publication_feedback_final" :"True",
+		"may_update_publication_feedback_final" : "True",
+                "may_update_publication_feedback_determination" : "False",
                 "allow_admin_side_menu":"True",
                 "show_form_buttons": "True",
                 "may_assign_to_person": "True",
@@ -3504,12 +3542,14 @@
             "document_determination_approved" :"hide",
             "approval_document_signed" : "hide",
             "landowner" : "hide",
-            "land_description": "hide"
+            "land_description": "hide",
+	    "document_memo_2": "hide"
 
         }
     },
     "20": {
         "title": "Manager (Determination)",
+	"status": "active",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -3528,12 +3568,13 @@
             "assessments_draft_report": "False",
             "assessments_swan_river_trust_board_feedback": "False",
             "assessments_new_draft": "False",
-            "publication_feedback_final" : "False",
             "publish_publication_feedback_draft": "False",
+	    "publication_feedback_draft": "False",
+	    "publish_publication_feedback_final": "False",
+	    "publication_feedback_final" : "False",
             "publication_feedback_determination": "True",
             "assessments_draft_report_after_public_consultation": "False",
             "assessments_determination_and_briefing_note": "False",
-            "publication_feedback_determination" : "False",
             "certificate_of_title": "False",
             "river_lease_section_29" : "False",
             "river_lease_section_32" : "False",
@@ -3701,12 +3742,14 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "document_memo_2": "hide"
 
         }
     },
     "21": {
         "title" : "Director (Determination)",
+	"status": "inactive",
         "hidden" : {
             "applicant": "False",
             "title": "False",
@@ -3891,12 +3934,14 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "document_memo_2": "hide"
 
         }
     },
     "22": {
         "title": "Executive Officer (Determination)",
+	"status": "inactive",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -4075,7 +4120,8 @@
             "document_determination_approved" :"hide",
             "landowner": "hide",
             "land_description": "hide",
-            "approval_document": "hide"
+            "approval_document": "hide",
+	    "document_memo_2": "hide"
         }
     },
     "23": {
@@ -4098,9 +4144,12 @@
             "assessments_draft_report": "False",
             "assessments_swan_river_trust_board_feedback": "False",
             "assessments_new_draft": "False",
-            "publication_feedback_final" : "False",
             "publish_publication_feedback_draft": "False",
-            "publication_feedback_determination": "False",
+            "publication_feedback_draft": "False",
+            "publish_publication_feedback_final": "False",
+            "publication_feedback_final" : "False",
+            "publication_feedback_determination": "True",
+	    
             "assessments_draft_report_after_public_consultation": "False",
             "assessments_determination_and_briefing_note": "False",
 	    "publish_publication_feedback_determination": "False",
@@ -4272,12 +4321,14 @@
             "document_determination" : "hide",
             "landowner": "hide",
             "land_description": "hide",
-            "approval_document" : "hide"
+            "approval_document" : "hide",
+	    "document_memo_2": "hide"
 
         }
     },
     "24": {
         "title": "Assessor (Finalisation) - Publish",
+	"status": "inactive",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -4459,13 +4510,15 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "document_memo_2": "hide"
 
 
         }
     },
     "25": {
         "title": "Completed",
+	"status": "active",
 	    "hidden": {
             "applicant": "False",
             "title": "False",
@@ -4601,8 +4654,47 @@
             "assessments": "False",
             "approval_document" : "hide",
             "approval_document_signed" : "hide"
-
+        },
+        "fields": {
+            "title": "hide",
+            "description": "hide",
+            "cost": "hide",
+            "project_no": "hide",
+            "river_lease_require_river_lease":"hide",
+            "river_lease_reserve_licence": "hide",
+            "river_lease_application_number":"hide",
+            "proposed_development_description":"hide",
+            "proposed_development_current_use_of_land":"hide",
+            "certificate_of_title_volume":"hide",
+            "folio":"hide",
+            "diagram_plan_deposit_number":"hide",
+            "location":"hide",
+            "reserve_number":"hide",
+            "street_number_and_name":"hide",
+            "town_suburb":"hide",
+            "lot":"hide",
+            "nearest_road_intersection":"hide",
+            "land_owner_consent":"hide",
+            "proposed_development_plans":"hide",
+            "document_final":"hide",
+            "document_completion":"hide",
+            "river_lease_scan_of_application":"hide",
+            "deed":"hide",
+            "document_draft": "hide",
+            "assessment_start_date" : "hide",
+            "document_new_draft" : "hide",
+            "swan_river_trust_board_feedback" : "hide",
+            "document_draft_signed": "hide",
+            "document_new_draft_v3": "hide",
+            "document_memo": "hide",
+            "document_final_signed": "hide",
+            "document_briefing_note": "hide",
+            "document_determination" : "hide",
+            "landowner": "hide",
+            "land_description": "hide",
+            "approval_document" : "hide",
+            "approval_document_signed" : "hide",
+            "document_memo_2": "hide"
         }
-
-    }
+   }
 }

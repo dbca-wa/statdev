@@ -30,7 +30,7 @@
 
 </svg>
 
-iiiii
+
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -100 200 200">
 <defs>
   <marker id='head' orient="auto"
@@ -109,7 +109,8 @@ L20,20 C40,40 40,40 60,20
               {% for r,v in workflow %}
                                {% if r == 'options' %}
                                {% else %}
-
+                               {% if v.status == 'inactive' %}
+			       {% else %}
                                <div id='flow_box_{{ v.step_id }}_line' style='position: absolute; z-index: 20' ></div>
                              
                                <div id='flow_box_{{ v.step_id }}' style='z-index: 30; width: 150px; height: 100px; top:10px; background:#FFF; padding: 10px; border: 3px solid #000; position:relative; float: left; margin-right: 80px; margin-bottom:70px;'>
@@ -122,6 +123,7 @@ L20,20 C40,40 40,40 60,20
                                       Title: {{ v.title }}<br>
                                       <A HREF='/applications/flows/{{ app_type }}/?route={{ r }}'>Route: {{ r }}</A>
                                </div>
+			       {% endif %}
                                {% endif %}
               {% endfor %}
 
@@ -158,18 +160,22 @@ $('#route_2_1').mouseenter(function(){
 function loadPoints() {
 
 {% for r,v in workflow %}
+                               {% if v.status == 'inactive' %}
+                               {% else %}
+
 $('#flow_box_{{ v.step_id }}_line').html('');
 $('#flow_point_top_{{ v.step_id }}').html('&#11044;');
 $('#flow_point_bottom_{{ v.step_id }}').html('&#11044;');
 $('#flow_point_left_{{ v.step_id }}').html('&#11044;');
 $('#flow_point_right_{{ v.step_id }}').html('&#11044;');
+                              {% endif %}
 {% endfor %}
 
 
 {% for r,v in workflow %}
 
-{% if r == 'options' %}{% else %}{% for row in v.actions %}{% for g,h in row.items %}{% if g == 'route_id' %}drawFlowLine('{{ v.step_id }}','{{ h }}');
-{% endif %}{% endfor %}{% endfor %}{% endif %}{% endfor %}
+{% if r == 'options' %}{% else %}{% if v.status == 'inactive' %}{% else %}{% for row in v.actions %}{% for g,h in row.items %}{% if g == 'route_id' %}drawFlowLine('{{ v.step_id }}','{{ h }}');
+{% endif %}{% endfor %}{% endfor %}{% endif %}{% endif %}{% endfor %}
 
 }
 

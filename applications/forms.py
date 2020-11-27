@@ -1324,7 +1324,8 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
      
 #    document_draft_signed = FileField(required=False, max_length=128 , widget=ClearableFileInput)
     document_draft_signed = FileField(required=False, max_length=128 , widget=AjaxFileUploader(attrs={'multiple':'multiple'}))
-    document_final = FileField(required=False, max_length=128, widget=ClearableFileInput)
+    #document_final = FileField(required=False, max_length=128, widget=ClearableFileInput)
+    document_final = FileField(required=False, max_length=128 , widget=AjaxFileUploader(attrs={'multiple':'multiple'}), label="Document Final (Unsigned)")
 #    document_final_signed = FileField(required=False, max_length=128 , widget=ClearableFileInput)
     document_final_signed = FileField(required=False, max_length=128 , widget=AjaxFileUploader(attrs={'multiple':'multiple'}))
     document_determination = FileField(required=False, max_length=128, widget=ClearableFileInput)
@@ -1550,11 +1551,14 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
         if check_fields_exist(self.fields,['swan_river_trust_board_feedback']) is True and may_update == "True":
             crispy_boxes.append(crispy_box('boardfeedback_collapse', 'form_boardfeedback' , 'Attach Swan River Trust Board Feedback','swan_river_trust_board_feedback'))
 
-        if check_fields_exist(self.fields,['document_draft_signed']) is True and may_update == "True":
-            crispy_boxes.append(crispy_box('boardfeedback_collapse', 'form_boardfeedback' , 'Attach Signed Draft','document_draft_signed'))
+        if check_fields_exist(self.fields,['document_draft_signed','document_final']) is True and may_update == "True":
+            crispy_boxes.append(crispy_box('boardfeedback_collapse', 'form_boardfeedback' , 'Signed Draft & Final Report','document_draft_signed','document_final'))
 
         if check_fields_exist(self.fields,["document_new_draft_v3","document_memo"]) is True and may_update == "True":
             crispy_boxes.append(crispy_box('draft_new_collapse','form_draft_new','Attach new Draft & Memo','document_new_draft_v3','document_memo'))
+
+        if check_fields_exist(self.fields,["document_memo_2"]) is True and may_update == "True":
+            crispy_boxes.append(crispy_box('memo_2_collapse','form_new_memo_2','Memo 2','document_memo_2'))
 
         if check_fields_exist(self.fields,["document_final_signed"]) is True and may_update == "True":
             crispy_boxes.append(crispy_box('final_signed_collapse','form_final_signed','Attach Final Signed Report','document_final_signed'))

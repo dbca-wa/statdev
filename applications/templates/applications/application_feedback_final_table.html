@@ -14,6 +14,7 @@
                                         <td>{{ feedpub.comments }}</td>
                                         <td>
                                             {% for doc in feedpub.documents_short %}
+					   
                                             <div class="col-sm-12 col-md-12 col-lg-12">
 						    <a href="{{ doc.file_url }}" target="new_tab_{{ doc.id }}">{{ doc.path_short }}</a>
                                             </div>
