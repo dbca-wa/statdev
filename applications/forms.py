@@ -26,6 +26,11 @@ class BaseFormHelper(FormHelper):
     label_class = 'col-xs-12 col-sm-4 col-md-3 col-lg-2'
     field_class = 'col-xs-12 col-sm-8 col-md-6 col-lg-4'
 
+class PopupFormHelper(FormHelper):
+    form_class = 'form-horizontal'
+    label_class = 'col-xs-12 col-sm-4 col-md-3 col-lg-3'
+    field_class = 'col-xs-12 col-sm-8 col-md-6 col-lg-6'
+
 class ApplicationCreateForm(ModelForm):
 
     class Meta:
@@ -1814,7 +1819,7 @@ class ReferralForm(ModelForm):
         # Application must be passed in as a kwarg.
         app = kwargs.pop('application')
         super(ReferralForm, self).__init__(*args, **kwargs)
-        self.helper = BaseFormHelper(self)
+        self.helper = PopupFormHelper(self)
         self.helper.form_id = 'id_form_referral_create'
         self.helper.attrs = {'novalidate': ''}
         # Limit the referee queryset.
@@ -1837,8 +1842,8 @@ class ReferralCompleteForm(ModelForm):
         super(ReferralCompleteForm, self).__init__(*args, **kwargs)
         self.helper = BaseFormHelper(self)
         self.helper.form_id = 'id_form_referral_complete'
-        self.helper.add_input(Submit('complete', 'Complete', css_class='btn-lg'))
-        self.helper.add_input(Submit('cancel', 'Cancel'))
+        self.helper.add_input(Submit('complete', 'Complete', css_class='btn-lg ajax-submit'))
+        self.helper.add_input(Submit('cancel', 'Cancel', css_class='ajax-close'))
 
 
 class ReferralRecallForm(Form):
@@ -1848,9 +1853,9 @@ class ReferralRecallForm(Form):
         kwargs.pop('instance')  # Don't need this because this isn't a ModelForm.
         super(ReferralRecallForm, self).__init__(*args, **kwargs)
         self.helper = BaseFormHelper(self)
-        self.helper.form_id = 'id_form_referral_recall'
-        self.helper.add_input(Submit('recall', 'Recall', css_class='btn-lg'))
-        self.helper.add_input(Submit('cancel', 'Cancel'))
+        self.helper.form_id = 'id_form_modals'
+        self.helper.add_input(Submit('recall', 'Recall', css_class='btn-lg ajax-submit'))
+        self.helper.add_input(Submit('cancel', 'Cancel', css_class='ajax-close'))
 
 
 class ReferralRemindForm(Form):
@@ -1860,9 +1865,9 @@ class ReferralRemindForm(Form):
         kwargs.pop('instance')  # Don't need this because this isn't a ModelForm.
         super(ReferralRemindForm, self).__init__(*args, **kwargs)
         self.helper = BaseFormHelper(self)
-        self.helper.form_id = 'id_form_referral_remind'
-        self.helper.add_input(Submit('remind', 'Remind', css_class='btn-lg'))
-        self.helper.add_input(Submit('cancel', 'Cancel'))
+        self.helper.form_id = 'id_form_modals'
+        self.helper.add_input(Submit('remind', 'Remind', css_class='btn-lg ajax-submit'))
+        self.helper.add_input(Submit('cancel', 'Cancel', css_class='ajax-close'))
 
 
 class ReferralResendForm(Form):
@@ -1872,9 +1877,9 @@ class ReferralResendForm(Form):
         kwargs.pop('instance')  # Don't need this because this isn't a ModelForm.
         super(ReferralResendForm, self).__init__(*args, **kwargs)
         self.helper = BaseFormHelper(self)
-        self.helper.form_id = 'id_form_referral_resend'
-        self.helper.add_input(Submit('remind', 'Resend', css_class='btn-lg'))
-        self.helper.add_input(Submit('cancel', 'Cancel'))
+        self.helper.form_id = 'id_form_modals'
+        self.helper.add_input(Submit('remind', 'Resend', css_class='btn-lg ajax-submit'))
+        self.helper.add_input(Submit('cancel', 'Cancel', css_class='ajax-close'))
 
 class ReferralDeleteForm(Form):
     """Form is to allow a referral to be reminded about the outstanding feedback
@@ -1962,7 +1967,7 @@ class ConditionCreateForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ConditionCreateForm, self).__init__(*args, **kwargs)
-        self.helper = BaseFormHelper(self)
+        self.helper = PopupFormHelper(self)
 
         if self.initial['may_assessor_advise'] != True:
             self.fields['predefined_conditions'].required = False
@@ -1985,7 +1990,7 @@ class ConditionUpdateForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ConditionUpdateForm, self).__init__(*args, **kwargs)
-        self.helper = BaseFormHelper(self)
+        self.helper = PopupFormHelper(self)
 	# self.helper.form_id = 'id_form_condition_apply'
 
         if self.initial['may_assessor_advise'] != True:
@@ -2611,7 +2616,7 @@ class NewsPaperPublicationCreateForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(NewsPaperPublicationCreateForm, self).__init__(*args, **kwargs)
-        self.helper = BaseFormHelper()
+        self.helper = PopupFormHelper()
 #        self.helper.form_id = 'id_form_create_newspaperpublication'
         self.helper.form_id = 'id_form_modals' 
         self.helper.attrs = {'novalidate': ''}
@@ -2675,7 +2680,7 @@ class FeedbackPublicationCreateForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(FeedbackPublicationCreateForm, self).__init__(*args, **kwargs)
-        self.helper = BaseFormHelper()
+        self.helper = PopupFormHelper()
 #        self.helper.form_id = 'id_form_create_websitepublication'
         self.helper.form_id = 'id_form_modals'
         self.helper.attrs = {'novalidate': ''}

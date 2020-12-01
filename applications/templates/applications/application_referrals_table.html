@@ -34,21 +34,25 @@
                                                                     <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'referral_delete' ref.pk %}','Delete Referral');" type="button">Delete</button>
                                                         {% endif %}
 
-                                                        {% if may_recall_resend %}
+                                                        {% if may_recall_resend and mode == 'update' %}
                                                              {% if may_recall_resend == "True" %}
                                                                         {% if ref.status == ref.REFERRAL_STATUS_CHOICES.referred %}
-                                                                        <a class="btn btn-primary btn-sm" role="button" href="{% url 'referral_recall' ref.pk %}">Recall</a>
-                                                                        <a class="btn btn-primary btn-sm" role="button" href="{% url 'referral_remind' ref.pk %}">Remind</a>
+                                                                        <button class="btn btn-primary btn-sm" role="button" onclick="django_ajax_form.OpenForm('{% url 'referral_recall' ref.pk %}','Referral Recall');" type="button">Recall</button>
+                                                                        <button class="btn btn-primary btn-sm" role="button" onclick="django_ajax_form.OpenForm('{% url 'referral_remind' ref.pk %}','Referral Remind');" type="button" >Remind</button>
+                                                                        {% endif %}
+
+									{% if ref.status == ref.REFERRAL_STATUS_CHOICES.with_admin %}
+									   <button class="btn btn-primary btn-sm" role="button" onclick="django_ajax_form.OpenForm('{% url 'referral_send_refer' ref.pk %}','Send Referral');" type="button">Send</button>
+									{% endif %}
                                                              {% endif %}
-                                             {% endif %}
                                     {% endif %}
                                         {% comment %}{% endcomment %}
 
                             {% if may_referral_resend == "True" %}
-                                                           {% if ref.status == ref.REFERRAL_STATUS_CHOICES.recalled or ref.status == ref.REFERRAL_STATUS_CHOICES.responded %}
-                                                             {# TODO: Referral resend function #}
-                                 <a class="btn btn-primary btn-sm" role="button" href="{% url 'referral_resend' ref.pk %}">Resend</a>
-                                                           {% endif %}
+                                        {% if ref.status == ref.REFERRAL_STATUS_CHOICES.recalled or ref.status == ref.REFERRAL_STATUS_CHOICES.responded %}
+                                             {# TODO: Referral resend function #}
+                                             <a class="btn btn-primary btn-sm" role="button" href="{% url 'referral_resend' ref.pk %}">Resend</a>
+                                        {% endif %}
                             {% endif %}
                                                 </td>
                                         </tr>

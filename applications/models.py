@@ -457,7 +457,7 @@ class Referral(models.Model):
         (2, 'responded', ('Responded')),
         (3, 'recalled', ('Recalled')),
         (4, 'expired', ('Expired')),
-        (5, 'with_admin',('With Admin'))
+        (5, 'with_admin',('Not Sent'))
     )
 
     application = models.ForeignKey(Application, on_delete=models.CASCADE)

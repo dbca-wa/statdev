@@ -87,6 +87,7 @@ urlpatterns = [
     url(r'^referrals/(?P<pk>\d+)/complete/$', views.ReferralComplete.as_view(), name='referral_complete'),
     url(r'^referrals/(?P<pk>\d+)/recall/$', views.ReferralRecall.as_view(), name='referral_recall'),
     url(r'^referrals/(?P<pk>\d+)/resend/$', views.ReferralResend.as_view(), name='referral_resend'),
+    url(r'^referrals/(?P<pk>\d+)/send-referral/$', views.ReferralSend.as_view(), name='referral_send_refer'),
     url(r'^referrals/(?P<pk>\d+)/remind/$', views.ReferralRemind.as_view(), name='referral_remind'),
     url(r'^referrals/(?P<pk>\d+)/delete/$', views.ReferralDelete.as_view(), name='referral_delete'),
     url(r'^referrals/list/$', views.ReferralList.as_view(), name='referral_list'),

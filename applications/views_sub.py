@@ -20,6 +20,7 @@ class Application_Part5():
         flow = Flow()
         workflowtype = flow.getWorkFlowTypeFromApp(app)
         flow.get(workflowtype)
+
         context = flow.getAccessRights(request,context,app.routeid,workflowtype)
         context = flow.getCollapse(context,app.routeid,workflowtype)
         context = flow.getHiddenAreas(context,app.routeid,workflowtype,request)
