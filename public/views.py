@@ -9,6 +9,8 @@ from django.core.urlresolvers import reverse
 from django.utils.safestring import SafeText
 from applications.validationchecks import Attachment_Extension_Check, is_json
 from datetime import datetime, date, timedelta
+from django.contrib import messages
+
 import json
 
 class PublicApplicationsList(TemplateView):
@@ -63,6 +65,28 @@ class PublicApplicationFeedback(UpdateView):
     def get(self, request, *args, **kwargs):
         # TODO: business logic to check the application may be changed.
         app = self.get_object()
+        action = self.kwargs['action']
+        app_id = self.kwargs['pk']
+        query_obj = Q()
+        current_datetime = datetime.now()
+        if action == 'review':
+            query_obj = Q(publish_documents__isnull=False,publish_draft_report__isnull=True, publish_documents_expiry__gte=current_datetime) & Q(app_type__in=[3]) & Q(id=app_id)
+        elif action == 'draft':
+            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=True,publish_draft_expiry__gte=current_datetime ) & Q(app_type__in=[3]) & Q(id=app_id)
+        elif action == 'final':
+            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=False, publish_determination_report__isnull=True,publish_final_expiry__gte=current_datetime) & Q(app_type__in=[3]) & Q(id=app_id)
+        elif action == 'determination':
+            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False, publish_final_report__isnull=False,publish_determination_report__isnull=False) & Q(app_type__in=[3]) & Q(id=app_id)
+        else:
+            messages.error(self.request, 'Forbidden from viewing this page.')
+            return HttpResponseRedirect("/")
+        if Application.objects.filter(query_obj).count() > 0:
+             pass
+        else:
+            messages.error(self.request, 'Forbidden from viewing this page.')
+            return HttpResponseRedirect("/")
+
+
         return super(PublicApplicationFeedback, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -74,7 +98,9 @@ class PublicApplicationFeedback(UpdateView):
         app = self.get_object()
 
         doclist = app.proposed_development_plans.all()
+        print ("AOOO")
         context['proposed_development_plans_list'] = []
+
         for doc in doclist:
             pub_web = None
             try:
@@ -98,7 +124,7 @@ class PublicApplicationFeedback(UpdateView):
                fileitem['name'] = pub_web.published_document.name
                fileitem['file_url'] = doc.file_url()
                context['proposed_development_plans_list'].append(fileitem)
-
+        print (context['proposed_development_plans_list'])
         if app.river_lease_scan_of_application:
             pub_web = None
             try:
@@ -122,6 +148,7 @@ class PublicApplicationFeedback(UpdateView):
         initial['application_id'] = self.kwargs['pk']
         initial['organisation'] = app.organisation
         initial['captcha'] = 'CaPtA'
+        initial['action'] = self.kwargs['action']
 
         if app.river_lease_scan_of_application:
             pub_web = None
@@ -183,12 +210,10 @@ class PublicApplicationFeedback(UpdateView):
         if 'records_json' in self.request.POST:
              if is_json(self.request.POST['records_json']) is True:
                   json_data = json.loads(self.request.POST['records_json'])
-                  self.object.records.remove()
-                  for d in self.object.records.all():
-                      self.object.records.remove(d)
                   for i in json_data:
                       doc = Record.objects.get(id=i['doc_id'])
-                      self.object.records.add(doc)
+                      pfcreate.records.add(doc)
+                  pfcreate.save()
 
 
         #if self.request.FILES.get('records'):

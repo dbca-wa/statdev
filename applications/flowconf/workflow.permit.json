@@ -27,7 +27,6 @@
         },
         "hidden_owner": { 
 
-
         },
         "condition-based-actions": {
             "2-prevstep": {
@@ -105,7 +104,6 @@
             "show_form_buttons": "True",
             "allow_access_attachments": "True"
         },
-
         "groupaccess": {
             "Statdev Processor": {
                 "may_update": "True",
@@ -141,7 +139,6 @@
                 "show_form_buttons": "True",
                 "allow_access_attachments": "True"
             }
-
         },
         "collapse": {
             "applicant": "False",
@@ -190,7 +187,6 @@
             "other_information" : "False",
             "description": "False",
             "landowner_consent": "False"
-
         },
         "actions": [
             {
@@ -225,7 +221,6 @@
             "show_form_buttons": "True",
             "allow_access_attachments": "True"
         },
-
         "submitteraccess": {
             "may_update": "False",
             "may_lodge":"False",
@@ -732,6 +727,7 @@
     "4": {
         "title": "Referrals",
         "hidden": {
+
             "applicant": "False",
             "title": "False",
             "certificate_commerical_acts_and_activities": "False",
@@ -742,17 +738,19 @@
             "details_of_proposed_development": "False",
             "river_reserve_lease_section_29": "False",
             "river_reserve_lease_section_32": "False",
-            "landowner_consent": "False",
-            "deed": "False",
+            "deed": "True",
             "publication": "True",
             "conditions": "True",
-            "assessments": "True",
+            "assessments": "False",
             "stakeholdercommunication": "True",
-            "referrals": "True",
+            "referrals": "False",
+            "hide_form_buttons": "False",
             "location": "False",
             "other_information" : "False",
             "description": "False",
             "landowner_consent": "False"
+
+
 
         },
         "actions": [
@@ -785,23 +783,27 @@
 		"may_view_action_log": "True",
                 "may_view_comm_log": "True",
                 "allow_access_attachments": "True"
-
             },
             "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"True",
-                "may_refer":"False",
-                "may_assign":"False",
+                "may_refer":"True",
+                "may_assign":"True",
                 "may_assign_customer": "False",
-                "may_assign_processor": "False",
+                "may_assign_processor": "True",
                 "may_create_condition":"False",
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu" : "True",
+                "allow_access_attachments": "True",
                 "may_recall_resend": "True",
-                "allow_access_attachments": "True"
-
+                "may_referral_resend": "True",
+                "may_referral_delete": "True",
+		"may_assign_to_person": "True",
+                "may_create_condition":"True",
+                "may_update_condition": "True",
+                "may_accept_condition": "True"
             },
             "Statdev Approver": {
                 "may_update": "True",
@@ -828,7 +830,8 @@
             "river_reserve_lease_section_32": "False",
             "details_of_proposed_development": "False",
             "publication": "True",
-            "referrals": "True",
+            "referrals": "False",
+	    "conditions": "False",
             "deed": "False",
             "landowner_consent": "False"
         },
@@ -838,7 +841,31 @@
             "document_final": "hide",
             "document_determination": "hide",
             "document_completion": "hide",
-            "assessment_start_date": "hide"
+            "assessment_start_date": "hide",
+            "applicant":"hide",
+            "title": "hide",
+            "description" :"hide",
+            "proposed_commence" : "hide",
+            "proposed_end" : "hide",
+            "cost" : "hide",
+            "project_no" : "hide",
+            "related_permits" : "hide",
+            "records" : "hide",
+            "land_owner_consent" : "hide",
+            "deed" : "hide",
+            "lot" : "hide",
+            "reserve_number" : "hide",
+            "town_suburb" : "hide",
+            "nearest_road_intersection" : "hide",
+            "local_government_authority" : "hide",
+            "over_water" : "hide",
+            "proposed_development_plans" : "hide",
+            "supporting_info_demonstrate_compliance_trust_policies" : "hide",
+            "assessment_start_date" : "hide",
+            "expire_date": "hide"
+
+
+	    
         }
     },
     "5": {

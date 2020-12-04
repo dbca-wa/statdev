@@ -2029,7 +2029,7 @@ class ApplicationCreateEW(LoginRequiredMixin, CreateView):
         else:
            messages.error(self.request, 'Forbidden from viewing this page.')
            return HttpResponseRedirect("/")
-        return super(OrganisationAccessRequest, self).get(request, *args, **kwargs)
+        return super(ApplicationCreateEW, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(ApplicationCreateEW, self).get_context_data(**kwargs)
@@ -3783,6 +3783,9 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
     def get_initial(self):
         initial = super(ApplicationUpdate, self).get_initial()
         initial['application_id'] = self.kwargs['pk']
+        #print ("###get_initial###")
+        #print (self.request.POST)
+
 
         app = self.get_object()
         initial['organisation'] = app.organisation
@@ -3882,6 +3885,9 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
             fileitem['extension']  = b1.extension
             multifilelist.append(fileitem)
         initial['brochures_itineries_adverts'] = multifilelist
+        #initial['address'] = "THISIIII TETS"
+        #if 'brochures_itineries_adverts_json' in self.request.POST:
+        #       initial['brochures_itineries_adverts'] = self.request.POST['brochures_itineries_adverts_json']
 
         a1 = app.location_route_access.all()
         multifilelist = []
@@ -4203,7 +4209,7 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
         # ToDO remove dupes of this line below. doesn't need to be called
         # multiple times
         application = Application.objects.get(id=self.object.id)
-
+        
         try:
             new_loc = Location.objects.get(application_id=self.object.id)
         except:
@@ -4371,13 +4377,14 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
                  self.object.document_memo_2.add(doc)
 
         if 'deed_json' in self.request.POST:
-             json_data = json.loads(self.request.POST['deed_json'])
-             self.object.deed.remove()
-             for d in self.object.deed.all():
-                 self.object.deed.remove(d)
-             for i in json_data:
-                 doc = Record.objects.get(id=i['doc_id'])
-                 self.object.deed.add(doc)
+             if is_json(self.request.POST['deed_json']) is True:
+                json_data = json.loads(self.request.POST['deed_json'])
+                self.object.deed.remove()
+                for d in self.object.deed.all():
+                    self.object.deed.remove(d)
+                for i in json_data:
+                    doc = Record.objects.get(id=i['doc_id'])
+                    self.object.deed.add(doc)
 
         if 'swan_river_trust_board_feedback_json' in self.request.POST:
              json_data = json.loads(self.request.POST['swan_river_trust_board_feedback_json'])

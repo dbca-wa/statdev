@@ -7,7 +7,7 @@
                         </a>
                     </h3>
                 </div>
-                <div class="panel-collapse collapse {{ collapse.details_of_proposed_development }}" id="details_of_proposed_development_collapse" role="tabpanel" aria-labelledby="details_of_proposed_development_heading">
+                <div class="panel-collapse collapse in {{ collapse.details_of_proposed_development }}" id="details_of_proposed_development_collapse" role="tabpanel" aria-labelledby="details_of_proposed_development_heading">
                     <div class="panel-body">
                         <div class="col-sm-12 col-md-12 col-lg-12">
                             <div class="col-lg-12">
@@ -38,22 +38,12 @@
                                 <label>Attach a full set of plans</Label>
                             </div>
                             <div class="col-lg-12">
-				    <b style='color: red'>THIS NEED FIXING</b>
-                                {% if proposed_development_plans_list.exists %}
-                                        {% for doc in object.proposed_development_plans_list.all %}
-                                        <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                {% if proposed_development_plans_list %}
+                                        {% for doc in proposed_development_plans_list %}
+                                        <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc.name }}</A></div>
                                         {% endfor %}
                                 {% else %}
                                         No Attachments
-                                {% endif %}
-				    
-                                {% if proposed_development_plans_list %}
-
-                                {% for doc in proposed_development_plans_list %}
-                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='/media/{{ doc.path }}'>{{ doc.name }}</A></div>
-                                {% endfor %}
-                                {% else %}
-                                No Attachments
                                 {% endif %}
                             </div>
                         </div>

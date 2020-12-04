@@ -147,6 +147,7 @@ mimeType:"multipart/form-data"
             $(result_output).append('<div class="error">'+obj['message']+'</div>');
 	}
 	$('#'+input_id+'_json').val(JSON.stringify(input_array));
+	// $('#'+input_id).val(JSON.stringify(input_array));
 	submit_btn.val("Upload").prop( "disabled", false); //enable submit button once ajax is done
 	ajax_loader_django.showFiles(input_id,upload_type);
 	$('#'+input_id+'__submit__files').val('');

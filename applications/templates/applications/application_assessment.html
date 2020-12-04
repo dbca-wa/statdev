@@ -35,7 +35,13 @@
                                 <label>Document Final</label>
                         </div>
                         <div class='col-sm-12 col-md-9 col-lg-9'>
-				<a href="{{ object.document_final.file_url }}" target="new_tab_{{ object.document_final.id }}">{{ object.document_final }}</a>
+                                {% if object.document_final.exists %}
+                                        {% for doc in object.document_final.all %}
+                                        <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                        {% endfor %}
+                                {% else %}
+                                        No Attachments
+                                {% endif %}
                         </div>
                         </div>
                     </div>

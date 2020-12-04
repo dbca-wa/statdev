@@ -262,6 +262,14 @@ class AjaxFileUploader(FileInput):
         else:
            substitutions['ajax_uploader'] += json.dumps(value)
         substitutions['ajax_uploader'] += '</TEXTAREA>'
+
+        #substitutions['ajax_uploader'] += '<TEXTAREA name="'+name+'" id="'+name+'" style="display:none">'
+        #if value == '':
+        #   donothing = ''
+        #else:
+        #   substitutions['ajax_uploader'] += json.dumps(value)
+        #substitutions['ajax_uploader'] += '</TEXTAREA>'
+
         substitutions['ajax_uploader'] += '<div id="'+name+'__uploader" ></div>'
         substitutions['ajax_uploader'] += '<div id="'+name+'__showfiles" ><BR>'
         if value == '':
@@ -351,6 +359,8 @@ class AjaxFileUploader(FileInput):
         return super(AjaxFileUploader, self).use_required_attribute(initial) and not initial
 
     def value_omitted_from_data(self, data, files, name):
+        print ("####value_omitted_from_data####")
+        print (data)
         return (
             super(AjaxFileUploader, self).value_omitted_from_data(data, files, name) and
             self.clear_checkbox_name(name) not in data

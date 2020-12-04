@@ -4207,7 +4207,7 @@
                 "route": "25",
                 "routegroup": "assess",
                 "state": "14",
-                "required" : ["approval_document_signed","document_determination_approved","publish_determination_report"]
+                "required" : ["approval_document_signed","document_determination_approved","publish_determination_report","assessment_start_date"]
             }
         ],
         "formcomponent": {
@@ -4348,7 +4348,6 @@
             "river_lease_scan_of_application":"hide",
             "deed":"hide",
             "document_draft": "hide",
-            "assessment_start_date" : "hide",
             "document_new_draft" : "hide",
             "swan_river_trust_board_feedback" : "hide",
             "document_draft_signed": "hide",
