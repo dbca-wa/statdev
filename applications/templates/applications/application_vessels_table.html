@@ -1,3 +1,4 @@
+<h4>Vessels</h4>
 <table class="table table-bordered table-striped">
     <tr>
         <th>Nominated vessel</th>
@@ -9,24 +10,57 @@
         <th></th>
     </tr>
     {% for vessel in object.vessels.all %}
-    <tr>
-        <td>{{ vessel.name }}</td>
-        <td>{{ vessel.vessel_id }}</td>
-        <td>
-            {% if vessel.registration.exists %}
-	    {% for doc in vessel.registration.all %}<a href="{{ doc.file_url }}" target="new_tab_{{ doc.id }}">{{ doc }}</a><br>{% endfor %}
-            {% endif %}
-        </td>
-        <td>{% if vessel.size %}{{ vessel.size }}{% endif %}</td>
-        <td>{% if vessel.engine %}{{ vessel.engine }}{% endif %}</td>
-        <td>{% if vessel.passenger_capacity %}{{ vessel.passenger_capacity }}{% endif %}</td>
-        <td>
-            {% if may_update_vessels_list == "True" %}
-	    <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'vessel_update' vessel.pk %}','Update Vessel');" type='button'>Update</button>
-            <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'vessel_delete' vessel.pk %}','Delete Vessel');" type='button'>Delete</button>
+       {% if vessel.vessel_type == 0 %}
+          <tr>
+              <td>{{ vessel.name }}</td>
+              <td>{{ vessel.vessel_id }}</td>
+              <td>
+                  {% if vessel.registration.exists %}
+                  {% for doc in vessel.registration.all %}<a href="{{ doc.file_url }}" target="new_tab_{{ doc.id }}">{{ doc }}</a><br>{% endfor %}
+                  {% endif %}
+              </td>
+              <td>{% if vessel.size %}{{ vessel.size }}{% endif %}</td>
+              <td>{% if vessel.engine %}{{ vessel.engine }}{% endif %}</td>
+              <td>{% if vessel.passenger_capacity %}{{ vessel.passenger_capacity }}{% endif %}</td>
+              <td width='200'>
+                  {% if may_update_vessels_list == "True" %}
+                  <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'vessel_update' vessel.pk %}','Update Vessel');" type='button'>Update</button>
+                  <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'vessel_delete' vessel.pk %}','Delete Vessel');" type='button'>Delete</button>
 
-            {% endif %}
-        </td>
-    </tr>
+                  {% endif %}
+              </td>
+          </tr>
+       {% endif %}
     {% endfor %}
 </table>
+
+<h4>Crafts</h4>
+<table class="table table-bordered table-striped">
+    <tr>
+        <th>Craft Type</th>
+        <th>Number of Crafts</th>
+        <th>Documents</th>
+        <th></th>
+    </tr>
+    {% for vessel in object.vessels.all %}
+       {% if vessel.vessel_type == 1 %}
+           <tr>
+               <td>{{ vessel.craft_type }}</td>
+               <td>{{ vessel.number_of_crafts }}</td>
+               <td>
+                   {% if vessel.documents.exists %}
+                   {% for doc in vessel.documents.all %}<a href="{{ doc.file_url }}" target="new_tab_{{ doc.id }}">{{ doc }}</a><br>{% endfor %}
+                   {% endif %}
+               </td>
+               <td width='200'>
+                   {% if may_update_vessels_list == "True" %}
+                   <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'vessel_update' vessel.pk %}','Update Vessel');" type='button'>Update</button>
+                   <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'vessel_delete' vessel.pk %}','Delete Vessel');" type='button'>Delete</button>
+
+                   {% endif %}
+               </td>
+           </tr>
+       {% endif %}
+    {% endfor %}
+</table>
+

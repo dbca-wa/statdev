@@ -87,12 +87,17 @@ class Vessel(models.Model):
     )
 
     vessel_type = models.SmallIntegerField(choices=VESSEL_TYPE_CHOICES, null=True, blank=True)
+    # Vessel Information
     name = models.CharField(max_length=256)
     vessel_id = models.CharField(max_length=256, null=True, blank=True, verbose_name='Vessel identification')
-    registration = models.ManyToManyField(Record, blank=True)
+    registration = models.ManyToManyField(Record, blank=True, related_name='vessel_documents')
     size = models.PositiveIntegerField(null=True, blank=True, verbose_name='size (m)')
     engine = models.PositiveIntegerField(null=True, blank=True, verbose_name='engine (kW)')
     passenger_capacity = models.PositiveIntegerField(null=True, blank=True)
+    # craft Information
+    craft_type = models.CharField(max_length=256, null=True, blank=True, verbose_name='Craft Type')
+    number_of_crafts = models.PositiveIntegerField(null=True, blank=True, verbose_name='Number of crafts')
+    documents = models.ManyToManyField(Record, blank=True, related_name='craft_documents')
 
     def __str__(self):
         return self.name
@@ -175,9 +180,10 @@ class Application(models.Model):
     )
 
     APP_VESSEL_CRAFT = Choices(
-        (1, 'vessel', ('Vessel(s)')),
+        #(1, 'vessel', ('Vessel(s)')),
         #(2, 'craft', ('Craft(s)')),
-        (0, 'none', ('None'))
+        (3, 'yes', ('yes')),
+        (0, 'none', ('No'))
     )
 
     applicant = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.PROTECT, related_name='applicant')

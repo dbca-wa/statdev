@@ -18,6 +18,7 @@
 <div id='vessels_table'>
 {% include "applications/application_vessels_table.html" %}
 </div>
+
 {% if may_update_vessels_list == "True"  %}
         <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_add_vessel' object.pk %}','Add New Vessel');" type='button'>Add new vessel / craft</button>
 {% endif %}

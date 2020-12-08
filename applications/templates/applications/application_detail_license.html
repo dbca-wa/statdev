@@ -125,6 +125,7 @@
                             <div class="row">
                                 <div class="col-xs-12">
                                     <h4>Purpose of application:</h4>
+
                                     {% if object.purpose %}
                                     <p>{{ object.purpose }}</p>
                                     {% else %}
@@ -163,11 +164,17 @@
                                     <p>Not stated</p>
                                     {% endif %}
                                     <h4>Location/route and access points (mark clearly on map):</h4>
-                                    {% if object.location_route_access %}
-				    <p><a href="{{ object.location_route_access.file_url }}" target="new_tab_{{ object.location_route_access.id }}">{{ object.location_route_access }}</a></p>
-                                    {% else %}
-                                    <p>Not stated</p>
-                                    {% endif %}
+
+
+                                        {% if object.location_route_access %}
+                                                {% for doc in object.location_route_access.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                                {% endfor %}
+                                        {% else %}
+                                                No Attachments
+                                        {% endif %}
+
+
                                     <h4>List of jetties to be used:</h4>
                                     {% if object.jetties %}
                                     <p>{{ object.jetties }}</p>
@@ -250,35 +257,54 @@
                     <div class ="row">
                         <div class="col-xs-12">
                             <h4>Certificate of survey:</h4>
-                            {% if object.cert_survey %}
-			    <p><a href="{{ object.cert_survey.file_url }}" target="new_tab_{{ object.cert_survey.id }}" >{{ object.cert_survey }}</a></p>
-                            {% else %}
-                            <p>None</p>
-                            {% endif %}
+
+                                        {% if object.cert_survey %}
+                                                {% for doc in object.cert_survey.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                                {% endfor %}
+                                        {% else %}
+                                                No Attachments
+                                        {% endif %}
                             <h4>Public liability insurance certificate:</h4>
-                            {% if object.cert_public_liability_insurance %}
-			    <p><a href="{{ object.cert_public_liability_insurance.file_url }}" target="new_tab_{{ object.cert_public_liability_insurance.id }}">{{ object.cert_public_liability_insurance }}</a></p>
-                            {% else %}
-                            <p>None</p>
-                            {% endif %}
+
+                                        {% if object.cert_public_liability_insurance %}
+                                                {% for doc in object.cert_public_liability_insurance.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                                {% endfor %}
+                                        {% else %}
+                                                No Attachments
+                                        {% endif %}
+
+
                             <h4>Risk management plan (if available):</h4>
-                            {% if object.risk_mgmt_plan %}
-			    <p><a href="{{ object.risk_mgmt_plan.file_url }}" target="new_tab_{{ object.risk_mgmt_plan.id }}">{{ object.risk_mgmt_plan }}</a></p>
-                            {% else %}
-                            <p>None</p>
-                            {% endif %}
+
+                                        {% if object.risk_mgmt_plan %}
+                                                {% for doc in object.risk_mgmt_plan.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                                {% endfor %}
+                                        {% else %}
+                                                No Attachments
+                                        {% endif %}
                             <h4>Safety management procedures (if available):</h4>
-                            {% if object.safety_mgmt_procedures %}
-			    <p><a href="{{ object.safety_mgmt_procedures.file_url }}" target="new_tab_{{ object.safety_mgmt_procedures.id }}">{{ object.safety_mgmt_procedures }}</a></p>
-                            {% else %}
-                            <p>None</p>
-                            {% endif %}
+
+                                        {% if object.safety_mgmt_procedures %}
+                                                {% for doc in object.safety_mgmt_procedures.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                                {% endfor %}
+                                        {% else %}
+                                                No Attachments
+                                        {% endif %}
+
                             <h4>Brochures, itineraries or advertisements (if applicable):</h4>
-                            {% if object.brochures_itineries_adverts.exists %}
-			    <p>{% for doc in object.brochures_itineries_adverts.all %}<a href="{{ doc.file_url }}" target="new_tab_{{ doc.id }}">{{ doc }}</a><br>{% endfor %}</p>
-                            {% else %}
-                            <p>None</p>
-                            {% endif %}
+
+                                        {% if object.brochures_itineries_adverts %}
+                                                {% for doc in object.brochures_itineries_adverts.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                                {% endfor %}
+                                        {% else %}
+                                                No Attachments
+                                        {% endif %}
+
                             {% comment %}
                             <h4>Other relevant supporting documentation (if available)</h4>
                             {% if other_supporting_docs.exists %}

@@ -760,7 +760,6 @@ class ApplicationLicencePermitForm(ApplicationFormMixin, ModelForm):
         show_form_buttons = self.initial["workflow"]['show_form_buttons']
 
         print ("__INIT__")
-        self.fields['address'].value = "THIS IS A "
         if 'brochures_itineries_adverts_json' in self.data:
             print (self.data.get('brochures_itineries_adverts_json'))
             self.initial['brochures_itineries_adverts'] = self.data.get('brochures_itineries_adverts_json')
@@ -899,7 +898,8 @@ class ApplicationLicencePermitForm(ApplicationFormMixin, ModelForm):
             crispy_boxes.append(HTML('{% include "applications/application_proposed_commercial_acts_activities.html" %}'))
 
         if check_fields_exist(self.fields,['vessel_or_craft_details']) is True and may_update == "True":
-             crispy_boxes.append(crispy_box('vessel_or_crafts_view_collapse', 'form_vessel_or_crafts_view' , 'Vessel or Craft Details',vesselandcraftdetails,InlineRadios('vessel_or_craft_details'), HTML('{% include "applications/application_vessels.html" %}'), crispy_box('crafts_collapse', 'form_crafts' , 'Craft Details','type_of_crafts','number_of_crafts')))
+             crispy_boxes.append(crispy_box('vessel_or_crafts_view_collapse', 'form_vessel_or_crafts_view' , 'Vessel or Craft Details',vesselandcraftdetails,InlineRadios('vessel_or_craft_details'), HTML('{% include "applications/application_vessels.html" %}'),))
+             #crispy_box('crafts_collapse', 'form_crafts' , 'Craft Details','type_of_crafts','number_of_crafts')))
         else:
             try:
                del self.fields['vessel_or_craft_details']
@@ -2608,14 +2608,14 @@ class ComplianceCreateForm(ModelForm):
 class VesselForm(ModelForm):
 #    registration = Field(required=False, widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'}))
     registration = Field(required=False, widget=AjaxFileUploader(attrs={'multiple':'multiple'}))
-
+    documents = Field(required=False, widget=AjaxFileUploader(attrs={'multiple':'multiple'}))
 #MultiFileField(
  #       required=False, label='Registration & licence documents',
 #        help_text='Choose multiple files to upload (if required). NOTE: this will replace any existing uploads.')
 
     class Meta:
         model = Vessel
-        fields = ['vessel_type', 'name', 'vessel_id', 'size', 'engine', 'passenger_capacity']
+        fields = ['vessel_type', 'name', 'vessel_id', 'size', 'engine', 'passenger_capacity','craft_type','number_of_crafts']
 
     def __init__(self, *args, **kwargs):
         # User must be passed in as a kwarg.
@@ -2624,6 +2624,18 @@ class VesselForm(ModelForm):
         #self.helper.form_id = 'id_form_create_vessel'
         self.helper.form_id = 'id_form_modals'
         self.helper.attrs = {'novalidate': ''}
+        #application_vessel_craft_js_dynamics.html
+        self.fields['name'].required = False
+        self.fields['vessel_id'].required = False
+        self.fields['size'].required = False
+        self.fields['engine'].required = False
+        self.fields['passenger_capacity'].required = False
+        self.fields['craft_type'].required = False
+        self.fields['number_of_crafts'].required = False
+
+        dynamic_selections = HTML('{% include "applications/application_vessel_craft_js_dynamics.html" %}')
+        self.helper.layout = Layout('vessel_type', 'name', 'vessel_id', 'size', 'engine', 'passenger_capacity','registration','craft_type','number_of_crafts','documents',dynamic_selections)
+
         self.helper.add_input(Submit('save', 'Save', css_class='btn-lg ajax-submit'))
         self.helper.add_input(Submit('cancel', 'Cancel', css_class='ajax-close'))
 

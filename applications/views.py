@@ -2012,7 +2012,7 @@ class SearchReference(ListView):
             form_prefix = query_str[:3]
             form_no = query_str.replace(form_prefix,'')
             context['form_prefix'] = form_prefix
-            context['form_no'] = form_no
+            context['form_no'] = int(form_no)
             context['query_string'] = self.request.GET['q']
 
         return context
@@ -7952,6 +7952,16 @@ class VesselCreate(LoginRequiredMixin, CreateView):
                      doc = Record.objects.get(id=i['doc_id'])
                      self.object.registration.add(doc)
 
+        if 'documents_json' in self.request.POST:
+             if is_json(self.request.POST['documents_json']) is True:
+                 json_data = json.loads(self.request.POST['documents_json'])
+                 for d in self.object.documents.all():
+                     self.object.documents.remove(d)
+                 for i in json_data:
+                     doc = Record.objects.get(id=i['doc_id'])
+                     self.object.documents.add(doc)
+                     
+
         # Registration document uploads.
 #        if self.request.FILES.get('registration'):
 #            for f in self.request.FILES.getlist('registration'):
@@ -8085,6 +8095,17 @@ class VesselUpdate(LoginRequiredMixin, UpdateView):
             multifilelist.append(fileitem)
         initial['registration'] = multifilelist
 
+        a1 = vessels.documents.all()
+        multifilelist = []
+        for b1 in a1:
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['documents'] = multifilelist
+
         return initial
     def post(self, request, *args, **kwargs):
         if request.POST.get('cancel'):
@@ -8105,6 +8126,16 @@ class VesselUpdate(LoginRequiredMixin, UpdateView):
                  for i in json_data:
                      doc = Record.objects.get(id=i['doc_id'])
                      self.object.registration.add(doc)
+
+
+        if 'documents_json' in self.request.POST:
+             if is_json(self.request.POST['documents_json']) is True:
+                 json_data = json.loads(self.request.POST['documents_json'])
+                 for d in self.object.documents.all():
+                     self.object.documents.remove(d)
+                 for i in json_data:
+                     doc = Record.objects.get(id=i['doc_id'])
+                     self.object.documents.add(doc)
 
         #for filelist in rego:
         #    if 'registration-clear_multifileid-' + str(filelist.id) in form.data:
