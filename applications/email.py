@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.template import Context
 from django.template.loader import render_to_string, get_template
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from ledger.accounts.models import EmailUser

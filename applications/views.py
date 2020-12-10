@@ -4838,6 +4838,7 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
         flowcontext = flow.getRequired(flowcontext, app.routeid, workflowtype)
         #route = flow.getNextRouteObj(action, app.routeid, workflowtype)
         route = flow.getNextRouteObjViaId(int(actionid), app.routeid, workflowtype)
+        #allow_email_attachment
         if action is "creator":
             if flowcontext['may_assign_to_creator'] != "True":
                 messages.error(self.request, 'This application cannot be reassigned, Unknown Error')
@@ -4884,6 +4885,25 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
 
     def get_initial(self):
         initial = super(ApplicationAssignNextAction, self).get_initial()
+        app = self.get_object()
+
+        action = self.kwargs['action']
+        actionid = self.kwargs['actionid']
+
+        flow = Flow()
+        workflowtype = flow.getWorkFlowTypeFromApp(app)
+        flow.get(workflowtype)
+        route = flow.getNextRouteObjViaId(int(actionid), app.routeid, workflowtype)
+        print ("ROUTE")
+        print ("flow.getNextRouteObjViaId")
+        print (route)
+        #allow_email_attachment
+        allow_email_attachment = False
+        if 'allow_email_attachment' in route:
+            if route['allow_email_attachment'] == 'True':
+                allow_email_attachment = True
+
+        initial['allow_email_attachment'] = allow_email_attachment
         initial['action'] = self.kwargs['action'] 
         initial['records'] = None
         return initial
@@ -5135,13 +5155,22 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
             sendHtmlEmail([app.submitted_by.email], 'Final Report - Part  - '+str(app.id), emailcontext, 'application-part5-final-report.html', None, None, None)
 
     def decline_notification(self,app,forms_data):
+
+         attachment1 = None
+         if 'attach_to_email_json' in self.request.POST:
+             if is_json(self.request.POST['attach_to_email_json']) is True:
+                json_data = json.loads(self.request.POST['attach_to_email_json'])
+                doc = Record.objects.get(id=json_data['doc_id'])
+                attachment1 = doc.upload.path
+         print ("ATTACHMENT")
+         print (attachment1)
          emailcontext = {}
          emailcontext['app'] = app
 
          emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
          emailcontext['person'] = app.submitted_by
          emailcontext['communication_details'] =  forms_data['details']
-         sendHtmlEmail([app.submitted_by.email], Application.APP_TYPE_CHOICES[app.app_type]+' application declined - '+str(app.id), emailcontext, 'application-declined.html', None, None, None)
+         sendHtmlEmail([app.submitted_by.email], Application.APP_TYPE_CHOICES[app.app_type]+' application declined - '+str(app.id), emailcontext, 'application-declined.html', None, None, None, attachment1)
 
 
     def temp_approval(self,app):

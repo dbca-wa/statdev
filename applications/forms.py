@@ -466,6 +466,7 @@ class ApplicationApplyUpdateForm(ModelForm):
 class CommunicationCreateForm(ModelForm):
 #    records = Field(required=False, widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'}),  label='Documents')
     records = Field(required=False, widget=AjaxFileUploader(attrs={'multiple':'multiple'}),  label='Documents', help_text='')
+    #attach_to_email = Field(required=False, widget=AjaxFileUploader(attrs={'multiple':'multiple'}),  label='Attach to Email', help_text='')
 
     class Meta:
         model = Communication 
@@ -2068,7 +2069,8 @@ class ApplicationAssignNextAction(ModelForm):
     submitter_comment = CharField(required=False, widget=Textarea, help_text='Reason to show to submitter')
     #records = FileField(required=False, max_length=128, widget=ClearableFileInput)
 #    records = Field(required=False, widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'}), label='Documents')
-    records = FileField(required=False, widget=AjaxFileUploader(attrs={'multiple':'multiple'}), label='Documents')
+    records = FileField(required=False, widget=AjaxFileUploader(attrs={'multiple':'multiple'}), label='Documents (communication log only)')
+    attach_to_email = Field(required=False, widget=AjaxFileUploader(attrs={}),  label='Attach to Email', help_text='')
 
     class Meta:
         model = Application
@@ -2087,11 +2089,16 @@ class ApplicationAssignNextAction(ModelForm):
             del self.fields['submitter_comment']
         if self.initial['action'] != 'referral':
             del self.fields['referral_comment']
+        if 'allow_email_attachment' in self.initial:
+            if self.initial['allow_email_attachment'] == False:
+                del self.fields['attach_to_email']
+        else:
+            del self.fields['attach_to_email']
 #            submitter_input = 'sumbitter_comment'
 
         self.helper.layout = Layout(
             HTML('<p>Application Next Action</p>'),
-            'details','submitter_comment','records','referral_comment',
+            'details','submitter_comment','records','referral_comment','attach_to_email',
             FormActions(
                 Submit('assign', 'Submit', css_class='btn-lg'),
                 Submit('cancel', 'Cancel')

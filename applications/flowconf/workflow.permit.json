@@ -906,7 +906,8 @@
                 "title": "Decline & Close Application",
                 "route": "8",
                 "routegroup": "admin",
-                "state": "8"
+                "state": "8",
+		"allow_email_attachment": "True"
             },
             {
                 "title": "Send back to Assessor",

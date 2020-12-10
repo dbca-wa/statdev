@@ -873,7 +873,7 @@
         },
         "actions": [
             {
-                    "title": "Approve & Complete Application",
+                "title": "Approve & Complete Application",
                 "route": "7",
                 "routegroup":"assess",
                 "state":"14"
@@ -882,7 +882,8 @@
                 "title": "Decline & Close Application",
                 "route": "8",
                 "routegroup": "admin",
-                "state": "8"
+                "state": "8",
+		"allow_email_attachment": "True"
             },
             {
                 "title": "Send back to Assessor",
