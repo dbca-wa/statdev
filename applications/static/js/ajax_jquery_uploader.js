@@ -1,5 +1,5 @@
 // configuration
-var max_file_size 		= 12048576; //allowed file size. (1 MB = 1048576)
+var max_file_size 		= 52428800; //allowed file size. (1 MB = 1048576)
 var allowed_file_types 		= ['text/plain','image/png', 'image/gif', 'image/jpeg', 'image/pjpeg','application/pdf','application/vnd.ms-excel','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','application/vnd.ms-outlook','application/octet-stream']; //allowed file types
 var result_output 		= '#output'; //ID of an element for response output
 var my_form_id 			= '#upload_form'; //ID of an element for response output
