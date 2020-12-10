@@ -185,7 +185,9 @@ $(error).each(function(i){ //output any error to output element
 }
 
 var ajax_loader_django = {
-
+autoUpload: function(upload_button_id) {
+	$( "#"+upload_button_id ).click();
+},
 openUploader: function(input_id,upload_type) {
 
 		      // Get django csrf token. 
@@ -207,10 +209,10 @@ openUploader: function(input_id,upload_type) {
 		      htmlvalue += '<input type="hidden" name="csrfmiddlewaretoken" value="'+csrfmiddlewaretoken+'" />';
 		      htmlvalue += '  <label class="custom-file">';
 		      //            htmlvalue += '  <input name="__files[]" type="file" ';
-		      htmlvalue += '  <input name="__files[]" id="'+input_id+'__submit__files" type="file" ';
+		      htmlvalue += '  <input name="__files[]" id="'+input_id+'__submit__files" type="file" onchange="ajax_loader_django.autoUpload('+"'"+input_id+"__submit'"+');" ';
 
 		      if (upload_type == 'multiple') { 
-			      htmlvalue += '  multiple ';
+			      // htmlvalue += '  multiple ';
 		      }
 
 		      htmlvalue += '  class="custom-file-input"';
