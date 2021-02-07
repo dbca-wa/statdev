@@ -6,8 +6,8 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.forms import Form, ModelForm, ChoiceField, FileField, CharField, Textarea, ClearableFileInput, HiddenInput, Field
-from applications.widgets import ClearableMultipleFileInput
 from multiupload.fields import MultiFileField
+from applications.widgets import ClearableMultipleFileInput, RadioSelectWithCaptions, AjaxFileUploader
 
 from ledger.accounts.models import EmailUser, Address, Organisation
 from .models import Approval, CommunicationApproval
@@ -95,8 +95,8 @@ class ApprovalChangeStatus(ModelForm):
         # Limit the organisation queryset unless the user is a superuser.
 
 class CommunicationCreateForm(ModelForm):
-    records = Field(required=False, widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'}),  label='Documents')
-
+    #records = Field(required=False, widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'}),  label='Documents')
+    records = FileField(required=False, max_length=128, widget=AjaxFileUploader(attrs={'multiple':'multiple'}), label='Documents')
     class Meta:
         model = CommunicationApproval
         fields = ['comms_to','comms_from','subject','comms_type','details','records','details']

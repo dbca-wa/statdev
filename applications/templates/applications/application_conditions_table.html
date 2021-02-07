@@ -1,8 +1,9 @@
                         <table class="table table-bordered table-striped">
                                 <thead>
                                         <tr>
-                                                <th>Number</th>
+                                                <th>Cond No.</th>
                                                 <th>Condition</th>
+						<th>Advise No.</th>
 						<th>Advise</th>
                                                 <th>Recur Pattern</th>
                                                 <th>Recur Freq</th>
@@ -13,8 +14,9 @@
                                 <tbody>
                                         {% for cond in object.condition_set.all %}
                                         <tr>
-                                                <td>{{ cond.pk }}</td>
-                                                <td>{{ cond.condition }}</td>
+                                                <td>{{ cond.condition_no }}</td>
+						<td>{{ cond.condition }}</td>
+						<td>{{ cond.advise_no }}</td>
 						<td>{{ cond.advise }}</td>
                                                 <td>{{ cond.get_recur_pattern_display }}</td>
                                                 <td>{{ cond.recur_freq }}</td>

@@ -9,7 +9,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.mail import send_mail
-from django.db.models import Q
+from django.db.models import Q, Max
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
 from django.urls import reverse_lazy
@@ -1089,7 +1089,6 @@ class ApplicationList(LoginRequiredMixin,ListView):
            return HttpResponseRedirect("/")
         return super(ApplicationList, self).get(request, *args, **kwargs)
 
-
     def get_queryset(self):
         qs = super(ApplicationList, self).get_queryset()
 
@@ -1119,7 +1118,7 @@ class ApplicationList(LoginRequiredMixin,ListView):
                APP_TYPE_CHOICES.append(i)
                APP_TYPE_CHOICES_IDS.append(i[0])
         context['app_apptypes'] = APP_TYPE_CHOICES
-        
+        context['app_appstatus'] = Application.APP_STATUS 
 
         if 'action' in self.request.GET and self.request.GET['action']:
             query_str = self.request.GET['q']
@@ -1130,12 +1129,14 @@ class ApplicationList(LoginRequiredMixin,ListView):
             else:
                 query_obj &= Q(app_type__in=APP_TYPE_CHOICES_IDS)
 
-
             if self.request.GET['applicant'] != '':
                 query_obj &= Q(applicant=int(self.request.GET['applicant']))
-            if self.request.GET['appstatus'] != '':
+            if self.request.GET['wfstatus'] != '':
                 #query_obj &= Q(state=int(self.request.GET['appstatus']))
-                query_obj &= Q(route_status=self.request.GET['appstatus'])
+                query_obj &= Q(route_status=self.request.GET['wfstatus'])
+            if self.request.GET['appstatus'] != '':
+                query_obj &= Q(status=self.request.GET['appstatus'])
+
 
             if 'from_date' in self.request.GET: 
                  context['from_date'] = self.request.GET['from_date']
@@ -1154,10 +1155,19 @@ class ApplicationList(LoginRequiredMixin,ListView):
                  context['apptype'] = int(self.request.GET['apptype'])
             if self.request.GET['applicant'] != '':
                  context['applicant'] = int(self.request.GET['applicant'])
+
+            context['appstatus'] = self.request.GET['appstatus']
             if 'appstatus' in self.request.GET:
                 if self.request.GET['appstatus'] != '':
                     #context['appstatus'] = int(self.request.GET['appstatus'])
                     context['appstatus'] = self.request.GET['appstatus']
+
+            if 'wfstatus' in self.request.GET:
+                if self.request.GET['wfstatus'] != '':
+                    #context['appstatus'] = int(self.request.GET['appstatus'])
+                    context['wfstatus'] = self.request.GET['wfstatus']
+
+
 
         else:
             to_date = datetime.today()
@@ -1170,13 +1180,14 @@ class ApplicationList(LoginRequiredMixin,ListView):
         context['app_applicants_list'] = []
 #       context['app_apptypes'] = list(Application.APP_TYPE_CHOICES)
         #context['app_appstatus'] = list(Application.APP_STATE_CHOICES)
-        context['app_appstatus'] = list(Application.objects.values_list('route_status',flat = True).distinct())
-
+        context['app_wfstatus'] = list(Application.objects.values_list('route_status',flat = True).distinct())
+        
         usergroups = self.request.user.groups.all()
         context['app_list'] = []
         for app in applications:
             row = {}
             row['may_assign_to_person'] = 'False'
+            row['may_assign_to_officer'] = 'False'
             row['app'] = app
 
             # Create a distinct list of applicants 
@@ -1191,6 +1202,9 @@ class ApplicationList(LoginRequiredMixin,ListView):
             if app.group is not None:
                 if app.group in usergroups:
                     row['may_assign_to_person'] = 'True'
+                    row['may_assign_to_officer'] = 'True'
+
+
             context['app_list'].append(row)
         # TODO: any restrictions on who can create new applications?
         context['may_create'] = True
@@ -1981,7 +1995,10 @@ class SearchReference(ListView):
 
             else:
                  messages.error(self.request, 'Invalid Prefix Provided,  Valid Prefix are EW- WO- AP- CO- AC- OG- AR-')
-                 return HttpResponseRedirect(reverse('search_reference'))
+                 #return HttpResponseRedirect(reverse('search_reference'))
+        #if len(context['form_prefix']) == 0:
+        #    messages.error(self.request, 'Invalid Prefix Provided,  Valid Prefix are EW- WO- AP- CO- AC- OG- AR-')
+        #    #return HttpResponseRedirect(reverse('search_reference'))
                
 
 
@@ -2012,7 +2029,10 @@ class SearchReference(ListView):
             form_prefix = query_str[:3]
             form_no = query_str.replace(form_prefix,'')
             context['form_prefix'] = form_prefix
-            context['form_no'] = int(form_no)
+            if len(form_no) > 0:
+               context['form_no'] = int(form_no)
+            else:
+               context['form_no'] = 0 
             context['query_string'] = self.request.GET['q']
 
         return context
@@ -3627,11 +3647,15 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
            messages.error(self.request, 'Forbidden from viewing this page.')
            return HttpResponseRedirect("/")
 
+        if app.status == 1:
+            pass
+        else:
+            messages.error(self.request, 'Application is not active')
+            return HttpResponseRedirect("/")
+
         if app.assignee is None and float(app.routeid) > 1:
              messages.error(self.request, 'Must be assigned to you before any changes can be made.')
              return HttpResponseRedirect("/")
-
-             
 
 
         # Rule: if the application status is 'draft', it can be updated.
@@ -4179,7 +4203,7 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
         workflowtype = flow.getWorkFlowTypeFromApp(app)
         flow.get(workflowtype)
         context = flow.getAccessRights(request, context, app.routeid, workflowtype)
-
+        
         if float(app.routeid) > 1:
             if app.assignee is None:
                 context['may_update'] = "False"
@@ -4188,9 +4212,12 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
                 if app.assignee != self.request.user:
                     context['may_update'] = "False"
 
+        print ('ZEW')
+        print (context)
+
         if context['may_update'] != 'True': 
            messages.error(self.request, 'You do not have permissions to update this form.')
-           return HttpResponseRedirect(self.get_object().get_absolute_url())            
+           return HttpResponseRedirect(self.get_object().get_absolute_url())
 
         if request.POST.get('cancel'):
             app = Application.objects.get(id=kwargs['pk'])
@@ -5513,6 +5540,150 @@ class ApplicationAssignPerson(LoginRequiredMixin, UpdateView):
         return initial
 
 
+class ApplicationAssignOfficer(LoginRequiredMixin, UpdateView):
+    """A view to allow an application applicant to be assigned to a person
+    """
+    model = Application
+
+    def get(self, request, *args, **kwargs):
+        app = self.get_object()
+
+        if app.state == 14:
+           messages.error(self.request, 'This application is completed and cannot be assigned.')
+           return HttpResponseRedirect("/")
+
+
+        if app.group is None:
+            messages.error(self.request, 'Unable to set Person Assignments as No Group Assignments Set!')
+            return HttpResponseRedirect(app.get_absolute_url())
+
+        app_type_short_name = None
+        for i in Application.APP_TYPE_CHOICES._identifier_map:
+             if Application.APP_TYPE_CHOICES._identifier_map[i] == app.app_type:
+                  app_type_short_name = i
+
+
+        flow = Flow()
+        flow.get(app_type_short_name)
+        flowcontext = {}
+        flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, app_type_short_name)
+        if flowcontext["may_assign_to_officer"] == "True":
+            pass
+        else:
+           messages.error(self.request, 'Forbidden from viewing this page.')
+           return HttpResponseRedirect("/")
+
+        return super(ApplicationAssignOfficer, self).get(request, *args, **kwargs)
+
+    def get_form_class(self):
+        # Return the specified form class
+        return apps_forms.AssignOfficerForm
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('cancel'):
+            return HttpResponseRedirect(self.get_object().get_absolute_url())
+        return super(ApplicationAssignOfficer, self).post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('application_update', args=(self.object.pk,))
+
+    def form_valid(self, form):
+        self.object = form.save(commit=True)
+        app = self.object
+
+        flow = Flow()
+        workflowtype = flow.getWorkFlowTypeFromApp(app)
+        DefaultGroups = flow.groupList()
+        flow.get(workflowtype)
+
+        # Record an action on the application:
+        action = Action(
+            content_object=self.object, category=Action.ACTION_CATEGORY_CHOICES.assign, user=self.request.user,
+            action='Application assigned officer to {} '.format(self.object.assignee.get_full_name()))
+        action.save()
+        if self.request.user != app.assignee:
+            messages.success(self.request, 'Assign officer completed')
+            return HttpResponseRedirect(reverse('application_list'))
+        else:
+            messages.success(self.request, 'Assign officer completed')
+            return HttpResponseRedirect(self.get_success_url())
+
+    def get_initial(self):
+        initial = super(ApplicationAssignOfficer, self).get_initial()
+        app = self.get_object()
+        if app.routeid is None:
+            app.routeid = 1
+        initial['assigngroup'] = app.group
+        return initial
+
+
+
+class ApplicationCancel(LoginRequiredMixin, UpdateView):
+    """A view to allow an application applicant to be assigned to a person
+    """
+    model = Application
+    template_name = 'applications/application_cancel_form.html'
+
+    def get(self, request, *args, **kwargs):
+        app = self.get_object()
+
+        if app.state == 14:
+           messages.error(self.request, 'This application is completed and cannot be cancelled.')
+           return HttpResponseRedirect("/")
+
+        #if app.group is None:
+        #    messages.error(self.request, 'Unable to set Person Assignments as No Group Assignments Set!')
+        #    return HttpResponseRedirect(app.get_absolute_url())
+
+        app_type_short_name = None
+        for i in Application.APP_TYPE_CHOICES._identifier_map:
+             if Application.APP_TYPE_CHOICES._identifier_map[i] == app.app_type:
+                  app_type_short_name = i
+
+
+        #flow = Flow()
+        #flow.get(app_type_short_name)
+        #flowcontext = {}
+        #flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, app_type_short_name)
+        if self.request.user.groups.filter(name__in=['Statdev Processor']).exists():
+            pass
+        else:
+           messages.error(self.request, 'Forbidden from viewing this page.')
+           return HttpResponseRedirect("/")
+
+        return super(ApplicationCancel, self).get(request, *args, **kwargs)
+
+    def get_form_class(self):
+        # Return the specified form class
+        return apps_forms.AssignCancelForm
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('cancel'):
+            return HttpResponseRedirect(self.get_object().get_absolute_url())
+        return super(ApplicationCancel, self).post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('application_list', args=(self.object.pk,))
+
+    def form_valid(self, form):
+        self.object = form.save(commit=True)
+        app = self.object
+        app.status = 2
+        app.save()
+        # Record an action on the application:
+        action = Action(
+            content_object=self.object, category=Action.ACTION_CATEGORY_CHOICES.cancel, user=self.request.user,
+            action='Application cancelled')
+        action.save()
+
+        messages.success(self.request, 'Application cancelled')
+        return HttpResponseRedirect(reverse('application_list'))
+
+    def get_initial(self):
+        initial = super(ApplicationCancel, self).get_initial()
+        return initial
+
+
 class ComplianceAssignPerson(LoginRequiredMixin, UpdateView):
     """A view to allow an application applicant to be assigned to a person
     """
@@ -5537,7 +5708,7 @@ class ComplianceAssignPerson(LoginRequiredMixin, UpdateView):
         return super(ComplianceAssignPerson, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
-        return reverse('compliance_approval_detail', args=(self.object.pk,))
+        return reverse('compliance_approval_update_internal', args=(self.object.pk,))
 
     def form_valid(self, form):
         self.object = form.save(commit=True)
@@ -6732,6 +6903,252 @@ class ReferralDelete(LoginRequiredMixin, UpdateView):
 #            qs = qs.filter(query).distinct()
 #        return qs
 
+class ComplianceCompleteExternal(LoginRequiredMixin,UpdateView):
+    model = Compliance
+    template_name = 'applications/compliance_update_external.html'
+    form_class = apps_forms.ComplianceCompleteExternal
+
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context_processor = template_context(self.request)
+        admin_staff = context_processor['admin_staff']
+        org = Delegate.objects.filter(email_user=self.request.user, organisation=self.object.organisation).count()
+
+        if admin_staff == True:
+           pass
+        elif self.request.user.groups.filter(name__in=['Statdev Assessor']).exists():
+           pass
+        elif self.request.user == self.object.applicant:
+           pass
+        elif org == 1:
+           pass
+        else:
+           messages.error(self.request, 'Forbidden from viewing this page.')
+           return HttpResponseRedirect("/")
+        if self.object.status != 2 and self.object.status != 8 and self.object.status != 7:
+           if self.object.status == 3: 
+                 messages.error(self.request, 'The clearance of condition is not due yet.')
+           else:
+               messages.error(self.request, 'Unable to complete clearance of condition.')
+           return HttpResponseRedirect(reverse("home_page_tabs", args=('clearance',)))
+ 
+        return super(ComplianceCompleteExternal, self).get(request, *args, **kwargs)
+
+
+    def get_context_data(self, **kwargs):
+        context = super(ComplianceCompleteExternal, self).get_context_data(**kwargs)
+        app = self.get_object()
+        context['conditions'] = Compliance.objects.filter(id=app.id)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('cancel'):
+           compliance = Compliance.objects.get(id=kwargs['pk'])
+           return HttpResponseRedirect(reverse("home_page_tabs", args=('clearance',)))
+        return super(ComplianceCompleteExternal, self).post(request, *args, **kwargs)
+
+    def get_initial(self):
+        initial = super(ComplianceCompleteExternal, self).get_initial()
+        multifilelist = []
+
+        #records = self.object.records.all()
+        #for b1 in records:
+        #    fileitem = {}
+        #    fileitem['fileid'] = b1.id
+        #    fileitem['path'] = b1.upload.name
+        #    fileitem['extension']  = b1.extension
+        #    multifilelist.append(fileitem)
+        records = self.object.records.all()
+        multifilelist = []
+        for b1 in records:
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['records'] = multifilelist
+        return initial
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+
+        if 'records_json' in self.request.POST:
+             if is_json(self.request.POST['records_json']) is True:
+                  json_data = json.loads(self.request.POST['records_json'])
+                  self.object.records.remove()
+                  for d in self.object.records.all():
+                      self.object.records.remove(d)
+                  for i in json_data:
+                      doc = Record.objects.get(id=i['doc_id'])
+                      self.object.records.add(doc)
+
+        self.object.save()
+        if self.request.POST.get('save'):
+            messages.success(self.request, 'Successfully Saved')
+            return HttpResponseRedirect(reverse("compliance_approval_update_external", args=(self.object.id,)))
+
+        group = Group.objects.get(name='Statdev Assessor')
+        self.object.group = group
+
+        self.object.status = 5
+        self.object.save()
+        return HttpResponseRedirect(reverse("home_page_tabs", args=('clearance',)))
+
+class ComplianceViewExternal(LoginRequiredMixin,DetailView):
+    # model = Approval
+    model = Compliance
+    template_name = 'applications/compliance_view_external.html'
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context_processor = template_context(self.request)
+        admin_staff = context_processor['admin_staff']
+        org = Delegate.objects.filter(email_user=self.request.user, organisation=self.object.organisation).count()
+
+        if admin_staff == True:
+           pass
+        elif self.request.user.groups.filter(name__in=['Statdev Assessor']).exists():
+           pass
+        elif self.request.user == self.object.applicant:
+           pass
+        elif org == 1:
+           pass
+        else:
+           messages.error(self.request, 'Forbidden from viewing this page.')
+           return HttpResponseRedirect("/")
+        return super(ComplianceViewExternal, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ComplianceViewExternal, self).get_context_data(**kwargs)
+        app = self.get_object()
+        # context['conditions'] = Compliance.objects.filter(approval_id=app.id)
+        context['conditions'] = Compliance.objects.filter(id=app.id)
+        return context
+
+class ComplianceApprovalInternal(LoginRequiredMixin,UpdateView):
+    model = Compliance
+    template_name = 'applications/compliance_update_internal.html'
+    form_class = apps_forms.ComplianceCompleteInternal
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context_processor = template_context(self.request)
+        admin_staff = context_processor['admin_staff']
+        org = Delegate.objects.filter(email_user=self.request.user, organisation=self.object.organisation).count()
+
+        if admin_staff == True:
+           pass
+        elif self.request.user.groups.filter(name__in=['Statdev Assessor']).exists():
+           pass
+        elif self.request.user == self.object.applicant:
+           pass
+        elif org == 1:
+           pass
+        else:
+           messages.error(self.request, 'Forbidden from viewing this page.')
+           return HttpResponseRedirect("/")
+        return super(ComplianceApprovalInternal, self).get(request, *args, **kwargs)
+
+    def get_initial(self):
+        initial = super(ComplianceApprovalInternal, self).get_initial()
+        multifilelist = []
+
+        initial['status'] = self.object.status
+        print ("STATUS")
+        print (initial['status'])
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super(ComplianceApprovalInternal, self).get_context_data(**kwargs)
+        app = self.get_object()
+        # context['conditions'] = Compliance.objects.filter(approval_id=app.id)
+        context['conditions'] = Compliance.objects.filter(id=app.id)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('cancel'):
+           return HttpResponseRedirect(reverse("compliance_list",))
+        return super(ComplianceApprovalInternal, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        action = self.request.POST.get('action')
+        if action == '1':
+             self.object.status = 4
+             self.object.assessed_by = self.request.user
+             self.object.assessed_date = date.today()
+             self.object.assignee = None
+             messages.success(self.request, "Compliance has been approved.")
+             action = Action(
+                  content_object=self.object, category=Action.ACTION_CATEGORY_CHOICES.assign, user=self.request.user,
+                  action='Compliance has been approved')
+             action.save()
+
+             emailcontext = {}
+             emailcontext['app'] = self.object
+             emailcontext['person'] = self.object.submitted_by
+             emailcontext['body'] = "Your clearance of condition has been approved"
+             sendHtmlEmail([self.object.submitted_by.email], 'Clearance of condition has been approved', emailcontext, 'clearance-approved.html', None, None, None)
+
+        elif action == '2':
+             self.object.status = 6
+             #self.object.group
+             approver = Group.objects.get(name='Statdev Approver')
+             self.object.assignee = None
+             self.object.group = approver
+             messages.success(self.request, "Compliance has been assigned to the manager group.")
+             action = Action(
+                  content_object=self.object, category=Action.ACTION_CATEGORY_CHOICES.assign, user=self.request.user,
+                  action='Compliance assigned to Manager')
+             action.save()
+
+             emailcontext = {}
+             emailcontext['clearance_id'] = self.object.id
+             emailGroup('Clearance of Condition Assigned to Manager Group', emailcontext, 'clearance-of-condition-assigned-groups.html', None, None, None, 'Statdev Approver')
+
+        elif action == '3':
+             self.object.status = 7
+             self.object.group = None
+             self.object.assignee = None
+             messages.success(self.request, "Compliance has been assigned to the holder.")
+             action = Action(
+                  content_object=self.object, category=Action.ACTION_CATEGORY_CHOICES.assign, user=self.request.user,
+                  action='Compliance has been return to holder')
+             action.save()
+
+             emailcontext = {}
+             emailcontext['app'] = self.object
+             emailcontext['person'] = self.object.submitted_by
+             emailcontext['body'] = "Your clearance of condition requires additional information."
+             sendHtmlEmail([self.object.submitted_by.email], 'Your clearance of condition requires additional information please login and resubmit with additional information.', emailcontext, 'clearance-holder.html', None, None, None)
+
+        elif action == '4':
+             self.object.status = 5
+             self.object.group = None
+             self.object.assignee = None
+             assigngroup = Group.objects.get(name='Statdev Assessor')
+             self.object.group = assigngroup
+             messages.success(self.request, "Compliance has been assigned to the assessor.")
+             action = Action(
+                  content_object=self.object, category=Action.ACTION_CATEGORY_CHOICES.assign, user=self.request.user,
+                  action='Compliance has been return to holder')
+             action.save()
+
+             emailcontext = {}
+             emailcontext['clearance_id'] = self.object.id
+             emailGroup('Clearance of Condition Assigned to Assessor Group', emailcontext, 'clearance-of-condition-assigned-groups.html', None, None, None, 'Statdev Assessor')
+        else: 
+            raise ValidationError("ERROR,  no action found: "+str(action))
+        self.object.save()
+        return HttpResponseRedirect(reverse("compliance_list",))
+
+
+
+
+
+
 class ComplianceApprovalDetails(LoginRequiredMixin,DetailView):
     # model = Approval
     model = Compliance
@@ -6808,26 +7225,37 @@ class ComplianceComplete(LoginRequiredMixin,UpdateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
 
-        for filelist in self.object.records.all():
-             if 'records-clear_multifileid-' + str(filelist.id) in form.data:
-                   self.object.records.remove(filelist)
+        if 'records_json' in self.request.POST:
+             if is_json(self.request.POST['records_json']) is True:
+                  json_data = json.loads(self.request.POST['records_json'])
+                  self.object.records.remove()
+                  for d in self.object.records.all():
+                      self.object.records.remove(d)
+                  for i in json_data:
+                      doc = Record.objects.get(id=i['doc_id'])
+                      self.object.records.add(doc)
 
-        if self.request.FILES.get('records'):
 
-            if Attachment_Extension_Check('multi', self.request.FILES.getlist('records'), None) is False:
-                raise ValidationError('Documents contains and unallowed attachment extension.')
+        #for filelist in self.object.records.all():
+        #     if 'records-clear_multifileid-' + str(filelist.id) in form.data:
+        #           self.object.records.remove(filelist)
 
-            for f in self.request.FILES.getlist('records'):
-                doc = Record()
-                doc.upload = f
-                doc.name = f.name
-                # print f.name
-                doc.save()
-                self.object.records.add(doc)
-                # print self.object.records
+        #if self.request.FILES.get('records'):
 
-        form.save()
-        form.save_m2m()
+        #    if Attachment_Extension_Check('multi', self.request.FILES.getlist('records'), None) is False:
+        #        raise ValidationError('Documents contains and unallowed attachment extension.')
+
+        #    for f in self.request.FILES.getlist('records'):
+        #        doc = Record()
+        #        doc.upload = f
+        #        doc.name = f.name
+        #        # print f.name
+        #        doc.save()
+        #        self.object.records.add(doc)
+        #        # print self.object.records
+        self.object.save()
+        #form.save()
+        #form.save_m2m()
         return HttpResponseRedirect(reverse("compliance_approval_detail", args=(self.object.id,)))
 
 # this is theory shoudl be able to be deleted.  need to chekc first.
@@ -7616,7 +8044,6 @@ class ConditionCreate(LoginRequiredMixin, CreateView):
             return HttpResponseRedirect(app.get_absolute_url())
 
 
-
         # Rule: conditions can be created when the app is with admin, with
         # referee or with assessor.
         if app.app_type == app.APP_TYPE_CHOICES.emergency:
@@ -7639,12 +8066,23 @@ class ConditionCreate(LoginRequiredMixin, CreateView):
         initial = super(ConditionCreate, self).get_initial()
         app = Application.objects.get(pk=self.kwargs['pk'])
 
+        condition_no_max = 1
+        advise_no_max = 1
+
+        condition_no_obj = Condition.objects.filter(application=app).aggregate(Max('condition_no'))
+        advise_no_obj = Condition.objects.filter(application=app).aggregate(Max('advise_no'))
+
         flow = Flow()
         workflowtype = flow.getWorkFlowTypeFromApp(app)
         flow.get(workflowtype)
         DefaultGroups = flow.groupList()
         flowcontext = {}
         flowcontext = flow.getAccessRights(self.request, flowcontext, app.routeid, workflowtype)
+
+        if condition_no_obj['condition_no__max'] is not None:
+            condition_no_max = condition_no_obj['condition_no__max'] + 1
+        if advise_no_obj['advise_no__max'] is not None:
+            advise_no_max = advise_no_obj['advise_no__max'] + 1
 
 #        condition = self.get_object()
 #        print condition.application.id
@@ -7659,6 +8097,8 @@ class ConditionCreate(LoginRequiredMixin, CreateView):
         initial['assessor_staff'] = False
         if self.request.user.groups.filter(name__in=['Statdev Assessor']).exists():
              initial['assessor_staff'] = True
+        initial['condition_no'] = condition_no_max
+        initial['advise_no'] = advise_no_max
         return initial
 
     def get_success_url(self):
@@ -10177,7 +10617,17 @@ def getAppFile(request,file_id,extension):
            if app.applicant.id == request.user.id or request.user.is_staff is True:
                   allow_access = True
 
-  
+  if file_record.file_group == 2007:
+      app = Approval.objects.get(id=app_id)
+      if app.applicant:
+           if request.user.is_staff is True:
+                  allow_access = True
+
+  if file_record.file_group == 2006:
+      app = Compliance.objects.get(id=app_id)
+      if app.applicant:
+           if app.applicant.id == request.user.id or request.user.is_staff is True:
+                  allow_access = True
  
   
   if allow_access == True:

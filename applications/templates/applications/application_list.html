@@ -80,7 +80,25 @@
                                 <select class="select form-control" id="id_appstatus" name="appstatus">
                                     <option value="" selected="selected">All</option>
                                     {% for at in app_appstatus %}
-                                    {% if appstatus == at %}
+                                        {% if appstatus|floatformat:"0" == at.0|floatformat:"0" %}
+                                           <option selected value="{{ at.0 }}">{{ at.1}}</option>
+                                        {% else %}
+                                           <option value="{{ at.0 }}">{{ at.1 }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 col-lg-3">
+                            <div class="col-sm-12 col-lg-12">
+                                <label>Workflow Step:</label>
+                            </div>
+                            <div class="col-sm-12 col-lg-12">
+                                <select class="select form-control" id="id_wfstatus" name="wfstatus">
+                                    <option value="" selected="selected">All</option>
+                                    {% for at in app_wfstatus %}
+                                    {% if wfstatus == at %}
                                     <option selected value="{{ at }}">{{ at}}</option>
                                     {% else %}
                                     <option value="{{ at }}">{{ at }}</option>
@@ -134,9 +152,11 @@
                                 <th>Type</th>
                                 <th>Title</th>
                                 <th>Applicant</th>
-                                <th>Status</th>
+				<th>Status</th> 
+                                <th>Workflow Step</th>
                                 <th  data-sorter="shortDate" data-date-format="dd-mmm-yyyy" >Lodged on</th>
                                 <th>Assignee</th>
+				<th>Officer</th>
 				<th>Submitter</th>
                                 <th>Payment status</th>
                                 <th class="nosort">Actions</th>
@@ -154,9 +174,11 @@
                 	                 {{ app_obj.app.applicant.get_full_name }}
                         	    {% endif %}
 				</td>
+				<td>{{ app_obj.app.get_status_display }}</td>
                                 <td>{{ app_obj.app.route_status }}</td>
                                 <td>{{ app_obj.app.submit_date|date:"d-M-Y" }}</td>
                                 <td>{{ app_obj.app.assignee.get_full_name }}</td>
+				<td>{{ app_obj.app.assigned_officer.get_full_name }}</td>
 				<td>{{ app_obj.app.submitted_by.get_full_name }}</td>
                                 <td></td>
                                 <td>
@@ -180,7 +202,20 @@
                                                 {% if app_obj.may_assign_to_person == "True" %}
                                                 <li><a href="{% url 'application_assign_person' app_obj.app.pk %}" title="Assign Person">{% if app_obj.app.assignee == None %}Assign Person{% else %}Re Assign Person{% endif %}</a></li>
 						{% endif %}
+
+                                                {% if app_obj.may_assign_to_officer == "True" %}
+                                                       <li><a href="{% url 'application_assign_officer' app_obj.app.pk %}" title="Assign Person">Assign Officer</a></li>
                                                 {% endif %}
+                                                {% endif %}
+						{{ app_obj.status }}
+                                                {% if app_obj.app.status == 1 %}
+                                                    {% if app_obj.app.state == 14 %}
+                                                          <!-- If application is completed it can not be cancelled -->
+			                            {% else %}
+						        <li><a href="{% url 'application_cancel' app_obj.app.pk %}">Cancel Application</a></li>
+				                    {% endif %}
+                                                {% endif %}
+
                                             </ul>
                                         </li>
                                     </ul>

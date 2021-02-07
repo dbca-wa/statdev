@@ -125,5 +125,20 @@
         {% else %}
         <p>--</p>
         {% endif %}
+
+	
+        <h4>Assigned Officer:</h4>
+        {% if object.assigned_officer %}
+        <p>
+        {% if object.assigned_officer.first_name %}
+                {{ object.assigned_officer.first_name }} {{ object.assigned_officer.last_name }}
+        {% else %}
+                {{ object.assigned_officer.email }}
+        {% endif %}
+        </p>
+        {% else %}
+        <p>--</p>
+        {% endif %}
+
     </div>
 </div>

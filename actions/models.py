@@ -23,7 +23,8 @@ class Action(models.Model):
         (7, 'lodge', ('Lodge')),
         (8, 'action', ('Next Step')),
         (9, 'change', ('Change')),
-        (10, 'create',('Create'))
+        (10, 'create',('Create')),
+        (11, 'cancel',('Cancelled'))
         # TODO: Compliance request
         # TODO: Request/add/remove delegate
     )

@@ -45,27 +45,28 @@
                 <tbody>
                     {% for obj in object_list|dictsort:"due_date" %}
                     <tr>
-                        <td><a HREF='{% url 'compliance_approval_detail' obj.pk %}'>CO-{{ obj.pk }}</A></td>
+                        <td><a HREF='{% url 'compliance_approval_update_internal' obj.pk %}'>CO-{{ obj.pk }}</A></td>
                         <td>{{ obj.get_app_type_display }}</td>
-                        <td>{% if obj.approval_id is None %}None{% else %}AP-{{ obj.approval_id }}{% endif %}</td>
+			<td>{% if obj.approval_id is None %}None{% else %}<a href='{% url 'approval_detail' obj.approval_id %}'>AP-{{ obj.approval_id }}</a>{% endif %}</td>
                         <td>{{ obj.title }}</td>
                         <td>
 				   {% if obj.organisation %}
-                                         {{ obj.organisation }}
-                                    {% else %}
-                                         {{ obj.applicant.get_full_name }}
-                                    {% endif %}
+                                        {{ obj.organisation }}
+                                   {% else %}
+                                        {{ obj.applicant.get_full_name }}
+                                   {% endif %}
 
 
 
 {{ obj.applicant.get_full_name }}</td>
                         
-                        <td>{% if staff == True %} {{ obj.get_status_display }} {% else %} 
-                            {% if obj.status == 2 or obj.status == 3 or obj.status == 4 or obj.status == 8 or obj.status == 9 %}
-                                   {{ obj.get_status_display }} 
-                            {% else %}
-                                Submitted
-                            {% endif %}
+                        <td>
+		            {% if staff == True %} {{ obj.get_status_display }} {% else %} 
+                               {% if obj.status == 2 or obj.status == 3 or obj.status == 4 or obj.status == 8 or obj.status == 9 %}
+                                      {{ obj.get_status_display }} 
+                               {% else %}
+                                   Submitted
+                               {% endif %}
                             {% endif %}
 
                         </td>
@@ -85,7 +86,10 @@
                                         <li><a href="{% url 'application_assign_person' app_obj.app.pk %}">Assign</a></li>
                                         {% endif %}
                                         {% else %}
-                                        <li><a href="{% url 'compliance_approval_detail' obj.approval_id %}">View</a></li>
+					{% if obj.status == 7 or obj.status == 1 or obj.status == 2 or obj.status == 3 %}
+                                                  <li><a href="{% url 'compliance_approval_update_external' obj.pk %}">Submit</a></li>
+					{% endif %}
+                                        <li><a href="{% url 'compliance_approval_update_internal' obj.pk %}">View</a></li>
                                         {% endif %}
                                     </ul>
                                 </li>

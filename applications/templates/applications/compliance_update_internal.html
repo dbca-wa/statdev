@@ -1,4 +1,5 @@
 {% extends "base_statdev.html" %}
+{% load crispy_forms_tags %}
 
 {% block page_content_inner %}
 {% load static %}
@@ -131,20 +132,16 @@
                                                <i>Please provide comment</i>
                                             {% endif %}
                                      </div>
-                                     <div class="col-sm-12 col-md-12 col-lg-12">
-					 <BR>
-                                         {% if object.status == 2 or object.status == 8 or object.status == 7 or object.status == 9 %} 
-                                         <a href="{% url "compliance_condition_update" c.id %}" class="btn btn-primary btn-sm" role="button">Add Clearance Condition</a>
-					 <BR>
-                                         <HR>
-					 {% endif %}
-                                    </div>
                                 </div>
                             </div>
                             {% endfor %}
                             {% endif %}
                         </div>
+		
                         <div class="col-sm-12 col-md-12 col-lg-12">
+				&nbsp;
+			    <div class="col-sm-12 col-md-12 col-lg-12">
+
                             <div class="col-sm-12 col-md-12 col-lg-1">
                                 <label>Supporting Documents</label>
                             </div>
@@ -155,11 +152,27 @@
                                      {% endfor %}
                                 {% endfor %}
                             </div>
+			   </div>
                         </div>
                     </div>
                 </div>
             </div>
             </div>
+	    {% if object.assignee == request.user %}
+           <div class="col-sm-12 col-md-12 col-lg-12">
+           <div class="panel panel-default">
+             <!-- Default panel contents -->
+             <div class="panel-heading">Compliance {{ object.get_app_type_display }} - {{ object.pk }}</div>
+             <div class="panel-body">
+                  {% crispy form %}
+             </div>
+           </div>
+           
+           </div>
+           </div>
+	    {% endif %}
+
+
 
             {% if object.status == 4 %}
             <div class="col-sm-12 col-md-12 col-lg-12">
@@ -204,67 +217,6 @@
                 </div>
             </div>
             </div>
-            {% elif object.status == 2 or object.status == 8 or object.status == 7 %}
-            <div class="col-sm-12 col-md-12 col-lg-12">
-            <!-- Conditions -->
-            <div class="panel panel-default">
-                <div class="panel-heading" data-toggle="collapse" data-target="#ac_collapse">
-                    <h3 class="panel-title">
-                       Action 
-                       <span class="glyphicon glyphicon-minus collapse-glyph"></span>
-                    </h3>
-                </div>
-                <div class="panel-collapse collapse in " id="ac_collapse">
-                    <div class="panel-body">
-                    	<a href="{% url "compliance_condition_submit" object.pk %}" class="btn btn-primary btn-sm" role="button">Submit</a>
-                    </div>
-                </div>
-            </div>
-            </div>
-            {% elif object.status == 9 or object.status == 5 %}
-            {% if admin_staff == True %}
-                    {% if object.assignee == request.user %}
-                    
-            <div class="col-sm-12 col-md-12 col-lg-12">
-            <!-- Conditions -->
-            <div class="panel panel-default">
-                <div class="panel-heading" data-toggle="collapse" data-target="#ac_collapse">
-                    <h3 class="panel-title">
-                       Action
-                       <span class="glyphicon glyphicon-minus collapse-glyph"></span>
-                    </h3>
-                </div>
-                <div class="panel-collapse collapse in " id="ac_collapse">
-                    <div class="panel-body">
-                        <a href="{% url "compliance_condition_staff" object.pk 'approve' %}" class="btn btn-primary btn-sm" role="button">Approve</a>
-                        <a href="{% url "compliance_condition_staff" object.pk 'manager'  %}" class="btn btn-primary btn-sm" role="button">Send to Manager</a>
-                        <a href="{% url "compliance_condition_staff" object.pk 'holder' %}" class="btn btn-primary btn-sm" role="button">Return to Licence Holder</a>
-                    </div>
-                </div>
-            </div>
-            </div>
-                 {% endif %}
-            {% endif %}
-            {% elif object.status == 6 %}
-                 {% if object.assignee == request.user %}
-            <div class="col-sm-12 col-md-12 col-lg-12">
-            <!-- Conditions -->
-            <div class="panel panel-default">
-                <div class="panel-heading" data-toggle="collapse" data-target="#ac_collapse">
-                    <h3 class="panel-title">
-                       Action
-                       <span class="glyphicon glyphicon-minus collapse-glyph"></span>
-                    </h3>
-                </div>
-                <div class="panel-collapse collapse in " id="ac_collapse">
-                    <div class="panel-body">
-                        <a href="{% url "compliance_condition_staff" object.pk 'approve' %}" class="btn btn-primary btn-sm" role="button">Approve</a>
-                        <a href="{% url "compliance_condition_staff" object.pk 'assessor'  %}" class="btn btn-primary btn-sm" role="button">Send to Assesor</a>
-                    </div>
-                </div>
-            </div>
-            </div>
-                {% endif %}
             {% endif %}
             </div>
         </div>
@@ -281,6 +233,19 @@ $(function() {
     }).on('hidden.bs.collapse', function() {
         $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
     });
+    $('#div_id_external_comments').hide();
+    $("#id_action").change(function(e) {
+            console.log(e);
+	    var action = $("#id_action").val();
+	    if  (action == 3) {
+                    $('#div_id_external_comments').show();
+	    } else {
+                $('#div_id_external_comments').hide();
+            }
+    
+    });
+    
+
 });
 </script>
 {% endblock extra_js %}

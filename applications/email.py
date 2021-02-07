@@ -8,6 +8,7 @@ from ledger.accounts.models import EmailUser
 from applications.models import Referral
 from confy import env
 from applications import models
+from approvals import models as approval_models
 from django.core.files import File
 from django.core.files.base import ContentFile
 
@@ -93,18 +94,35 @@ def sendHtmlEmail(to,subject,context,template,cc,bcc,from_email,attachment1=None
        #f = open(file_name, "r")
 #       print(f.read())
 
-       doc = models.Record()
-       doc.upload.save(str(log_hash)+'.eml', ContentFile(eml_content), save=False)
-       doc.name = str(log_hash)+'.eml' 
-       doc.file_group = 2003 
-       doc.file_group_ref_id = context['app'].id
-       doc.extension = '.eml' 
-       doc.save()
-       
-       
-       comms = models.Communication.objects.create(application=context['app'],comms_type=2,comms_to=str(to), comms_from=from_email, subject=subject, details='see attachment')
-       comms.records.add(doc)
-       comms.save()
+       print ("APPROCAL/APP")
+       if context['app'].__class__.__name__ == 'Compliance':
+             doc = models.Record()
+             doc.upload.save(str(log_hash)+'.eml', ContentFile(eml_content), save=False)
+             doc.name = str(log_hash)+'.eml'
+             doc.file_group = 2007
+             doc.file_group_ref_id = context['app'].id
+             doc.extension = '.eml'
+             doc.save()
+           
+             print (context['app'].approval_id)
+             approval = approval_models.Approval.objects.get(id=context['app'].approval_id)
+             print(approval_models)
+             comms = approval_models.CommunicationApproval.objects.create(approval=approval,comms_type=2,comms_to=str(to), comms_from=from_email, subject=subject, details='see attachment')
+             comms.records.add(doc)
+             comms.save()
+       else:
+             doc = models.Record()
+             doc.upload.save(str(log_hash)+'.eml', ContentFile(eml_content), save=False)
+             doc.name = str(log_hash)+'.eml'
+             doc.file_group = 2003
+             doc.file_group_ref_id = context['app'].id
+             doc.extension = '.eml'
+             doc.save()
+
+
+             comms = models.Communication.objects.create(application=context['app'],comms_type=2,comms_to=str(to), comms_from=from_email, subject=subject, details='see attachment')
+             comms.records.add(doc)
+             comms.save()
     return True
 
 def emailGroup(subject,context,template,cc,bcc,from_email,group):

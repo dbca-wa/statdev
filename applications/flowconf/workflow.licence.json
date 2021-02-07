@@ -17,7 +17,7 @@
             "river_reserve_lease_section_29": "False",
             "river_reserve_lease_section_32": "False",
             "landowner_consent": "False",
-            "deed": "False",
+            "deed": "True",
             "publication": "True",
             "conditions": "True",
             "assessments": "True",
@@ -141,7 +141,8 @@
         "fields": {
             "assessment_start_date": "hide",
             "expire_date" : "hide",
-            "document_final" :" hide"
+            "document_final" :" hide",
+            "deed" : "hide"
         },
         "required" : []
     },
@@ -519,7 +520,7 @@
             "river_reserve_lease_section_29": "False",
             "river_reserve_lease_section_32": "False",
             "landowner_consent": "False",
-            "deed": "False",
+            "deed": "True",
             "publication": "True",
             "conditions": "False",
             "assessments": "True",
@@ -601,7 +602,8 @@
                 "may_assign_to_person": "True",
                 "may_update_vessels_list": "True",
                 "may_update_condition": "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             },
             "Statdev Approver": {
                 "may_update": "False",
@@ -653,6 +655,7 @@
                 "allow_access_attachments": "True"
             },
             "Statdev Processor": {
+		        "may_assign_to_officer": "True",
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -690,7 +693,8 @@
             "document_draft": "hide",
             "document_determination": "hide",
             "document_completion": "hide",
-            "type_of_crafts" : "hide"
+            "type_of_crafts" : "hide",
+            "deed": "hide"
 
         },
         "required": []
@@ -709,7 +713,7 @@
             "river_reserve_lease_section_29": "False",
             "river_reserve_lease_section_32": "False",
             "landowner_consent": "False",
-            "deed": "False",
+            "deed": "True",
             "publication": "True",
             "conditions": "True",
             "assessments": "True",
@@ -845,6 +849,7 @@
             "document_final": "hide",
             "document_determination": "hide",
             "document_completion": "hide",
+            "deed": "hide",
             "assessment_start_date": "hide"
         }
     },
@@ -862,7 +867,7 @@
             "river_reserve_lease_section_29": "False",
             "river_reserve_lease_section_32": "False",
             "landowner_consent": "False",
-            "deed": "False",
+            "deed": "True",
             "publication": "True",
             "conditions": "False",
             "assessments": "False",
@@ -1060,7 +1065,7 @@
             "river_reserve_lease_section_29": "False",
             "river_reserve_lease_section_32": "False",
             "landowner_consent": "False",
-            "deed": "False",
+            "deed": "True",
             "publication": "True",
             "conditions": "False",
             "assessments": "False",
@@ -1238,7 +1243,7 @@
             "river_reserve_lease_section_29": "False",
             "river_reserve_lease_section_32": "False",
             "landowner_consent": "False",
-            "deed": "False",
+            "deed": "True",
             "publication": "True",
             "conditions": "False",
             "assessments": "False",
@@ -1411,7 +1416,7 @@
             "river_reserve_lease_section_29": "False",
             "river_reserve_lease_section_32": "False",
             "landowner_consent": "False",
-            "deed": "False",
+            "deed": "True",
             "publication": "True",
             "conditions": "False",
             "assessments": "False",

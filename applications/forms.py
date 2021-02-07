@@ -18,14 +18,24 @@ from .models import (
 from django_countries.fields import CountryField
 from django_countries.data import COUNTRIES
 from ledger.accounts.models import EmailUser, Address, Organisation, Document, OrganisationAddress
+from model_utils import Choices
+
 from django import forms
 
 User = get_user_model()
+
+
 
 class BaseFormHelper(FormHelper):
     form_class = 'form-horizontal'
     label_class = 'col-xs-12 col-sm-4 col-md-3 col-lg-2'
     field_class = 'col-xs-12 col-sm-8 col-md-6 col-lg-4'
+
+class FullBaseFormHelper(FormHelper):
+    form_class = 'form-horizontal'
+    label_class = 'col-xs-12 col-sm-4 col-md-3 col-lg-2'
+    field_class = 'col-xs-12 col-sm-8 col-md-9 col-lg-10'
+
 
 class PopupFormHelper(FormHelper):
     form_class = 'form-horizontal'
@@ -1002,9 +1012,9 @@ class ApplicationLicencePermitForm(ApplicationFormMixin, ModelForm):
                del self.fields['deed']
             except:
                donothing =''
-
-            application_deed = HTML('{% include "applications/application_deed.html" %}')
-            crispy_boxes.append(application_deed)
+            if self.initial["workflow"]["hidden"]["deed"] == 'False':
+                  application_deed = HTML('{% include "applications/application_deed.html" %}')
+                  crispy_boxes.append(application_deed)
     
 #        if self.initial["workflow"]["hidden"]["conditions"] == 'False':
 #            crispy_boxes.append(HTML('{% include "applications/application_conditions.html" %}'))
@@ -1099,7 +1109,7 @@ class ApplicationPermitForm(ApplicationFormMixin, ModelForm):
     town_suburb = CharField(required=False)
     nearest_road_intersection = CharField(required=False)
     local_government_authority = CharField(required=False)
-    street_number_and_name = CharField(required=False, label='Street Number')
+    street_number_and_name = CharField(required=False, label='Street Address')
 
 #    proposed_development_plans = FileField(required=False, max_length=128, widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'}))
 #    supporting_info_demonstrate_compliance_trust_policies = FileField(required=False, max_length=128, widget=ClearableFileInput) 
@@ -1553,8 +1563,9 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
                     del self.fields['deed']
                  except:
                     donothing =''
-     
-                 crispy_boxes.append(HTML('{% include "applications/application_deed.html" %}'))
+                 if self.initial["workflow"]["hidden"]["deed"] == 'False':
+                    crispy_boxes.append(HTML('{% include "applications/application_deed.html" %}'))
+                    
         # publication
 #       if 'hide_form_buttons' in self.initial["workflow"]["hidden"]:
         if self.initial["workflow"]["hidden"]["publication"] == 'False':
@@ -1941,10 +1952,62 @@ class VesselDeleteForm(Form):
         self.helper.add_input(Submit('delete', 'Delete', css_class='btn-lg ajax-submit'))
         self.helper.add_input(Submit('cancel', 'Cancel', css_class='ajax-close' ))
 
+class ComplianceCompleteExternal(ModelForm):
+    """Compliance Complete form External
+    """
+    #records = FileField(required=False, max_length=128, widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'}))
+    records = FileField(required=False, widget=AjaxFileUploader(attrs={'multiple':'multiple'}), label='Documents')
+
+    class Meta:
+        model = Compliance
+        fields = ['comments']
+
+    def __init__(self, *args, **kwargs):
+        super(ComplianceCompleteExternal, self).__init__(*args, **kwargs)
+        self.helper = FullBaseFormHelper(self)
+        self.helper.attrs = {'novalidate': ''}
+        #compliance_detail_external.html
+
+        dynamic_selections = HTML('{% include "applications/compliance_detail_external.html" %}')
+        self.helper.layout = Layout(dynamic_selections ,'comments','records',)
+
+        self.helper.add_input(Submit('save', 'Save', css_class='btn-lg'))
+        self.helper.add_input(Submit('submit', 'Submit', css_class='btn-lg'))
+
+class ComplianceCompleteInternal(ModelForm):
+    """Compliance Complete form External
+    """
+    ACTION = Choices((0, 'none', ('None'))  )
+
+    #records = FileField(required=False, max_length=128, widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'}))
+    records = FileField(required=False, widget=AjaxFileUploader(attrs={'multiple':'multiple'}), label='Documents')
+    action = ChoiceField(choices=ACTION, widget=forms.Select())
+
+
+    class Meta:
+        model = Compliance
+        fields = ['external_comments']
+
+    def __init__(self, *args, **kwargs):
+        super(ComplianceCompleteInternal, self).__init__(*args, **kwargs)
+        self.helper = FullBaseFormHelper(self)
+        self.helper.attrs = {'novalidate': ''}
+        #compliance_detail_external.html
+
+        if self.initial['status'] == 6:
+             self.fields['action'].choices = Choices((0, 'none', ('None')), (1, 'approve', ('Approve')),(4, 'assesor', ('Send to Assesor')),)
+        if self.initial['status'] == 5:
+             self.fields['action'].choices = Choices((0, 'none', ('None')), (1, 'approve', ('Approve')), (2, 'sendtomanager', ('Send to Manager')), (3, 'licence_holder', ('Return to licence holder')))
+        self.helper.layout = Layout('action', 'external_comments',)
+
+        self.helper.add_input(Submit('submit', 'Submit', css_class='btn-lg'))
+
+
 class ComplianceComplete(ModelForm):
     """Compliance Complete form
     """
-    records = FileField(required=False, max_length=128, widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'}))
+    #records = FileField(required=False, max_length=128, widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'}))
+    records = FileField(required=False, widget=AjaxFileUploader(attrs={'multiple':'multiple'}), label='Documents')
 
     class Meta:
         model = Compliance
@@ -1987,7 +2050,7 @@ class ConditionCreateForm(ModelForm):
 
     class Meta:
         model = Condition
-        fields = ['predefined_conditions','condition', 'due_date', 'recur_pattern', 'recur_freq','advise']
+        fields = ['predefined_conditions','condition_no','condition', 'due_date', 'recur_pattern', 'recur_freq','advise_no','advise']
 
     def __init__(self, *args, **kwargs):
         super(ConditionCreateForm, self).__init__(*args, **kwargs)
@@ -2000,17 +2063,33 @@ class ConditionCreateForm(ModelForm):
             del self.fields['advise']
             del self.fields['predefined_conditions']
 
+        self.fields['condition'].required = False
+        self.fields['advise'].required = False
+
         self.helper.attrs = {'novalidate': ''}
         self.helper.form_id = 'id_form_modals'
         self.fields['condition'].required = True
         self.helper.add_input(Submit('save', 'Save', css_class='btn-lg ajax-submit'))
         self.helper.add_input(Submit('cancel', 'Cancel', css_class='ajax-close'))
 
+    def clean(self):
+        cleaned_data = super(ConditionCreateForm, self).clean()
+        condition = self.cleaned_data.get('condition')
+        advise = self.cleaned_data.get('advise')
+        if condition is None:
+            condition = ''
+        if advise is None:
+            advise = ''
+
+        if len(condition) == 0 and len(advise) == 0:
+              raise forms.ValidationError('Please complete condition or advise.')
+        return cleaned_data
+
 
 class ConditionUpdateForm(ModelForm):
     class Meta:
         model = Condition
-        fields = ['condition', 'due_date', 'recur_pattern', 'recur_freq','advise']
+        fields = ['condition_no','condition', 'due_date', 'recur_pattern', 'recur_freq','advise_no','advise']
 
     def __init__(self, *args, **kwargs):
         super(ConditionUpdateForm, self).__init__(*args, **kwargs)
@@ -2022,9 +2101,21 @@ class ConditionUpdateForm(ModelForm):
         else:
             del self.fields['advise']
 
+        self.fields['condition'].required = False
+        self.fields['advise'].required = False
+
         self.helper.form_id = 'id_form_modals'
         self.helper.add_input(Submit('update', 'Update', css_class='btn-lg ajax-submit'))
         self.helper.add_input(Submit('cancel', 'Cancel', css_class='ajax-close' ))
+
+    def clean(self):
+        cleaned_data = super(ConditionUpdateForm, self).clean()
+        condition = self.cleaned_data.get('condition')
+        advise = self.cleaned_data.get('advise')
+        if len(condition) == 0 and len(advise) == 0:
+              raise forms.ValidationError('Please complete condition or advise.')
+
+        return cleaned_data
 
 
 class ConditionActionForm(ModelForm):
@@ -2143,6 +2234,66 @@ class AssignPersonForm(ModelForm):
                 Submit('cancel', 'Cancel')
             )
         )
+
+class AssignCancelForm(ModelForm):
+    """A form for assigning an application to people with a specific group.
+    """
+
+    class Meta:
+        model = Application
+        #fields = ['app_type', 'title', 'description', 'submit_date', 'assignee']
+        fields = []
+
+    def __init__(self, *args, **kwargs):
+        super(AssignCancelForm, self).__init__(*args, **kwargs)
+        self.helper = BaseFormHelper(self)
+        self.helper.form_id = 'id_form_assign_cancel_application'
+        self.helper.attrs = {'novalidate': ''}
+        # Limit the assignee queryset.
+        # Define the form layout.
+        self.helper.layout = Layout(
+            HTML('<p>Are you sure you want to cancel this application:</p>'),
+            FormActions(
+                Submit('cancel-application', 'Cancel Application', css_class='btn-lg'),
+            )
+        )
+
+
+class AssignOfficerForm(ModelForm):
+    """A form for assigning an application to people with a specific group.
+    """
+
+    class Meta:
+        model = Application
+        #fields = ['app_type', 'title', 'description', 'submit_date', 'assignee']
+        fields = ['assigned_officer']
+
+    def __init__(self, *args, **kwargs):
+        super(AssignOfficerForm, self).__init__(*args, **kwargs)
+        self.helper = BaseFormHelper(self)
+        self.helper.form_id = 'id_form_assign_officer_application'
+        self.helper.attrs = {'novalidate': ''}
+        # Limit the assignee queryset.
+        assigngroup = Group.objects.get(name=self.initial['assigngroup'])
+        self.fields['assigned_officer'].queryset = User.objects.filter(groups__in=[assigngroup])
+        self.fields['assigned_officer'].required = True
+        # Disable all form fields.
+        for k, v in self.fields.items():
+            self.fields[k].disabled = True
+        # Re-enable the assignee field.
+        self.fields['assigned_officer'].disabled = False
+        #self.initial["fieldstatus"]:
+        # Define the form layout.
+        self.helper.layout = Layout(
+            HTML('<p>Assign this application an officer:</p>'),
+            #'app_type', 'title', 'description', 'submit_date', 'assignee',
+            'assigned_officer',
+            FormActions(
+                Submit('assign', 'Assign', css_class='btn-lg'),
+                Submit('cancel', 'Cancel')
+            )
+        )
+
 
 
 class ComplianceAssignPersonForm(ModelForm):

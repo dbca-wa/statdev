@@ -50,8 +50,9 @@ class Record(models.Model):
         (2002, 'organisation', ('Organistion')),
         (2003, 'application_comms', ('Application Communication Logs')),    
         (2004, 'account_comms', ('Account Communication Logs')),
-        (2005, 'approval', ('Approval'))
-        
+        (2005, 'approval', ('Approval')),
+        (2006, 'compliance', ('Compliance')),
+        (2007, 'approval_comms', ('Approval Communication Logs'))
     )
 
 
@@ -145,6 +146,10 @@ class Application(models.Model):
          (4, 'somebody_else_company', ('On Behalf of a company as somebody else (as an authorised agent)')),
          (5, 'internal', ('Internal'))
     )
+    APP_STATUS = Choices(
+          (1, 'active', ('Active')),
+          (2, 'cancelled', ('Cancelled'))
+    )
 
     APP_STATE_CHOICES = Choices(
         (0, 'unknown',('Unknown')),
@@ -192,6 +197,7 @@ class Application(models.Model):
     apply_on_behalf_of = models.IntegerField(choices=APP_APPLY_ON, blank=True, null=True)
     assignee = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.PROTECT, related_name='assignee')
     assigned_officer = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.PROTECT, related_name='assigned_officer')
+    status = models.IntegerField(choices=APP_STATUS, default=APP_STATUS.active, editable=True, ) 
     state = models.IntegerField(choices=APP_STATE_CHOICES, default=APP_STATE_CHOICES.draft, editable=True)
     title = models.CharField(max_length=256)
     description = models.TextField(null=True, blank=True)
@@ -509,6 +515,7 @@ class Condition(models.Model):
     )
 
     application = models.ForeignKey(Application, on_delete=models.PROTECT)
+    condition_no = models.IntegerField(blank=True, null=True)
     condition = models.TextField(blank=True, null=True)
     referral = models.ForeignKey(Referral, null=True, blank=True, on_delete=models.PROTECT)
     status = models.IntegerField(choices=CONDITION_STATUS_CHOICES, default=CONDITION_STATUS_CHOICES.proposed)
@@ -520,6 +527,7 @@ class Condition(models.Model):
         null=True, blank=True, verbose_name='recurrence frequency',
         help_text='How frequently is the recurrence pattern applied (e.g. every 2 months)')
     suspend = models.BooleanField(default=False)
+    advise_no = models.IntegerField(blank=True, null=True)
     advise = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -604,6 +612,7 @@ class Compliance(models.Model):
     submit_date = models.DateTimeField(auto_now_add=True)
     due_date = models.DateField(blank=True, null=True)
     compliance = models.TextField(blank=True, null=True, help_text='Information to fulfil requirement of condition.')
+    external_comments = models.TextField(blank=True, null=True)
     comments = models.TextField(blank=True, null=True)
     approve_date = models.DateField(blank=True, null=True)
     records = models.ManyToManyField(Record, blank=True)
