@@ -122,9 +122,9 @@ class PublicApplicationFeedback(UpdateView):
                fileitem['path'] = pub_web.published_document.upload.name
                fileitem['path_short'] = SafeText(pub_web.published_document.upload.name)[19:]
                fileitem['name'] = pub_web.published_document.name
-               fileitem['file_url'] = doc.file_url()
+               fileitem['file_url'] = pub_web.published_document.file_url()
                context['proposed_development_plans_list'].append(fileitem)
-        print (context['proposed_development_plans_list'])
+
         if app.river_lease_scan_of_application:
             pub_web = None
             try:

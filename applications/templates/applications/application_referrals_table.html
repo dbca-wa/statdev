@@ -3,6 +3,7 @@
                                         <tr>
                                                 <th>Name</th>
                                                 <th>Sent date</th>
+						<th>Expiry</th>
                                                 <th>Period (days)</th>
                                                 <th>Status</th>
                                                 <th>Feedback</th>
@@ -16,6 +17,7 @@
                                         <tr>
                                                 <td>{{ ref.referee }}</td>
                                                 <td>{{ ref.sent_date|date:"d-M-Y" }}</td>
+						<td>{{ ref.expire_date|date:"d-M-Y" }}</td>
                                                 <td>{{ ref.period }}</td>
                                                 <td>{{ ref.get_status_display }}</td>
                                                 <td>{{ ref.feedback }}</td>
@@ -50,8 +52,7 @@
 
                             {% if may_referral_resend == "True" %}
                                         {% if ref.status == ref.REFERRAL_STATUS_CHOICES.recalled or ref.status == ref.REFERRAL_STATUS_CHOICES.responded %}
-                                             {# TODO: Referral resend function #}
-                                             <a class="btn btn-primary btn-sm" role="button" href="{% url 'referral_resend' ref.pk %}">Resend</a>
+                                             <button class="btn btn-primary btn-sm" role="button" onclick="django_ajax_form.OpenForm('{% url 'referral_resend' ref.pk %}','Referral Resend')"  type="button">Resend</button>
                                         {% endif %}
                             {% endif %}
                                                 </td>

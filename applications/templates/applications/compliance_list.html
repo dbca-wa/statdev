@@ -104,6 +104,31 @@
     <script>
 function loadTable() {
     $('#compliance-table').dataTable({searching: false, paging: true, "pageLength": 25, "order": [[ 0, "desc" ]],
+    dom: 'lrtipB',
+    buttons: [
+      'copy',
+
+      {
+        extend: "excelHtml5",
+        filename: function fred() { return "Excel - " + Date.now(); },
+        exportOptions: { orthogonal: "exportxls", columns: ':not(:last-child)', }
+      },
+      {
+        extend: "csvHtml5",
+        filename: function fred() { return "CSV - " + Date.now(); },
+        exportOptions: { orthogonal: "exportcsv", columns: ':not(:last-child)', }
+      },
+      {
+        extend: "pdfHtml5",
+        filename: function fred() { return "PDF - " + Date.now(); },
+        exportOptions: { orthogonal: "exportpdf",columns: ':not(:last-child)', }
+      },
+
+      'print'
+    ],
+     "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+
+
       columnDefs: [
        { type: 'natural-nohtml', targets: 0 }, { type: 'natural-nohtml', targets: 2 }, { type: 'date-dd-mmm-yyyy', targets: 5 }, { 'bSortable': false, 'aTargets':  6 }
      ]

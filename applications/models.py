@@ -475,7 +475,7 @@ class Referral(models.Model):
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
     referee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     details = models.TextField(blank=True, null=True)
-    sent_date = models.DateField()
+    sent_date = models.DateField(blank=True, null=True)
     period = models.PositiveIntegerField(verbose_name='period (days)')
     expire_date = models.DateField(blank=True, null=True, editable=False)
     response_date = models.DateField(blank=True, null=True)
@@ -493,7 +493,7 @@ class Referral(models.Model):
     def save(self, *args, **kwargs):
         """Override save to set the expire_date field.
         """
-        self.expire_date = self.sent_date + timedelta(days=self.period)
+        #self.expire_date = self.sent_date + timedelta(days=self.period)
         super(Referral, self).save(*args, **kwargs)
 
 

@@ -4827,7 +4827,7 @@ class ApplicationRefer(LoginRequiredMixin, CreateView):
 
         self.object = form.save(commit=False)
         self.object.application = app
-        self.object.sent_date = date.today()
+        #self.object.sent_date = date.today()
         self.object.save()
         # Set the application status to 'with referee'.
 #        app.state = app.APP_STATE_CHOICES.with_referee
@@ -6464,7 +6464,7 @@ class ReferralComplete(LoginRequiredMixin, UpdateView):
             # Record an action.
             action = Action(
                 content_object=app,
-                action='No outstanding referrals, application routed to nextstep "{}"'.format(app_updated.get_state_display()))
+                action='No outstanding referrals, application routed to nextstep "{}"'.format(app_updated.get_state_display()), category=3)
             action.save()
 
         return HttpResponseRedirect(app.get_absolute_url())
@@ -6550,7 +6550,7 @@ class ReferralRecall(LoginRequiredMixin, UpdateView):
         # Record an action on the referral's application:
         action = Action(
             content_object=ref.application, user=self.request.user,
-            action='Referral to {} recalled'.format(ref.referee))
+            action='Referral to {} recalled'.format(ref.referee), category=3)
         action.save()
 
         #  check to see if there is any uncompleted/unrecalled referrals
@@ -6562,7 +6562,7 @@ class ReferralRecall(LoginRequiredMixin, UpdateView):
             refnextaction.go_next_action(ref.application)
             action = Action(
                 content_object=ref.application, user=self.request.user,
-                action='All Referrals Completed, Progress to next Workflow Action {} '.format(ref.referee))
+                action='All Referrals Completed, Progress to next Workflow Action {} '.format(ref.referee), category=3)
             action.save()
 
         return HttpResponseRedirect(ref.application.get_absolute_url())
@@ -6634,7 +6634,7 @@ class ReferralResend(LoginRequiredMixin, UpdateView):
         # Record an action on the referral's application:
         action = Action(
             content_object=ref.application, user=self.request.user,
-            action='Referral to {} resend '.format(ref.referee))
+            action='Referral to {} resend '.format(ref.referee), category=3)
         action.save()
 
         return HttpResponseRedirect(ref.application.get_absolute_url())
@@ -6705,6 +6705,9 @@ class ReferralSend(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         ref = self.get_object()
         ref.status = Referral.REFERRAL_STATUS_CHOICES.referred
+        if ref.sent_date is None:
+            ref.sent_date = date.today()
+            ref.expire_date = ref.sent_date + timedelta(days=ref.period)
         ref.save()
 
         emailcontext = {}
@@ -6716,7 +6719,7 @@ class ReferralSend(LoginRequiredMixin, UpdateView):
         # Record an action on the referral's application:
         action = Action(
             content_object=ref.application, user=self.request.user,
-            action='Referral to {} sent '.format(ref.referee))
+            action='Referral to {} sent '.format(ref.referee), category=3)
         action.save()
 
         return HttpResponseRedirect(ref.application.get_absolute_url())
@@ -6799,7 +6802,7 @@ class ReferralRemind(LoginRequiredMixin, UpdateView):
 
         action = Action(
             content_object=ref.application, user=self.request.user,
-            action='Referral to {} reminded'.format(ref.referee))
+            action='Referral to {} reminded'.format(ref.referee), category=3)
         action.save()
         return HttpResponseRedirect(self.get_success_url(application_id))
         #ref.application.get_absolute_url())
@@ -6881,7 +6884,7 @@ class ReferralDelete(LoginRequiredMixin, UpdateView):
         # Record an action on the referral's application:
         action = Action(
             content_object=ref.application, user=self.request.user,
-            action='Referral to {} delete'.format(ref.referee))
+            action='Referral to {} delete'.format(ref.referee), category=3)
         action.save()
         return HttpResponseRedirect(self.get_success_url(application_id))
 

@@ -11,6 +11,7 @@ from applications import models
 from approvals import models as approval_models
 from django.core.files import File
 from django.core.files.base import ContentFile
+from datetime import date, timedelta
 
 import hashlib
 import datetime
@@ -141,5 +142,7 @@ def emailApplicationReferrals(application_id,subject,context,template,cc,bcc,fro
         context['person'] = Referee.referee
         context['application_id'] = application_id
         sendHtmlEmail([Referee.referee.email],subject,context,template,cc,bcc,from_email)
-
+        Referee.sent_date = date.today() 
+        Referee.expire_date = Referee.sent_date + timedelta(days=Referee.period)
+        Referee.save()
 

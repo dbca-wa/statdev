@@ -296,7 +296,7 @@ class Referrals_Next_Action_Check():
 
     def go_next_action(self,app):
         app = Application.objects.get(id=app.id)
-        app.status = ''
+        #app.status = ''
         flow = Flow()
         workflowtype = flow.getWorkFlowTypeFromApp(app)
         DefaultGroups = flow.groupList()
@@ -310,15 +310,25 @@ class Referrals_Next_Action_Check():
             groupassignment = None
         route = flow.getNextRouteObj(action,app.routeid,workflowtype)
 
+        print ("go_next_action")
+        print (route)
+
         if "route"in route:
             app.routeid = route["route"]
         else:
             app.routeid = None
+
         if "state" in route:
             app.state = route["state"]
             app.route_status = flow.json_obj[route['route']]['title']
         else:
-            app.state = 0 
+            app.state = 0
+
+        print (app.routeid)
+        print (groupassignment)
+        print (assignee)
+        print ("go_next_action --end")
+        
         app.group = groupassignment
         app.assignee = assignee
         app.save()
