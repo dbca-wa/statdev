@@ -15,6 +15,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from statdev.context_processors import template_context
 from django.contrib import messages
 from applications.views_pdf import PDFtool
+from applications.email import sendHtmlEmail, emailGroup, emailApplicationReferrals
+
 import os.path
 import os 
 
@@ -165,7 +167,7 @@ class ApprovalStatusChange(LoginRequiredMixin,UpdateView):
     def post(self, request, *args, **kwargs):
         #        self.initial = self.get_initial()
         self.object = self.get_object()
-        self.object.status = 2
+        #self.object.status = 2
         #print self.initial['status']
         if request.POST.get('cancel'):
             app = Application.objects.get(pk=self.kwargs['application'])
@@ -184,6 +186,10 @@ class ApprovalStatusChange(LoginRequiredMixin,UpdateView):
             content_object=app, category=Action.ACTION_CATEGORY_CHOICES.change,
             user=self.request.user, action='Approval Change')
         action.save()
+        if status == 'surrendered':
+             emailcontext = {'approval_id': app.id, 'app': app}
+             emailGroup('Approval surrendered AP-'+str(app.id) , emailcontext, 'approval_surrendered.html', None, None, None, 'Statdev Processor')
+
 
         return super(ApprovalStatusChange, self).form_valid(form)
 
