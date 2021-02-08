@@ -127,6 +127,7 @@ ALLOWED_UPLOAD_TYPES = [
     'text/plain'
 ]
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 50240
+MAX_UPLOAD_SIZE = "5242880"
 
 #USER_FIELDS = ['email']
 ##SOCIAL_AUTH_STRATEGY = 'social_django.strategy.DjangoStrategy'
