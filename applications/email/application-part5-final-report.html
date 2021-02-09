@@ -1,11 +1,11 @@
 <p>Dear {{ person.first_name }}</p>
 
-<p>FINAL REPORT - PART 5 - [LOCATION] - [DESCRIPTION OF WORKS] - [APPLICANT]</p>
+<p>FINAL REPORT - PART 5 - {{ app.location }} – {{ app.title }} – {% include "application-applicant.html" %}</p>
 
-<p>The draft report on the above mentioned proposal was released for public comment by the Department of Biodiversity, Conservation and Attractions (the department) for a period of 14 days from [dd mmmm yyy] to [dd mmmm yyy]. The department has considered the submissions made in relation to the draft report and has made any changes considered appropriate.</p>
+<p>The draft report on the above mentioned proposal was released for public comment by the Department of Biodiversity, Conservation and Attractions (the department) for a period of 14 days from {{ app.publish_final_report|date:"d M Y" }} to {{ app.publish_final_expiry|date:"d M Y" }}. The department has considered the submissions made in relation to the draft report and has made any changes considered appropriate.</p>
 
-<p>The final report has now been prepared and forwarded to the Minister for Environment; Disability Services for determination. The final report is now available at [insert hyperlink]</p>
+<p>The final report has now been prepared and forwarded to the Minister for Environment; Disability Services for determination. The final report is now available at <a href='{{ EXTERNAL_URL }}/public/application/{{ app.id }}/final/'>{{ EXTERNAL_URL }}/public/application/{{ app.id }}/final/</a></p>
 
-<p>If you have any queries regarding this matter, please contact [Planning Officer], [Position Title], at rivers.planning@dbca.wa.gov.au. In all correspondence please quote reference number WO-{{ app.id }}.</p>
+<p>If you have any queries regarding this matter, please email rivers.planning@dbca.wa.gov.au. In all correspondence please quote reference number WO-{{ app.id }}.</p>
 
 {% include "signature.html" %}

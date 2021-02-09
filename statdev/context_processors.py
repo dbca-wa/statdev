@@ -46,6 +46,8 @@ def template_context(request):
         'TEMPLATE_GROUP': "rivers",
         'GIT_COMMIT_DATE' : settings.GIT_COMMIT_DATE,
         'GIT_COMMIT_HASH' : settings.GIT_COMMIT_HASH,
+        'EXTERNAL_URL' : settings.EXTERNAL_URL
+
         #['Approver','Assessor','Director','Emergency','Executive','Processor']
     }
     return context

@@ -5182,6 +5182,7 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
 #        if app.app_type == 3:
          emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
          emailcontext['person'] = app.submitted_by
+         emailcontext['EXTERNAL_URL'] = settings.EXTERNAL_URL
          sendHtmlEmail([app.submitted_by.email], 'Draft Report - Part 5 - '+str(app.id), emailcontext, 'application-part5-draft-report.html', None, None, None)
 
     def final_completed(self,app):
@@ -5191,6 +5192,7 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
          if app.app_type == 3:
             emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
             emailcontext['person'] = app.submitted_by 
+            emailcontext['EXTERNAL_URL'] = settings.EXTERNAL_URL
             sendHtmlEmail([app.submitted_by.email], 'Final Report - Part  - '+str(app.id), emailcontext, 'application-part5-final-report.html', None, None, None)
 
     def decline_notification(self,app,forms_data):

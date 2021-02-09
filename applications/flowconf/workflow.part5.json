@@ -1891,8 +1891,7 @@
                 "title": "Post to DG",
                 "route": "13",
                 "routegroup": "assess",
-                "state": "2",
-                "process": ["draft_completed"]
+                "state": "2"
             },
             {
                 "title": "Reject To Assessor (Swan River)",
@@ -2283,8 +2282,7 @@
                 "title": "Post to DG",
                 "route": "13",
                 "routegroup": "assess",
-                "state": "2",
-                "process": ["draft_completed"]
+                "state": "2"
             }
         ],
         "groupaccess": {
@@ -2478,7 +2476,8 @@
                 "route": "15",
                 "routegroup": "manager",
                 "state": "5",
-                "required":["document_draft_signed","publish_draft_report","document_new_draft_v3","document_memo"]
+                "required":["document_draft_signed","publish_draft_report","document_new_draft_v3","document_memo"],
+		"process": ["draft_completed"]
             }
         ],
         "formcomponent": {
@@ -2875,7 +2874,7 @@
                 "route": "18",
                 "routegroup": "assess",
                 "state": "2",
-                "process": ["final_completed","temp_approval"]
+                "process": ["temp_approval"]
 
             },
 
@@ -3254,8 +3253,7 @@
                 "title": "Post Determination to DG",
                 "route": "18",
                 "routegroup": "assess",
-                "state": "2",
-                "process": ["final_completed","temp_approval"]
+                "state": "2"
 
             }
         ],
@@ -3445,7 +3443,8 @@
                 "route": "20",
                 "routegroup": "manager",
                 "state": "5",
-                "required":["publish_final_report","document_final_signed","document_briefing_note","document_determination"]
+                "required":["publish_final_report","document_final_signed","document_briefing_note","document_determination"],
+                "process": ["final_completed"]
             }
         ],
         "formcomponent": {
