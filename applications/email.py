@@ -73,7 +73,7 @@ def sendHtmlEmail(to,subject,context,template,cc,bcc,from_email,attachment1=None
           if attachment1:
               msg.attach_file(attachment1)
         
-          msg.send()
+          #msg.send()
 
           try:
                email_log(str(log_hash)+' '+subject) 
@@ -89,7 +89,7 @@ def sendHtmlEmail(to,subject,context,template,cc,bcc,from_email,attachment1=None
           msg.content_subtype = 'html'
           if attachment1:
               msg.attach_file(attachment1)
-          msg.send()
+          #msg.send()
           #print ("MESSGE")
           #print (str(msg.message()))
 
