@@ -6,7 +6,7 @@
 {% if object.state == 1 %}{% if object.app_type == None %}window.location = "{% url 'application_apply_form' object.pk 'apptype' %}";{% else %}window.location = "{% url 'application_update' object.pk %}";{% endif %}{% else %}{% endif %}
 </script>
 
-<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}?ver={{ GIT_COMMIT_HASH }}" />
 <div class="container-fluid">
     <div class="row">
         <h1>Application for {{ object.get_app_type_display }} - {{ object.pk }}</h1>

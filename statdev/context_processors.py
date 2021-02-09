@@ -44,6 +44,8 @@ def template_context(request):
         'admin_staff': has_admin(request.user),
         'admin_assessor_staff':  has_admin_assessor(request.user),
         'TEMPLATE_GROUP': "rivers",
+        'GIT_COMMIT_DATE' : settings.GIT_COMMIT_DATE,
+        'GIT_COMMIT_HASH' : settings.GIT_COMMIT_HASH,
         #['Approver','Assessor','Director','Emergency','Executive','Processor']
     }
     return context

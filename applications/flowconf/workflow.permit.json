@@ -703,7 +703,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
         },
         "collapse": {
@@ -782,7 +783,8 @@
                 "allow_admin_side_menu" : "True",
 		"may_view_action_log": "True",
                 "may_view_comm_log": "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             },
             "Statdev Assessor": {
                 "may_update": "True",
@@ -1009,7 +1011,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
         },
@@ -1171,7 +1174,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
         },
@@ -1331,7 +1335,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
         },
@@ -1486,7 +1491,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "False",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
         },
@@ -1642,7 +1648,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "False",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
 

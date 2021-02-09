@@ -857,7 +857,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
 
@@ -954,7 +955,8 @@
                 "may_referral_delete": "True",
                 "may_view_action_log": "True",
                 "allow_admin_side_menu":"True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             },
             "Statdev Assessor": {
                 "may_update": "True",
@@ -1216,7 +1218,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
 
@@ -1407,7 +1410,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
 
@@ -1596,7 +1600,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
         },
@@ -1788,7 +1793,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
 
@@ -1982,7 +1988,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
         },
@@ -2178,7 +2185,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
         },
@@ -2364,7 +2372,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
         },
@@ -2451,7 +2460,7 @@
             "referrals": "False",
             "assessments_draft_report": "False",
             "assessments_swan_river_trust_board_feedback": "False",
-	        "assessments_draft_report_after_public_consultation": "False",
+	    "assessments_draft_report_after_public_consultation": "False",
             "assessments_new_draft": "False",
             "assessments_draft_report": "False",
             "publication_feedback_draft" : "False",
@@ -2564,7 +2573,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
 
@@ -2695,8 +2705,8 @@
                 "may_publish_publication_feedback_draft": "True",
                 "allow_admin_side_menu":"True",
                 "show_form_buttons": "True",
-                "allow_access_attachments": "True"
-
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             },
 
             "Statdev Approver": {
@@ -2762,7 +2772,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
         },
@@ -2960,7 +2971,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
         },
         "collapse": {
@@ -3144,7 +3156,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
         },
@@ -3326,7 +3339,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
         },
         "collapse": {
@@ -3525,7 +3539,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
         },
         "collapse": {
@@ -3719,7 +3734,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
         },
@@ -3910,7 +3926,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
         },
@@ -4098,7 +4115,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
         },
         "collapse": {
@@ -4295,7 +4313,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
         },
@@ -4482,7 +4501,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "True",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
         },
@@ -4663,7 +4683,8 @@
                 "may_view_comm_log": "True",
                 "may_assign_to_person": "False",
                 "allow_admin_side_menu" : "True",
-                "allow_access_attachments": "True"
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
         },

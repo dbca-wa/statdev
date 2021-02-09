@@ -4979,6 +4979,9 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
             assignee = None
             assessed_by = self.request.user 
             groupassignment = Group.objects.get(name=DefaultGroups['grouplink'][action])
+            if app.assigned_officer:
+               if app.assigned_officer.groups.filter(name__in=[groupassignment.name]).exists():
+                      assignee = app.assigned_officer
 
         #route = flow.getNextRouteObj(action, app.routeid, workflowtype)
         route = flow.getNextRouteObjViaId(int(actionid), app.routeid, workflowtype)   
@@ -5060,10 +5063,17 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
         elif action == "referral":
             emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
             emailApplicationReferrals(app.id, 'Application for Feedback ', emailcontext, 'application-assigned-to-referee.html', None, None, None)
+        else:
+            if self.object.state != '14':
+                emailcontext = {'person': app.assignee}
+                emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
+                sendHtmlEmail([app.assignee.email], emailcontext['application_name'] + ' application assigned to you ', emailcontext, 'application-assigned-to-person.html', None, None, None)
+
 
         if self.object.state == '14':
         # Form Commpleted & Create Approval
             self.complete_application(app)
+        
         if self.object.state == '10': 
             self.ammendment_approved(app) 
         if self.object.state == '8':

@@ -3,7 +3,7 @@
 {% load static %} 
 {% block page_content_inner %}
 
-<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}?ver={{ GIT_COMMIT_HASH }}" />
 
 <input type='hidden' value='{{ object.app_type }}' id='file_group' name='file_group'>
 <input type='hidden' value='{{ object.id }}' id='file_group_ref_id' name='file_group_ref_id'>
