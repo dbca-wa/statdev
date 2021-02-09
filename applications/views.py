@@ -5055,6 +5055,13 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
             emailcontext['groupname'] = DefaultGroups['grouplink'][action]
             emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
             emailGroup('Application Assignment to Group ' + DefaultGroups['grouplink'][action], emailcontext, 'application-assigned-to-group.html', None, None, None, DefaultGroups['grouplink'][action])
+            if self.object.state != '14':
+                if app.assignee:
+                    emailcontext = {}
+                    emailcontext['app'] = self.object
+                    emailcontext = {'person': app.assignee}
+                    emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
+                    sendHtmlEmail([app.assignee.email], emailcontext['application_name'] + ' application assigned to you ', emailcontext, 'application-assigned-to-person.html', None, None, None)
         elif action == "creator":
             emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
             emailcontext['person'] = assignee
@@ -5063,11 +5070,6 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
         elif action == "referral":
             emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
             emailApplicationReferrals(app.id, 'Application for Feedback ', emailcontext, 'application-assigned-to-referee.html', None, None, None)
-        else:
-            if self.object.state != '14':
-                emailcontext = {'person': app.assignee}
-                emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
-                sendHtmlEmail([app.assignee.email], emailcontext['application_name'] + ' application assigned to you ', emailcontext, 'application-assigned-to-person.html', None, None, None)
 
 
         if self.object.state == '14':
