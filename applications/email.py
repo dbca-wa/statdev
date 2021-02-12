@@ -33,6 +33,8 @@ def sendHtmlEmail(to,subject,context,template,cc,bcc,from_email,attachment1=None
 
     email_delivery = env('EMAIL_DELIVERY', 'off')
     override_email = env('OVERRIDE_EMAIL', None)
+    email_instance = env('EMAIL_INSTANCE','DEV')
+
     context['default_url'] = env('DEFAULT_URL', '')
     context['default_url_internal'] = env('DEFAULT_URL_INTERNAL', '')
     log_hash = int(hashlib.sha1(str(datetime.datetime.now()).encode('utf-8')).hexdigest(), 16) % (10 ** 8)
@@ -68,7 +70,7 @@ def sendHtmlEmail(to,subject,context,template,cc,bcc,from_email,attachment1=None
     
     if len(to) > 1:
        for to_email in to:
-          msg = EmailMessage(subject, main_template, to=[to_email],cc=cc, from_email=from_email)
+          msg = EmailMessage(subject, main_template, to=[to_email],cc=cc, from_email=from_email, headers={'System-Environment': email_instance})
           msg.content_subtype = 'html'
           if attachment1:
               msg.attach_file(attachment1)
@@ -85,7 +87,7 @@ def sendHtmlEmail(to,subject,context,template,cc,bcc,from_email,attachment1=None
           #print ("MESSGE")
           #print (str(msg.message()))
     else:
-          msg = EmailMessage(subject, main_template, to=to,cc=cc, from_email=from_email)
+          msg = EmailMessage(subject, main_template, to=to,cc=cc, from_email=from_email, headers={'System-Environment': email_instance})
           msg.content_subtype = 'html'
           if attachment1:
               msg.attach_file(attachment1)
@@ -110,7 +112,10 @@ def sendHtmlEmail(to,subject,context,template,cc,bcc,from_email,attachment1=None
 
        #f = open(file_name, "r")
 #       print(f.read())
+       print ("CLASS")
+       print (":"+ context['app'].__class__.__name__+":")
        if context['app'].__class__.__name__ == 'Compliance':
+             print ("LOADING")
              doc = models.Record()
              doc.upload.save(str(log_hash)+'.eml', ContentFile(eml_content), save=False)
              doc.name = str(log_hash)+'.eml'
@@ -123,7 +128,7 @@ def sendHtmlEmail(to,subject,context,template,cc,bcc,from_email,attachment1=None
              comms = approval_models.CommunicationApproval.objects.create(approval=approval,comms_type=2,comms_to=str(to), comms_from=from_email, subject=subject, details='see attachment')
              comms.records.add(doc)
              comms.save()
-       if context['app'].__class__.__name__ == 'Approval':
+       elif context['app'].__class__.__name__ == 'Approval':
              doc = models.Record()
              doc.upload.save(str(log_hash)+'.eml', ContentFile(eml_content), save=False)
              doc.name = str(log_hash)+'.eml'
@@ -143,7 +148,6 @@ def sendHtmlEmail(to,subject,context,template,cc,bcc,from_email,attachment1=None
              doc.file_group_ref_id = context['app'].id
              doc.extension = '.eml'
              doc.save()
-
 
              comms = models.Communication.objects.create(application=context['app'],comms_type=2,comms_to=str(to), comms_from=from_email, subject=subject, details='see attachment')
              comms.records.add(doc)

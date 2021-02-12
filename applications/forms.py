@@ -1982,7 +1982,9 @@ class ComplianceCompleteInternal(ModelForm):
     #records = FileField(required=False, max_length=128, widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'}))
     records = FileField(required=False, widget=AjaxFileUploader(attrs={'multiple':'multiple'}), label='Documents')
     action = ChoiceField(choices=ACTION, widget=forms.Select())
-
+    internal_comments = CharField(required=False, widget=Textarea, help_text='Comment is added to communication log')
+    internal_documents = FileField(required=False, widget=AjaxFileUploader(attrs={'multiple':'multiple'}), label='Internal Documents (Comms Log)')
+    external_documents = FileField(required=False, widget=AjaxFileUploader(attrs={'multiple':'multiple'}), label='External Documents (holder sees)')
 
     class Meta:
         model = Compliance
@@ -1998,7 +2000,7 @@ class ComplianceCompleteInternal(ModelForm):
              self.fields['action'].choices = Choices((0, 'none', ('None')), (1, 'approve', ('Approve')),(4, 'assesor', ('Send to Assesor')),)
         if self.initial['status'] == 5:
              self.fields['action'].choices = Choices((0, 'none', ('None')), (1, 'approve', ('Approve')), (2, 'sendtomanager', ('Send to Manager')), (3, 'licence_holder', ('Return to licence holder')))
-        self.helper.layout = Layout('action', 'external_comments',)
+        self.helper.layout = Layout('action', 'external_comments','external_documents','internal_comments','internal_documents')
 
         self.helper.add_input(Submit('submit', 'Submit', css_class='btn-lg'))
 

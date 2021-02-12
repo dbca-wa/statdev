@@ -268,7 +268,7 @@ class PDFtool(FPDF):
          pdf = self.column_para(pdf,'Licence/Permit holder',holder_name,None)
          # group spacer
          pdf = self.space(pdf)
-         pdf = self.column_para(pdf,'Authorised works, acts or activities','',None)
+         pdf = self.column_para(pdf,'Authorised works, acts or activities',app.title,None)
          pdf = self.space(pdf)
          pdf = self.column_para(pdf,'Location of works, acts or activities','',None)
          pdf = self.space(pdf)
@@ -960,12 +960,16 @@ class PDFtool(FPDF):
          pdf.cell(0,5,' ', 0,1,'L')
 
          pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'Authorised works, acts or activities',0,1,'L')
-         pdf.cell(6, 5, '',0,1,'L')
+         pdf.cell(60, 5, 'Authorised works, acts or activities',0,0,'L')
+         pdf.cell(6, 5, ':',0,0,'L')
+         pdf.cell(6, 5, app.title ,0,1,'L')
+
+         pdf.cell(0,5,' ', 0,1,'L')
 
          pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'Location of works, acts or activities:',0,0,'L')
-         pdf.cell(6, 5, ' ',0,0,'L')
+         pdf.cell(60, 5, 'Location of works, acts or activities',0,0,'L')
+         pdf.cell(6, 5, ':',0,0,'L')
+
          if application_location.count() > 0:
             pdf.cell(50, 5, application_location[0].lot + ' '+ application_location[0].street_number_name + ' '+application_location[0].suburb,0,0,'L')
          else:

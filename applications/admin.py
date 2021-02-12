@@ -52,7 +52,8 @@ class ApplicationLicenceFeeAdmin(ModelAdmin):
 class ApplicationAdmin(ModelAdmin):
     date_hierarchy = 'submit_date'
     filter_horizontal = ('records',)
-    list_display = ('id', 'app_type', 'applicant', 'organisation', 'state', 'title', 'submit_date', 'assignee', 'expire_date')
+    raw_id_fields = ('applicant','assignee','assigned_officer','approval_document','approval_document_signed')
+    list_display = ('id', 'app_type', 'organisation', 'state', 'title', 'submit_date', 'expire_date')
     list_filter = ('app_type', 'state')
     search_fields = ('applicant__email', 'organisation__name', 'assignee__email', 'title')
 

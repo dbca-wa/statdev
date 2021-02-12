@@ -31,7 +31,7 @@ from applications.validationchecks import Attachment_Extension_Check, is_json
 from applications.utils import get_query, random_generator
 from applications import utils
 from ledger.accounts.models import EmailUser, Address, Organisation, Document, OrganisationAddress
-from approvals.models import Approval
+from approvals.models import Approval, CommunicationApproval
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import math
@@ -6791,6 +6791,7 @@ class ReferralRemind(LoginRequiredMixin, UpdateView):
         flow.get(app_type_short_name)
         flowcontext = {}
         flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, app_type_short_name)
+
         print ('test')
         print (flowcontext)
         if flowcontext["may_recall_resend"] == "True":
@@ -7075,6 +7076,20 @@ class ComplianceApprovalInternal(LoginRequiredMixin,UpdateView):
         initial['status'] = self.object.status
         print ("STATUS")
         print (initial['status'])
+
+        external_documents = self.object.external_documents.all()
+        print ("EXTERNAL DOC")
+        print (external_documents)
+        multifilelist = []
+        for b1 in external_documents:
+            fileitem = {}
+            fileitem['fileid'] = b1.id
+            fileitem['path'] = b1.upload.name
+            fileitem['name'] = b1.name
+            fileitem['extension']  = b1.extension
+            multifilelist.append(fileitem)
+        initial['external_documents'] = multifilelist
+        
         return initial
 
     def get_context_data(self, **kwargs):
@@ -7092,6 +7107,10 @@ class ComplianceApprovalInternal(LoginRequiredMixin,UpdateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         action = self.request.POST.get('action')
+        external_comments = self.request.POST.get('external_comments','')
+        internal_comments = self.request.POST.get('internal_comments','')
+        internal_documents = self.request.POST.get('internal_documents')
+
         if action == '1':
              self.object.status = 4
              self.object.assessed_by = self.request.user
@@ -7102,6 +7121,19 @@ class ComplianceApprovalInternal(LoginRequiredMixin,UpdateView):
                   content_object=self.object, category=Action.ACTION_CATEGORY_CHOICES.assign, user=self.request.user,
                   action='Compliance has been approved')
              action.save()
+
+             if len(internal_comments) > 0:
+                 approval = Approval.objects.get(id=self.object.approval_id)
+                 comms = CommunicationApproval.objects.create(approval=approval,comms_type=4,comms_to=str('Approved'), comms_from='', subject='internal comment', details=internal_comments)
+                 if 'internal_documents_json' in self.request.POST:
+                      if is_json(self.request.POST['internal_documents_json']) is True:
+                           json_data = json.loads(self.request.POST['internal_documents_json'])
+                           for i in json_data:
+                               doc = Record.objects.get(id=i['doc_id'])
+                               comms.records.add(doc)
+                 comms.save()
+
+
 
              emailcontext = {}
              emailcontext['app'] = self.object
@@ -7116,10 +7148,24 @@ class ComplianceApprovalInternal(LoginRequiredMixin,UpdateView):
              self.object.assignee = None
              self.object.group = approver
              messages.success(self.request, "Compliance has been assigned to the manager group.")
+
              action = Action(
                   content_object=self.object, category=Action.ACTION_CATEGORY_CHOICES.assign, user=self.request.user,
                   action='Compliance assigned to Manager')
              action.save()
+
+             if len(internal_comments) > 0:
+                 approval = Approval.objects.get(id=self.object.approval_id)
+                 comms = CommunicationApproval.objects.create(approval=approval,comms_type=4,comms_to=str('Sent to Manager'), comms_from='', subject='internal comment', details=internal_comments)
+                 if 'internal_documents_json' in self.request.POST:
+                      if is_json(self.request.POST['internal_documents_json']) is True:
+                           json_data = json.loads(self.request.POST['internal_documents_json'])
+                           for i in json_data:
+                               doc = Record.objects.get(id=i['doc_id'])
+                               comms.records.add(doc)
+
+                 comms.save()
+
 
              emailcontext = {}
              emailcontext['clearance_id'] = self.object.id
@@ -7130,16 +7176,37 @@ class ComplianceApprovalInternal(LoginRequiredMixin,UpdateView):
              self.object.group = None
              self.object.assignee = None
              messages.success(self.request, "Compliance has been assigned to the holder.")
+
              action = Action(
                   content_object=self.object, category=Action.ACTION_CATEGORY_CHOICES.assign, user=self.request.user,
                   action='Compliance has been return to holder')
              action.save()
+
+             if len(external_comments) > 0:
+                 approval = Approval.objects.get(id=self.object.approval_id)
+                 comms = CommunicationApproval.objects.create(approval=approval,comms_type=4,comms_to=str('Return to licence holder'), comms_from='', subject='external comment', details=external_comments)
+                 comms.save()
+
+             if len(internal_comments) > 0:
+                 approval = Approval.objects.get(id=self.object.approval_id)
+                 comms = CommunicationApproval.objects.create(approval=approval,comms_type=4,comms_to=str('Sent to Manager'), comms_from='', subject='internal comment', details=internal_comments)
+                 if 'internal_documents_json' in self.request.POST:
+                      if is_json(self.request.POST['internal_documents_json']) is True:
+                           json_data = json.loads(self.request.POST['internal_documents_json'])
+                           for i in json_data:
+                               doc = Record.objects.get(id=i['doc_id'])
+
+                               comms.records.add(doc)
+
+                 comms.save()
+
 
              emailcontext = {}
              emailcontext['app'] = self.object
              emailcontext['person'] = self.object.submitted_by
              emailcontext['body'] = "Your clearance of condition requires additional information."
              sendHtmlEmail([self.object.submitted_by.email], 'Your clearance of condition requires additional information please login and resubmit with additional information.', emailcontext, 'clearance-holder.html', None, None, None)
+
 
         elif action == '4':
              self.object.status = 5
@@ -7150,14 +7217,40 @@ class ComplianceApprovalInternal(LoginRequiredMixin,UpdateView):
              messages.success(self.request, "Compliance has been assigned to the assessor.")
              action = Action(
                   content_object=self.object, category=Action.ACTION_CATEGORY_CHOICES.assign, user=self.request.user,
-                  action='Compliance has been return to holder')
+                  action='Compliance has been returned to assessor')
              action.save()
+
+             if len(internal_comments) > 0:
+                 approval = Approval.objects.get(id=self.object.approval_id)
+                 comms = CommunicationApproval.objects.create(approval=approval,comms_type=4,comms_to=str('Return to assessor'), comms_from='', subject='internal comment', details=internal_comments)
+                 if 'internal_documents_json' in self.request.POST:
+                      if is_json(self.request.POST['internal_documents_json']) is True:
+                           json_data = json.loads(self.request.POST['internal_documents_json'])
+                           for i in json_data:
+                               doc = Record.objects.get(id=i['doc_id'])
+                               comms.records.add(doc)
+
+                 comms.save()
 
              emailcontext = {}
              emailcontext['clearance_id'] = self.object.id
-             emailGroup('Clearance of Condition Assigned to Assessor Group', emailcontext, 'clearance-of-condition-assigned-groups.html', None, None, None, 'Statdev Assessor')
+             emailGroup('Clearance of condition assigned to Assessor Group', emailcontext, 'clearance-of-condition-assigned-groups.html', None, None, None, 'Statdev Assessor')
         else: 
             raise ValidationError("ERROR,  no action found: "+str(action))
+
+        
+        if 'external_documents_json' in self.request.POST:
+             if is_json(self.request.POST['external_documents_json']) is True:
+                  json_data = json.loads(self.request.POST['external_documents_json'])
+                  self.object.external_documents.remove()
+                  for d in self.object.external_documents.all():
+                      self.object.external_documents.remove(d)
+                  for i in json_data:
+                      doc = Record.objects.get(id=i['doc_id'])
+                      doc.file_group = 2006
+                      doc.save()
+                      self.object.external_documents.add(doc)
+
         self.object.save()
         return HttpResponseRedirect(reverse("compliance_list",))
 

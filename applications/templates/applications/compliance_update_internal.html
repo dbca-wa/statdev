@@ -4,6 +4,8 @@
 {% block page_content_inner %}
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}?ver={{ GIT_COMMIT_HASH }}" />
+<input type='hidden' value='2007' id='file_group' name='file_group'>
+<input type='hidden' value='{{ object.id }}' id='file_group_ref_id' name='file_group_ref_id'>
 
 <div class="container-fluid">
     <div class="row">
@@ -114,13 +116,24 @@
                             <div class="col-sm-12 col-md-12 col-lg-12">
                                 <div class="col-sm-12 col-md-12 col-lg-12">
                                     <div class="col-sm-12 col-md-12 col-lg-12">
-                                        <b>Condition ({{ c.id }})</b>
+                                        <b>Condition</b>
                                     </div>
                                     <div class="col-sm-12 col-md-12 col-lg-12">
                                         {{ c.condition.condition }} 
 					</bR><BR>
                                     </div>
                                 </div>
+
+                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <b>Advise</b>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        {{ c.condition.advise }}
+                                        </bR><BR>
+                                    </div>
+                                </div>
+
                                 <div class="col-sm-12 col-md-12 col-lg-12">
                                     <div class="col-sm-12 col-md-12 col-lg-12">
 					<b>Comments</b>
@@ -131,8 +144,32 @@
                                             {% else %}
                                                <i>Please provide comment</i>
                                             {% endif %}
+					    </bR><BR>
                                      </div>
                                 </div>
+                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <b>External Comments</b>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                             {{ c.external_comments }}
+					     </bR><BR>
+                                     </div>
+                                </div>
+
+
+                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <b>Staff Documents (holder can see)</b>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+
+                                             {% if c.external_documents.exists %}
+                                                  {% for doc in c.external_documents.all %}<a href="{{ doc.file_url }}" target="new_tab_{{ doc.id }}">{{ doc }}</a><br>{% endfor %}
+                                             {% endif %}
+                                     </div>
+                                </div>
+
                             </div>
                             {% endfor %}
                             {% endif %}
@@ -234,12 +271,15 @@ $(function() {
         $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
     });
     $('#div_id_external_comments').hide();
+    $('#div_id_external_documents').hide();
     $("#id_action").change(function(e) {
             console.log(e);
 	    var action = $("#id_action").val();
 	    if  (action == 3) {
+		    $('#div_id_external_documents').show();
                     $('#div_id_external_comments').show();
 	    } else {
+		$('#div_id_external_documents').hide();
                 $('#div_id_external_comments').hide();
             }
     

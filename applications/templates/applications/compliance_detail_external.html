@@ -17,22 +17,49 @@
 
 	<div id="div_id_" class="form-group"> 
 		<label for="id_" class="control-label col-xs-12 col-sm-4 col-md-3 col-lg-2">
-		         Condition ({{ c.id }})
+		         Condition
 		</label> 
 		<div class="controls col-xs-12 col-sm-8 col-md-9 col-lg-10"> 
 			{{ c.condition.condition }}
-		</div> 
-	</div>
+		</div>
+        </div>
+	<div id="div_id_" class="form-group">
+		<label for="id_" class="control-label col-xs-12 col-sm-4 col-md-3 col-lg-2">
+                         Advise
+		</label>
+                <div class="controls col-xs-12 col-sm-8 col-md-9 col-lg-10">
+                        {{ c.condition.advise }} 
+		</div>
+        </div>
+         
+
         {% if c.external_comments %}
-        <div id="div_id_" class="form-group">
+        <div id="div_id_" class="form-group" >
                 <label for="id_" class="control-label col-xs-12 col-sm-4 col-md-3 col-lg-2">
                          Staff Comments
                 </label>
-                <div class="controls col-xs-12 col-sm-8 col-md-9 col-lg-10">
-                                                {{ c.external_comments }}
+                <div class="controls col-xs-12 col-sm-8 col-md-9 col-lg-10" >
+			 <div class="alert alert-info" role="alert">  
+                                  {{ c.external_comments }}
+		         </div>
                 </div>
         </div>
         {% endif %}
+
+
+        <div id="div_id_" class="form-group">
+                <label for="id_" class="control-label col-xs-12 col-sm-4 col-md-3 col-lg-2">
+                       Staff Documents
+                </label>
+                <div class="controls col-xs-12 col-sm-8 col-md-9 col-lg-10">
+                     {% if c.external_documents.exists %}
+                          {% for doc in c.external_documents.all %}<a href="{{ doc.file_url }}" target="new_tab_{{ doc.id }}">{{ doc }}</a><br>{% endfor %}
+                     {% endif %}
+                </div>
+        </div>
+
+
+
 
 	{% endfor %}
         {% endif %}

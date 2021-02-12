@@ -613,6 +613,7 @@ class Compliance(models.Model):
     due_date = models.DateField(blank=True, null=True)
     compliance = models.TextField(blank=True, null=True, help_text='Information to fulfil requirement of condition.')
     external_comments = models.TextField(blank=True, null=True)
+    external_documents = models.ManyToManyField(Record, blank=True, related_name='compliance_external_documents')
     comments = models.TextField(blank=True, null=True)
     approve_date = models.DateField(blank=True, null=True)
     records = models.ManyToManyField(Record, blank=True)
