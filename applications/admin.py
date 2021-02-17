@@ -54,7 +54,7 @@ class ApplicationLicenceFeeAdmin(ModelAdmin):
 class ApplicationAdmin(ModelAdmin):
     date_hierarchy = 'submit_date'
     filter_horizontal = ('records',)
-    raw_id_fields = ('applicant','assignee','assigned_officer','approval_document','approval_document_signed','submitted_by')
+    raw_id_fields = ('applicant','assignee','assigned_officer','approval_document','approval_document_signed','submitted_by','assessed_by','organisation','group',)
     readonly_fields = ('records','location_route_access','cert_survey','cert_public_liability_insurance','risk_mgmt_plan','safety_mgmt_procedures','brochures_itineries_adverts','other_relevant_documents','vessels','land_owner_consent','deed','river_lease_scan_of_application','proposed_development_plans','document_draft','document_new_draft','document_new_draft_v3','document_draft_signed','swan_river_trust_board_feedback','document_memo','document_memo_2','document_briefing_note','document_determination_approved','supporting_info_demonstrate_compliance_trust_policies','document_final','document_final_signed','document_determination','document_completion',)
     list_display = ('id', 'app_type', 'organisation', 'state', 'title', 'submit_date', 'expire_date')
     list_filter = ('app_type', 'state')
