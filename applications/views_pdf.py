@@ -1100,46 +1100,58 @@ class PDFtool(FPDF):
          pdf.cell(6, 5, ' ',0,0,'L')
          pdf.cell(30, 5, 'Approval date:',0,0,'L')
          pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(50, 5, app.proposed_commence.strftime("%d %b %Y"),0,0,'L')
+         pdf.cell(50, 5, app.start_date.strftime("%d %b %Y"),0,0,'L')
 
          pdf.cell(30, 5, 'Expiry date:',0,0,'L')
          pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(30, 5, app.proposed_end.strftime("%d %b %Y"),0,1,'L')
+         pdf.cell(30, 5, app.expiry_date.strftime("%d %b %Y"),0,1,'L')
 
          pdf = self.horizontal_line(pdf)
          # horizontal line
 #         pdf.line(7, 110, 205, 110)
 
 
+
+         # group spacer
          pdf.cell(0,5,' ', 0,1,'L')
-         pdf.set_font('Arial', 'B', 10)
 
-         pdf.cell(30, 8, 'CONDITIONS',0,1,'L')
-         pdf.cell(10, 8, ' 1.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         pdf.cell(6, 5, ' ',0,0,'L')
+         pdf.set_font('Arial', 'B', 9)
+         pdf.cell(60, 5, 'CONDITIONS TO APPLICANT',0,1,'L')
+         pdf.set_font('Arial', '', 9)
 
-         pdf.cell(10, 8, ' 2.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         application_condition = Condition.objects.filter(application=app.application).order_by('condition_no')
 
-         pdf.cell(10, 8, ' 3.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         condition_count = 1
+         for c in application_condition:
+              #condition
+              if len(c.condition) > 0 and c.condition_no > 0:
+                 pdf = self.column_para_no_seperator(pdf,str(c.condition_no)+'.', c.condition,10,1)
+                 pdf = self.space(pdf)
+                 condition_count = condition_count + 1
 
 
-         pdf.cell(30, 8, 'ADVICE TO APPLICANT',0,1,'L')
+         # group spacer
+         pdf.cell(0,5,' ', 0,1,'L')
 
-         pdf.cell(10, 8, ' 1.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         pdf.cell(6, 5, ' ',0,0,'L')
+         pdf.set_font('Arial', 'B', 9)
+         pdf.cell(60, 5, 'ADVISE TO APPLICANT',0,1,'L')
+         pdf.set_font('Arial', '', 9)
 
-         pdf.cell(10, 8, ' 2.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         application_condition = Condition.objects.filter(application=app.application).order_by('advise_no')
 
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         condition_count = 1
+         for c in application_condition:
+
+              if c.advise_no is None:
+                   c.advise_no = 0
+
+              #advise
+              if len(c.advise) > 0 and c.advise_no > 0:
+                  pdf = self.column_para_no_seperator(pdf,str(c.advise_no)+'.', c.advise,10,1)
+                  pdf = self.space(pdf)
+                  condition_count = condition_count + 1
 
 
          pdf.cell(0,15,' ', 0,1,'L')
@@ -1150,7 +1162,7 @@ class PDFtool(FPDF):
          # group spacer
          pdf.cell(0,5,' ', 0,1,'L')
 
-         pdf.output(BASE_DIR+'/pdfs/applications/'+str(app.id)+'-application.pdf', 'F')
+         pdf.output(BASE_DIR+'/pdfs/approvals/'+str(app.id)+'-approval.pdf', 'F')
 
     def get(self,app,self_view,context):
         request = self_view.request

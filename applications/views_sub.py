@@ -25,7 +25,7 @@ class Application_Part5():
         context = flow.getCollapse(context,app.routeid,workflowtype)
         context = flow.getHiddenAreas(context,app.routeid,workflowtype,request)
         context['workflow'] = flow.getAllRouteConf(workflowtype,app.routeid)
-        context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
+        #context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
         context['formcomponent'] = flow.getFormComponent(app.routeid,workflowtype)
         context['workflowoptions'] = flow.getWorkflowOptions()
 
@@ -233,7 +233,7 @@ class Application_Emergency():
         context = flow.getAccessRights(request,context,app.routeid,workflowtype)
         context = flow.getCollapse(context,app.routeid,workflowtype)
         context = flow.getHiddenAreas(context,app.routeid,workflowtype,request)
-        context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
+        #context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
         context['formcomponent'] = flow.getFormComponent(app.routeid,workflowtype)
         context['workflowoptions'] = flow.getWorkflowOptions()
 
@@ -257,7 +257,7 @@ class Application_Permit():
         context = flow.getAccessRights(request,context,app.routeid,workflowtype)
         context = flow.getCollapse(context,app.routeid,workflowtype)
         context = flow.getHiddenAreas(context,app.routeid,workflowtype,request)
-        context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
+        #context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
         context['formcomponent'] = flow.getFormComponent(app.routeid,workflowtype)
         context['workflowoptions'] = flow.getWorkflowOptions()
 
@@ -276,7 +276,7 @@ class Application_Licence():
         context = flow.getAccessRights(request,context,app.routeid,workflowtype)
         context = flow.getCollapse(context,app.routeid,workflowtype)
         context = flow.getHiddenAreas(context,app.routeid,workflowtype,request)
-        context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
+        #context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
         context['formcomponent'] = flow.getFormComponent(app.routeid,workflowtype)
         context['workflowoptions'] = flow.getWorkflowOptions()
 

@@ -873,7 +873,7 @@ class ApplicationLicencePermitForm(ApplicationFormMixin, ModelForm):
         #         crispy_boxes.append(crispy_alert(self.initial['submitter_comment']))
 
         if self.initial["may_change_application_applicant"] == "True":
-            changeapplicantbutton = crispy_button_link('Change Applicant',reverse('applicant_change', args=(self.initial['application_id'],)))
+            changeapplicantbutton = crispy_button_link('Update Applicant',reverse('applicant_change', args=(self.initial['application_id'],)))
         else:
             changeapplicantbutton = HTML('')
 
@@ -2385,7 +2385,7 @@ class AssignApplicantForm(ModelForm):
             'applicant',
             'organisation',
             FormActions(
-                Submit('assign', 'Change Applicant', css_class='btn-lg'),
+                Submit('assign', 'Assign Applicant', css_class='btn-lg'),
                 Submit('cancel', 'Cancel')
             )
         )

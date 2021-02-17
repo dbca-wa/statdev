@@ -2289,6 +2289,7 @@ class ApplicationApplyUpdate(LoginRequiredMixin, UpdateView):
         app = Application.objects.get(pk=self.object.pk)
         if self.object.app_type == 4:
              self.object.group = Group.objects.get(name='Statdev Assessor')
+             self.assignee = self.request.user
              self.object.save()
         if action == 'apptype':
             if self.request.user.groups.filter(name__in=['Statdev Processor']).exists() or self.request.user.groups.filter(name__in=['Statdev Assessor']).exists():
@@ -2415,12 +2416,9 @@ class ApplicationDetail(DetailView):
 
         # context = flow.getAllGroupAccess(request,context,app.routeid,workflowtype)
         # may_update has extra business rules
-        print ("MAY UPDTAE")
-        print (context['may_update'])
-        if float(app.routeid) > 1:
+        if float(app.routeid) > 0:
             if app.assignee is None:
                 context['may_update'] = "False"
-                del context['workflow_actions']
                 context['workflow_actions'] = []
             if context['may_update'] == "True":
                 if app.assignee != self.request.user:
@@ -3683,17 +3681,15 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
         flow.get(workflowtype)
         context = flow.getAccessRights(request, context, app.routeid, workflowtype)
         
-        if float(app.routeid) > 1:
+        if float(app.routeid) > 0:
             if app.assignee is None:
                 context['may_update'] = "False"
-               
+
+
             if context['may_update'] == "True":
                 if app.assignee != self.request.user:
                     context['may_update'] = "False"
          
-        print ("ASSIGNEE")
-        print (app.assignee)
-              
 
         #if context['may_update'] != "True":
         #    messages.error(self.request, 'This application cannot be updated!')
@@ -3737,8 +3733,11 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
         context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
         context['condactions'] = flow.getAllConditionBasedRouteActions(app.routeid)
         context['workflow'] = flow.getAllRouteConf(workflowtype,app.routeid)
-
         context['stakeholder_communication'] = StakeholderComms.objects.filter(application=app)
+
+
+        if app.assignee is None:
+           context['workflow_actions'] = []
 
         if app.app_type == app.APP_TYPE_CHOICES.part5:
             part5 = Application_Part5()
@@ -4217,9 +4216,6 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
             if context['may_update'] == "True":
                 if app.assignee != self.request.user:
                     context['may_update'] = "False"
-
-        print ('ZEW')
-        print (context)
 
         if context['may_update'] != 'True': 
            messages.error(self.request, 'You do not have permissions to update this form.')
@@ -5103,8 +5099,8 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
             content_object=self.object, category=Action.ACTION_CATEGORY_CHOICES.action, user=self.request.user,
             action='Next Step Application Assigned to group ({}) with action title ({}) and route id ({}) '.format(groupassignment, route['title'], self.object.routeid))
         action.save()
-        if app.app_type == 4:
-             return HttpResponseRedirect(reverse('emergencyworks_list'))
+        #if app.app_type == 4:
+        #     return HttpResponseRedirect(reverse('emergencyworks_list'))
         return HttpResponseRedirect(self.get_success_url())
 
     def send_stake_holder_comms(self,app):
@@ -5306,6 +5302,10 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
                                                expiry_date=app.expire_date,
                                                status=1
                                                )
+             if app.app_type==4:
+                 approval.start_date = app.proposed_commence
+                 approval.expiry_date = app.proposed_end
+                 approval.save()
      
         emailcontext = {}
         emailcontext['app'] = app
@@ -10675,11 +10675,9 @@ class ApplicationBooking(LoginRequiredMixin, FormView):
         
         lines = []
         lines.append({'ledger_description':booking['app'].get_app_type_display(),"quantity":1,"price_incl_tax": fee_total,"oracle_code":'00123sda', 'line_status': 1})
-        print (lines)
         result = utils.checkout(request, booking, lines, invoice_text=invoice_text)
        
         return result
-
 
 def getPDFapplication(request,application_id):
 
