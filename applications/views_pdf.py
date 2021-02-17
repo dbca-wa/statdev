@@ -1060,7 +1060,7 @@ class PDFtool(FPDF):
          pdf.output(BASE_DIR+'/pdfs/approvals/'+str(app.id)+'-approval.pdf', 'F')
 
     def generate_emergency_works(self,app):
-
+         application_location = Location.objects.filter(application=app.application)
          pdf = PDFtool('P', 'mm', 'A4')
          pdf.alias_nb_pages()
          pdf.add_page()
@@ -1089,11 +1089,20 @@ class PDFtool(FPDF):
          pdf.cell(0,5,' ', 0,1,'L')
 
          pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'Authorised works, acts or activities',0,1,'L')
-         pdf.cell(6, 5, '',0,1,'L')
+         pdf.cell(60, 5, 'Authorised works, acts or activities',0,0,'L')
+         pdf.cell(6, 5, ':',0,0,'L')
+         pdf.cell(6, 5, "Emergency works: "+app.title ,0,1,'L')
+
+         pdf.cell(0,5,' ', 0,1,'L')
 
          pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'Location of works, acts or activities',0,1,'L')
+         pdf.cell(60, 5, 'Location of works, acts or activities',0,0,'L')
+         pdf.cell(6, 5, ':',0,0,'L')
+
+         if application_location.count() > 0:
+            pdf.cell(50, 5, application_location[0].lot + ' '+ application_location[0].street_number_name + ' '+application_location[0].suburb,0,0,'L')
+         else:
+            pdf.cell(50, 5, '' ,0,0,'L')
          pdf.cell(6, 5, '',0,1,'L')
 
          pdf.cell(0,5,' ', 0,1,'L')

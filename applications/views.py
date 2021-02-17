@@ -2289,7 +2289,7 @@ class ApplicationApplyUpdate(LoginRequiredMixin, UpdateView):
         app = Application.objects.get(pk=self.object.pk)
         if self.object.app_type == 4:
              self.object.group = Group.objects.get(name='Statdev Assessor')
-             self.assignee = self.request.user
+             self.object.assignee = self.request.user
              self.object.save()
         if action == 'apptype':
             if self.request.user.groups.filter(name__in=['Statdev Processor']).exists() or self.request.user.groups.filter(name__in=['Statdev Assessor']).exists():
@@ -5281,8 +5281,6 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
 
               if app.app_type == 3: 
                   approval.start_date = app.assessment_start_date
-              print ("APP STATE")
-              print (state)
               if int(state) == 19:
                   approval.status = 8
               else:
@@ -5335,6 +5333,13 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
            emailcontext['approval'] = approval
            approval_pdf = approval.approval_document.upload.path
            sendHtmlEmail([app.submitted_by.email], 'Part 5 - '+app.title, emailcontext, 'application-licence-permit-proposal.html', None, None, None, approval_pdf)
+
+        elif app.app_type == 4:
+           pdftool.generate_emergency_works(approval)
+           emailcontext['person'] = app.submitted_by
+           emailcontext['conditions_count'] = Condition.objects.filter(application=app).count()
+           sendHtmlEmail([app.submitted_by.email], 'Emergency Works - '+app.title, emailcontext, 'application-permit-proposal.html', None, None, None, approval_pdf)
+
 
         elif app.app_type == 6:            
 
@@ -10706,8 +10711,10 @@ def getAppFile(request,file_id,extension):
   app_group = file_record.file_group
 
   if (file_record.file_group > 0 and file_record.file_group < 12) or (file_record.file_group == 2003):
+      print ("COMMS LOADED")
       app = Application.objects.get(id=app_id)
       if app.id == file_record.file_group_ref_id:
+            print ("comms loaded 2")
             flow = Flow()
             workflowtype = flow.getWorkFlowTypeFromApp(app)
             flow.get(workflowtype)
