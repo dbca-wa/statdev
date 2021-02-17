@@ -1112,7 +1112,7 @@ class ApplicationList(LoginRequiredMixin,ListView):
         APP_TYPE_CHOICES = []
         APP_TYPE_CHOICES_IDS = []
         for i in Application.APP_TYPE_CHOICES:
-            if i[0] in [4,7,8,9,10,11]:
+            if i[0] in [7,8,9,10,11]:
                skip = 'yes'
             else:
                APP_TYPE_CHOICES.append(i)
@@ -2260,6 +2260,9 @@ class ApplicationApplyUpdate(LoginRequiredMixin, UpdateView):
         row = () 
         for i in Delegate.objects.filter(email_user=self.request.user):
             initial['organisations_list'].append((i.organisation.id,i.organisation.name))
+        initial['is_staff'] = False
+        if self.request.user.is_staff == True:
+            initial['is_staff'] = True
         return initial
 
     def post(self, request, *args, **kwargs):
@@ -2284,6 +2287,9 @@ class ApplicationApplyUpdate(LoginRequiredMixin, UpdateView):
         elif action == 'info':
             nextstep = 'apptype'
         app = Application.objects.get(pk=self.object.pk)
+        if self.object.app_type == 4:
+             self.object.group = Group.objects.get(name='Statdev Assessor')
+             self.object.save()
         if action == 'apptype':
             if self.request.user.groups.filter(name__in=['Statdev Processor']).exists() or self.request.user.groups.filter(name__in=['Statdev Assessor']).exists():
                 success_url = reverse('applicant_change', args=(self.object.pk,))
@@ -5055,7 +5061,7 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
             emailcontext['groupname'] = DefaultGroups['grouplink'][action]
             emailcontext['application_name'] = Application.APP_TYPE_CHOICES[app.app_type]
             emailGroup('Application Assignment to Group ' + DefaultGroups['grouplink'][action], emailcontext, 'application-assigned-to-group.html', None, None, None, DefaultGroups['grouplink'][action])
-            if self.object.state != '14':
+            if self.object.state != '14' and self.object.state != '19':
                 if app.assignee:
                     emailcontext = {}
                     emailcontext['app'] = self.object
@@ -5072,10 +5078,13 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
             emailApplicationReferrals(app.id, 'Application for Feedback ', emailcontext, 'application-assigned-to-referee.html', None, None, None)
 
 
-        if self.object.state == '14':
+        if self.object.state == '14' or self.object.state == '19':
         # Form Commpleted & Create Approval
-            self.complete_application(app)
-        
+            self.complete_application(app, self.object.state)
+
+        #if self.object.state == 19:
+        #    self.complete_application_part5_not_supported(app)
+
         if self.object.state == '10': 
             self.ammendment_approved(app) 
         if self.object.state == '8':
@@ -5094,7 +5103,8 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
             content_object=self.object, category=Action.ACTION_CATEGORY_CHOICES.action, user=self.request.user,
             action='Next Step Application Assigned to group ({}) with action title ({}) and route id ({}) '.format(groupassignment, route['title'], self.object.routeid))
         action.save()
-
+        if app.app_type == 4:
+             return HttpResponseRedirect(reverse('emergencyworks_list'))
         return HttpResponseRedirect(self.get_success_url())
 
     def send_stake_holder_comms(self,app):
@@ -5234,7 +5244,7 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
               approval.save()
 
 
-    def complete_application(self,app): 
+    def complete_application(self,app, state): 
         """Once and application is complete and approval needs to be created in the approval model.
         """
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   
@@ -5272,7 +5282,16 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
               r.upload.save(app.approval_document_signed.name, ContentFile(app_file_bytes), save=False)
 
               approval.approval_document = r
-              approval.status = 1
+
+              if app.app_type == 3: 
+                  approval.start_date = app.assessment_start_date
+              print ("APP STATE")
+              print (state)
+              if int(state) == 19:
+                  approval.status = 8
+              else:
+                  approval.status = 1
+              print (approval.status)
               approval.save()
               
 
@@ -8156,11 +8175,11 @@ class ConditionCreate(LoginRequiredMixin, CreateView):
 
         # Rule: conditions can be created when the app is with admin, with
         # referee or with assessor.
-        if app.app_type == app.APP_TYPE_CHOICES.emergency:
-            if app.state != app.APP_STATE_CHOICES.draft or app.assignee != self.request.user:
-                messages.error(
-                    self.request, 'New conditions cannot be created for this application!')
-                return HttpResponseRedirect(app.get_absolute_url())
+        #if app.app_type == app.APP_TYPE_CHOICES.emergency:
+        #    if app.state != app.APP_STATE_CHOICES.draft or app.assignee != self.request.user:
+        #        messages.error(
+        #            self.request, 'New conditions cannot be created for this application!')
+        #        return HttpResponseRedirect(app.get_absolute_url())
         #elif app.state not in [app.APP_STATE_CHOICES.with_admin, app.APP_STATE_CHOICES.with_referee, app.APP_STATE_CHOICES.with_assessor]:
         #    messages.error(
         #        self.request, 'New conditions cannot be created for this application!')

@@ -94,6 +94,7 @@
                         <thead>
                             <tr>
                                 <th>Lodgement no.</th>
+				<th>Title</th>
                                 <th>Holder</th>
                                 <th>Status</th>
                                 <th>Issue Date</th>
@@ -107,6 +108,7 @@
                             {% for app_obj in app_list %}
                             <tr>
                                 <td><a href="{% url 'application_detail' app_obj.app.pk %}">EW-{{ app_obj.app.pk }}</a></td>
+				<td>{{ app_obj.app.title }}</td>
                                 <td>
                                     {% if app_obj.app.organisation %}
                                         {{ app_obj.app.organisation }}
@@ -154,7 +156,7 @@
 
 <script>
 function loadApprovalTable() {
-    $('#application-table').dataTable({searching: false, paging: true, "pageLength": 25,
+    $('#application-table').dataTable({searching: false, paging: true, "pageLength": 25,"order": [[ 0, "desc" ]],
 
     dom: 'lrtipB',
     buttons: [
@@ -180,11 +182,9 @@ function loadApprovalTable() {
     ],
      "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 
-
- "toColumnDefs": [
-          { 'bSortable': false, 'aTargets': [ 8 ] }
-       ]
-
+     columnDefs: [
+       { type: 'natural-nohtml', targets: 0 }, { type: 'date-dd-mmm-yyyy', targets: 4 }, { type: 'date-dd-mmm-yyyy', targets: 5 }, { type: 'date-dd-mmm-yyyy', targets: 6 }, { 'bSortable': false, 'aTargets':  8 }
+     ],
 
 
 });

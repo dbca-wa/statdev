@@ -21,6 +21,7 @@ class Approval(models.Model):
         (5, 'suspended', ('Suspended')),
         (6, 'reinstate', ('Reinstate')),
         (7, 'pending', ('Pending')),
+        (8, 'not-supported', ('Not Supported'))
      )
 
      app_type = models.IntegerField(choices=Application.APP_TYPE_CHOICES)

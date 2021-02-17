@@ -170,7 +170,8 @@ class Application(models.Model):
         (15, 'creator', ('Form Creator')),
         (16, 'current', ('Current')),
         (17, 'discard', ('Deleted')),
-        (18, 'payment', ('Pending Payment'))
+        (18, 'payment', ('Pending Payment')),
+        (19, 'not_supported', ('Not Supported'))
     )
 
     APP_LOCATION_CHOICES = Choices(

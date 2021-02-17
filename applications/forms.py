@@ -387,7 +387,10 @@ class ApplicationApplyUpdateForm(ModelForm):
                 attrs={'class':'radio-inline'}, 
                 caption={'caption-2':'Apply for a licence and permit to undertake an activity within the Swan Canning Riverpark etc.', 
                          'caption-1':'Apply for permit to carry out works or, activities within the Riverpark', 
-                         'caption-3':'Apply for development approval in accordance with Part 5 of the <i>Swan and Canning Rivers Management Act 2006</i>' } 
+                         'caption-3':'Apply for development approval in accordance with Part 5 of the <i>Swan and Canning Rivers Management Act 2006</i>', 
+                         'caption-4': 'Issue an emergency works'
+                         } 
+                 
                 ))
     #organisation = ModelChoiceField(queryset=None, empty_label=None, widget=RadioSelect(attrs={'class':'radio-inline'}))
 
@@ -434,10 +437,15 @@ class ApplicationApplyUpdateForm(ModelForm):
             self.fields['app_type'].label = ''
 
             for i in Application.APP_TYPE_CHOICES:
-                if i[0] in [4,5,6,7,8,9,10,11]:
+                if i[0] in [5,6,7,8,9,10,11]:
                     skip = 'yes'
                 else:
-                    APP_TYPE_CHOICES.append(i)
+                    if i[0] == 4:
+                        if self.initial['is_staff'] is True:
+                            APP_TYPE_CHOICES.append(i)
+
+                    else:
+                        APP_TYPE_CHOICES.append(i)
             self.fields['app_type'].choices = APP_TYPE_CHOICES
 
             crispy_boxes = crispy_empty_box()
@@ -1723,9 +1731,18 @@ class ApplicationPart5Form(ApplicationFormMixin, ModelForm):
         
 class ApplicationEmergencyForm(ModelForm):
 
+
+    lot = CharField(required=False)
+    reserve_number = CharField(required=False)
+    town_suburb = CharField(required=False)
+    nearest_road_intersection = CharField(required=False)
+    local_government_authority = CharField(required=False)
+    street_number_and_name = CharField(required=False, label='Street Address')
+    over_water = ChoiceField(choices=Application.APP_YESNO, widget=RadioSelect(attrs={'class':'radio-inline'}))
+
     class Meta:
         model = Application
-        fields = ['applicant', 'organisation', 'proposed_commence', 'proposed_end']
+        fields = ['title','applicant', 'organisation', 'proposed_commence', 'proposed_end','over_water']
 
     def __init__(self, *args, **kwargs):
         super(ApplicationEmergencyForm, self).__init__(*args, **kwargs)
@@ -1738,6 +1755,7 @@ class ApplicationEmergencyForm(ModelForm):
         # Add labels and help text for fields
         self.fields['proposed_commence'].label = "Start date"
         self.fields['proposed_end'].label = "Expiry date"
+        self.fields['over_water'].label = "Are any proposed works, acts or activities in or over waters?"
 
         changeapplicantbutton = crispy_button_link('Change Applicant or Organisation',reverse('applicant_change', args=(self.initial['application_id'],)))
         crispy_boxes = crispy_empty_box()
@@ -1749,8 +1767,11 @@ class ApplicationEmergencyForm(ModelForm):
             applicant_info = HTML('{% include "applications/applicant_update_snippet.html" %}')
 
         crispy_boxes.append(crispy_box('emergency_collapse', 'form_emergency' , 'Emergency Works',applicant_info,changeapplicantbutton,'organisation'))
-        crispy_boxes.append(crispy_box('emergency_period_collapse', 'form_emergency_period' , 'Emergency Works Period', 'proposed_commence', 'proposed_end',Submit('1-nextstep', 'Save', css_class='btn-lg')))
+        crispy_boxes.append(crispy_box('emergency_period_collapse', 'form_emergency_period' , 'Emergency Works Period', 'title', 'proposed_commence', 'proposed_end',))
+        crispy_boxes.append(crispy_box('location_collapse', 'form_location' , 'Location','location_of_title_volume','street_number_and_name','lot','reserve_number','town_suburb','nearest_road_intersection','local_government_authority','over_water'))
+
         crispy_boxes.append(HTML('{% include "applications/application_conditions.html" %}'))
+        dynamic_selections = HTML('{% include "applications/application_form_emergency_works_js_dynamics.html" %}')
 
         if 'condactions' in self.initial['workflow']:
              if  self.initial['workflow']['condactions'] is not None:
@@ -1759,7 +1780,7 @@ class ApplicationEmergencyForm(ModelForm):
                           self.helper = crispy_button(self.helper,ca,self.initial['workflow']['condactions'][ca]['steplabel'])
              else:
                  self.helper.add_input(Submit('save', 'Save', css_class='btn-lg'))
-                 self.helper.add_input(Submit('cancel', 'Cancel'))
+                 #self.helper.add_input(Submit('cancel', 'Cancel'))
 
 
         del self.fields['applicant']
@@ -1769,7 +1790,7 @@ class ApplicationEmergencyForm(ModelForm):
             if fielditem in self.fields:
                 self.fields[fielditem].disabled = True
 
-        self.helper.layout = Layout(crispy_boxes,)
+        self.helper.layout = Layout(crispy_boxes,dynamic_selections)
 
 class ApplicationLodgeForm(Form):
     """A basic form to submit a request to lodge an application.

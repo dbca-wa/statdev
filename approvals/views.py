@@ -55,7 +55,7 @@ class ApprovalList(ListView):
         APP_TYPE_CHOICES = []
         APP_TYPE_CHOICES_IDS = []
         for i in Application.APP_TYPE_CHOICES:
-            if i[0] in [4,5,6,7,8,9,10,11]:
+            if i[0] in [5,6,7,8,9,10,11]:
                skip = 'yes'
             else:
                APP_TYPE_CHOICES.append(i)
