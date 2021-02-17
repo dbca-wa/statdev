@@ -3343,8 +3343,10 @@ class ApplicationConditionTable(LoginRequiredMixin, DetailView):
         flow.get(workflowtype)
         context['workflowoptions'] = flow.getWorkflowOptions()
         context = flow.getAccessRights(request, context, app.routeid, workflowtype)
-        part5 = Application_Part5()
-        context = part5.get(app, self, context)
+        if context['application_assignee_id']:
+            context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
+        #part5 = Application_Part5()
+        #context = part5.get(app, self, context)
         return context
 
     def get_success_url(self,app):
@@ -3402,8 +3404,11 @@ class ApplicationReferTable(LoginRequiredMixin, DetailView):
         flow.get(workflowtype)
         context['workflowoptions'] = flow.getWorkflowOptions()
         context = flow.getAccessRights(request, context, app.routeid, workflowtype)
-        part5 = Application_Part5()
-        context = part5.get(app, self, context)
+        if context['application_assignee_id']:
+              context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
+
+        #part5 = Application_Part5()
+        #context = part5.get(app, self, context)
         return context
 
     def get_success_url(self,app):
@@ -10711,10 +10716,8 @@ def getAppFile(request,file_id,extension):
   app_group = file_record.file_group
 
   if (file_record.file_group > 0 and file_record.file_group < 12) or (file_record.file_group == 2003):
-      print ("COMMS LOADED")
       app = Application.objects.get(id=app_id)
       if app.id == file_record.file_group_ref_id:
-            print ("comms loaded 2")
             flow = Flow()
             workflowtype = flow.getWorkFlowTypeFromApp(app)
             flow.get(workflowtype)
@@ -10779,6 +10782,7 @@ def getAppFile(request,file_id,extension):
 
               return HttpResponse(the_data, content_type=mimetypes.types_map['.'+str(extension)])
   else:
+              return HttpResponse("Error loading attachment", content_type="plain/html")
               return
 
 

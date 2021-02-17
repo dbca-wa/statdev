@@ -23,6 +23,7 @@
                                                 <td>{{ cond.due_date|date:"d-M-Y" }}</td>
 						<td> 
                                                     {% if workflow_actions or condactions %}
+						       
                                                         {% if may_update_condition == "True" %}
 							                      {% if mode == 'update' %}
                                                                                 <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'condition_update' cond.pk %}','Update Condition');" type="button">Update</button>
