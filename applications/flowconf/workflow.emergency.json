@@ -369,17 +369,26 @@
             "emergencyworks": "False"
         },
         "actions": [
-            {
-                "title": "Issue - Approved",
+            {   
+                "title": "Approve (Issue)",
                 "route": "3",
                 "routegroup":"assess",
-                "state" : "4"
+                "state" : "14"
             },
-            {
+
+	
+            {   
                 "title": "Assign to Manager",
                 "route": "4",
                 "routegroup":"manager",
-		"state" : "5"
+                "state" : "5"
+
+            },
+            {   
+                "title": "Cancel Emergency Works",
+                "route": "2",
+                "routegroup":"assess",
+                "state" : "4"
             }
 
         ],
