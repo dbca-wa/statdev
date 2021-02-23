@@ -5867,7 +5867,7 @@ class ApplicationAssignOfficer(LoginRequiredMixin, UpdateView):
         # Record an action on the application:
         action = Action(
             content_object=self.object, category=Action.ACTION_CATEGORY_CHOICES.assign, user=self.request.user,
-            action='Application assigned officer to {} '.format(self.object.assignee.get_full_name()))
+            action='Application assigned officer to {} '.format(self.object.assigned_officer.get_full_name()))
         action.save()
         if self.request.user != app.assignee:
             messages.success(self.request, 'Assign officer completed')
