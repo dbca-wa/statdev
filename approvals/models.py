@@ -52,7 +52,6 @@ class Approval(models.Model):
         else:
            return str("/approvals/viewpdf-"+str(self.id)+".pdf")
 
-
      def __str__(self):
         return 'Approvals {}: {} - {} ({})'.format(
             self.pk, self.get_app_type_display(), self.title, self.get_status_display())

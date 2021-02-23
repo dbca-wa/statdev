@@ -2430,7 +2430,31 @@ class ApplicationDetail(DetailView):
                 context['workflow_actions'] = []
 
         context['may_update_vessels_list'] = "False"
+        context['application_history'] = self.get_application_history(app, [])
         return context
+
+
+    def get_application_history(self,app,ah):
+        ah = self.get_application_history_up(app,ah)
+        ah = self.get_application_history_down(app,ah)
+        return ah
+
+    def get_application_history_up(self,app,ah):
+        if app:
+           application = Application.objects.filter(old_application=app)
+           if application.count() > 0:
+              ah.append({'id': application[0].id, 'title':  application[0].title})
+              ah = self.get_application_history_up(application[0],ah)
+
+        return ah
+
+    def get_application_history_down(self,app,ah):
+        if app.old_application:
+            ah.append({'id': app.old_application.id, 'title':  app.old_application.title})
+            ah = self.get_application_history_down(app.old_application,ah)
+        return ah
+
+
 
 
 class ApplicationDetailPDF(LoginRequiredMixin,ApplicationDetail):

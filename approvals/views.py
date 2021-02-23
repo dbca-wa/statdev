@@ -137,7 +137,38 @@ class ApprovalDetails(LoginRequiredMixin,DetailView):
         app = self.get_object()
         context_processor = template_context(self.request)
         context['admin_staff'] = context_processor['admin_staff']
+        context['approval_history'] = self.get_approval_history(app, [])
         return context
+
+    def get_approval_history(self,app,approvals):
+        approvals = self.get_approval_history_up(app,approvals)
+        approvals = self.get_approval_history_down(app,approvals)
+
+        return approvals
+
+    def get_approval_history_up(self,app,approvals):
+        if app:
+           application = Application.objects.filter(old_approval_id=app.id)
+           if application.count() > 0:
+
+                app = ApprovalModel.objects.filter(application=application[0])
+                if app.count() > 0:
+                    approvals.append({'id': app[0].id, 'title':  app[0].title})
+
+                    approvals = self.get_approval_history_up(app[0],approvals)
+        return approvals
+
+    def get_approval_history_down(self,app,approvals):
+        if app.application.old_approval_id:
+            app_old = ApprovalModel.objects.filter(id=app.application.old_approval_id)
+            approvals.append({'id': app_old[0].id, 'title':  app_old[0].title} )
+            app = ApprovalModel.objects.get(id=app.application.old_approval_id)
+            approvals = self.get_approval_history_down(app,approvals) 
+
+        return approvals
+
+
+
 
 class ApprovalStatusChange(LoginRequiredMixin,UpdateView):
     model = ApprovalModel
