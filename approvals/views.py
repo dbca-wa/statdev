@@ -77,7 +77,7 @@ class ApprovalList(ListView):
             if self.request.GET['appstatus'] != '':
                 query_obj &= Q(status=int(self.request.GET['appstatus']))
 
-            objlist = ApprovalModel.objects.filter(query_obj)
+            objlist = ApprovalModel.objects.filter(query_obj).order_by('-id')
             context['query_string'] = self.request.GET['q']
 
             if self.request.GET['apptype'] != '':
@@ -93,7 +93,7 @@ class ApprovalList(ListView):
  #           query_str = self.request.GET['q']
   #          objlist = ApprovalModel.objects.filter(Q(pk__contains=query_str) | Q(title__icontains=query_str) | Q(applicant__email__icontains=query_str))
         else:
-            objlist = ApprovalModel.objects.filter()
+            objlist = ApprovalModel.objects.filter().order_by('-id')
         usergroups = self.request.user.groups.all()
 
         context['app_list'] = []

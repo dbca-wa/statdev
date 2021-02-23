@@ -1148,7 +1148,7 @@ class ApplicationList(LoginRequiredMixin,ListView):
                      to_date_db = datetime.strptime(self.request.GET['to_date'], '%d/%m/%Y').date()
                      query_obj &= Q(submit_date__lte=to_date_db)
 
-            applications = Application.objects.filter(query_obj)
+            applications = Application.objects.filter(query_obj).order_by('-id')
             context['query_string'] = self.request.GET['q']
 
             if self.request.GET['apptype'] != '':
@@ -1171,10 +1171,10 @@ class ApplicationList(LoginRequiredMixin,ListView):
 
         else:
             to_date = datetime.today()
-            from_date = datetime.today() - timedelta(days=30)
+            from_date = datetime.today() - timedelta(days=10)
             context['from_date'] = from_date.strftime('%d/%m/%Y')
             context['to_date'] = to_date.strftime('%d/%m/%Y')
-            applications = Application.objects.filter(app_type__in=APP_TYPE_CHOICES_IDS, submit_date__gte=from_date, submit_date__lte=to_date)
+            applications = Application.objects.filter(app_type__in=APP_TYPE_CHOICES_IDS, submit_date__gte=from_date, submit_date__lte=to_date).order_by('-id')
 
         context['app_applicants'] = {}
         context['app_applicants_list'] = []
