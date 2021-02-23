@@ -3108,7 +3108,6 @@ class ApplicationChange(LoginRequiredMixin, CreateView):
     form_class = apps_forms.ApplicationChange
     template_name = 'applications/application_change_form.html'
 
-
     def get(self, request, *args, **kwargs):
         context_processor = template_context(self.request)
         action = self.kwargs['action']
@@ -3122,84 +3121,262 @@ class ApplicationChange(LoginRequiredMixin, CreateView):
                                               app_type=5,
                                               submit_date=date.today(),
                                               state=Application.APP_STATE_CHOICES.new,
-                                              approval_id=approval.id
-                                             )
-             return HttpResponseRedirect(reverse('application_update', args=(app.id,)))
-        if action == 'amend':
-            if approval.ammendment_application:
-
-                 a1 = approval.application.river_lease_scan_of_application.all()
-                 multifilelist = []
-                 for b1 in a1:
-                     fileitem = {}
-                     fileitem['fileid'] = b1.id
-                     fileitem['path'] = b1.upload.name
-                     fileitem['name'] = b1.name
-                     fileitem['extension']  = b1.extension
-                     multifilelist.append(fileitem)
-
-
-                 app = Application.objects.create(applicant=approval.application.applicant,
-                                              title=approval.application.title,
-                                              assignee=self.request.user,
-                                              submitted_by=self.request.user,
-                                              app_type=6,
-                                              submit_date=date.today(),
-                                              state=Application.APP_STATE_CHOICES.new,
                                               approval_id=approval.id,
-                                              river_lease_require_river_lease=approval.application.river_lease_require_river_lease,
-                                              river_lease_reserve_licence=approval.application.river_lease_reserve_licence, 
-                                              cost=approval.application.cost,
-                                              proposed_development_current_use_of_land=approval.application.proposed_development_current_use_of_land,
-                                              proposed_development_description=approval.application.proposed_development_description
+                                              old_approval_id = approval.id
                                              )
 
-                 a1 = approval.application.river_lease_scan_of_application.all()
-                 for b1 in a1:
-                     app.river_lease_scan_of_application.add(b1)
 
-                 a1 = approval.application.proposed_development_plans.all()
-                 for b1 in a1:
-                     app.proposed_development_plans.add(b1)
+             return HttpResponseRedirect(reverse('application_update', args=(app.id,)))
 
-                 a1 = approval.application.land_owner_consent.all()
-                 for b1 in a1:
-                     app.land_owner_consent.add(b1)
+        if action == 'amend':
+            if approval.app_type == 3:
+                if approval.ammendment_application:
 
-                 a1 = approval.application.deed.all()
-                 for b1 in a1:
-                     app.deed.add(b1)
+                     a1 = approval.application.river_lease_scan_of_application.all()
+                     multifilelist = []
+                     for b1 in a1:
+                         fileitem = {}
+                         fileitem['fileid'] = b1.id
+                         fileitem['path'] = b1.upload.name
+                         fileitem['name'] = b1.name
+                         fileitem['extension']  = b1.extension
+                         multifilelist.append(fileitem)
 
 
-                 app.save()
-                 locobj = Location.objects.get(application_id=application.id)
-                 new_loc = Location()
-                 new_loc.application_id = app.id
-                 new_loc.title_volume = locobj.title_volume
-                 new_loc.folio = locobj.folio
-                 new_loc.dpd_number = locobj.dpd_number
-                 new_loc.location = locobj.location
-                 new_loc.reserve = locobj.reserve
-                 new_loc.street_number_name = locobj.street_number_name
-                 new_loc.suburb = locobj.suburb
-                 new_loc.lot = locobj.lot
-                 new_loc.intersection = locobj.intersection
-                 new_loc.local_government_authority = locobj.local_government_authority
-                 new_loc.save()
-                 print (new_loc) 
+                     app = Application.objects.create(applicant=approval.application.applicant,
+                                                  title=approval.application.title,
+                                                  assignee=self.request.user,
+                                                  submitted_by=self.request.user,
+                                                  app_type=6,
+                                                  submit_date=date.today(),
+                                                  state=Application.APP_STATE_CHOICES.new,
+                                                  approval_id=approval.id,
+                                                  river_lease_require_river_lease=approval.application.river_lease_require_river_lease,
+                                                  river_lease_reserve_licence=approval.application.river_lease_reserve_licence, 
+                                                  cost=approval.application.cost,
+                                                  proposed_development_current_use_of_land=approval.application.proposed_development_current_use_of_land,
+                                                  proposed_development_description=approval.application.proposed_development_description,
+                                                  old_approval_id = approval.id
+                                                 )
 
-                 #self.object.applicant = self.request.user
-                 #self.object.assignee = self.request.user
-                 #self.object.submitted_by = self.request.user
-                 #self.object.assignee = self.request.user
-                 #self.object.submit_date = date.today()
-                 #self.object.state = self.object.APP_STATE_CHOICES.new
-                 #self.object.approval_id = approval.id
-                 #self.object.save()
-                 print ("APPLICATION")
-                 print (app)
-                 return HttpResponseRedirect(reverse('application_update', args=(app.id,)))
+                     a1 = approval.application.river_lease_scan_of_application.all()
+                     for b1 in a1:
+                         app.river_lease_scan_of_application.add(b1)
+
+                     a1 = approval.application.proposed_development_plans.all()
+                     for b1 in a1:
+                         app.proposed_development_plans.add(b1)
+
+                     a1 = approval.application.land_owner_consent.all()
+                     for b1 in a1:
+                         app.land_owner_consent.add(b1)
+
+                     a1 = approval.application.deed.all()
+                     for b1 in a1:
+                         app.deed.add(b1)
+
+                     app.save()
+                     locobj = Location.objects.get(application_id=application.id)
+                     new_loc = Location()
+                     new_loc.application_id = app.id
+                     new_loc.title_volume = locobj.title_volume
+                     new_loc.folio = locobj.folio
+                     new_loc.dpd_number = locobj.dpd_number
+                     new_loc.location = locobj.location
+                     new_loc.reserve = locobj.reserve
+                     new_loc.street_number_name = locobj.street_number_name
+                     new_loc.suburb = locobj.suburb
+                     new_loc.lot = locobj.lot
+                     new_loc.intersection = locobj.intersection
+                     new_loc.local_government_authority = locobj.local_government_authority
+                     new_loc.save()
+
+                     action = Action(
+                         content_object=app, category=Action.ACTION_CATEGORY_CHOICES.create, user=self.request.user,
+                         action='Application copied from application : WO-{}, Approval : AP-{}'.format(str(approval.application.id), str(approval.id)))
+                     action.save()
+
+                     #self.object.applicant = self.request.user
+                     #self.object.assignee = self.request.user
+                     #self.object.submitted_by = self.request.user
+                     #self.object.assignee = self.request.user
+                     #self.object.submit_date = date.today()
+                     #self.object.state = self.object.APP_STATE_CHOICES.new
+                     #self.object.approval_id = approval.id
+                     #self.object.save()
+                     print ("APPLICATION")
+                     print (app)
+                     return HttpResponseRedirect(reverse('application_update', args=(app.id,)))
+
+            elif approval.app_type == 1:
+                app = self.copy_application(approval, application)
+
+                action = Action(
+                    content_object=app, category=Action.ACTION_CATEGORY_CHOICES.create, user=self.request.user,
+                    action='Application copied from application : WO-{}, Approval : AP-{}'.format(str(approval.application.id), str(approval.id)))
+                action.save()
+
+                return HttpResponseRedirect(reverse('application_update', args=(app.id,)))
+
+            elif approval.app_type == 2:
+                app = self.copy_application(approval, application)
+
+                action = Action(
+                    content_object=app, category=Action.ACTION_CATEGORY_CHOICES.create, user=self.request.user,
+                    action='Application copied from application : WO-{}, Approval : AP-{}'.format(str(approval.application.id), str(approval.id)))
+                action.save()
+
+                return HttpResponseRedirect(reverse('application_update', args=(app.id,)))
+
+
+
         return super(ApplicationChange, self).get(request, *args, **kwargs)
+
+
+    def copy_application(self, approval, application):
+
+        app = Application.objects.create(applicant=approval.application.applicant,
+                                     title=approval.application.title,
+                                     assignee=self.request.user,
+                                     description=approval.application.description,
+                                     proposed_commence=approval.application.proposed_commence,
+                                     proposed_end=approval.application.proposed_end,
+                                     cost=approval.application.cost,
+                                     project_no=approval.application.project_no,
+                                     related_permits=approval.application.related_permits,
+                                     over_water=approval.application.over_water,
+                                     vessel_or_craft_details=approval.application.vessel_or_craft_details,
+                                     purpose=approval.application.purpose,
+                                     max_participants=approval.application.max_participants,
+                                     proposed_location=approval.application.proposed_location,
+                                     address=approval.application.address,
+                                     jetties=approval.application.jetties,
+                                     jetty_dot_approval=approval.application.jetty_dot_approval,
+                                     jetty_dot_approval_expiry=approval.application.jetty_dot_approval_expiry,
+                                     drop_off_pick_up=approval.application.drop_off_pick_up,
+                                     food=approval.application.food,
+                                     beverage=approval.application.beverage,
+                                     liquor_licence=approval.application.liquor_licence,
+                                     byo_alcohol=approval.application.byo_alcohol,
+                                     sullage_disposal=approval.application.sullage_disposal,
+                                     waste_disposal=approval.application.waste_disposal,
+                                     refuel_location_method=approval.application.refuel_location_method,
+                                     berth_location=approval.application.berth_location,
+                                     anchorage=approval.application.anchorage,
+                                     operating_details=approval.application.operating_details,
+                                     river_lease_require_river_lease=approval.application.river_lease_require_river_lease,
+                                     river_lease_reserve_licence=approval.application.river_lease_reserve_licence,
+                                     river_lease_application_number=approval.application.river_lease_application_number,
+                                     proposed_development_current_use_of_land=approval.application.proposed_development_current_use_of_land,
+                                     proposed_development_description=approval.application.proposed_development_description,
+                                     type_of_crafts=approval.application.type_of_crafts,
+                                     number_of_crafts=approval.application.number_of_crafts,
+                                     landowner=approval.application.landowner,
+                                     land_description=approval.application.land_description,
+                                     submitted_by=self.request.user,
+                                     app_type=approval.application.app_type,
+                                     submit_date=date.today(),
+                                     state=Application.APP_STATE_CHOICES.new,
+                                     approval_id=approval.id,
+                                     old_application=approval.application,
+                                     old_approval_id=approval.id
+                                    )
+
+        a1 = approval.application.records.all()
+        for b1 in a1:
+            app.records.add(b1)
+
+        a1 = approval.application.vessels.all()
+        for b1 in a1:
+            app.vessels.add(b1)
+
+        a1 = approval.application.location_route_access.all()
+        for b1 in a1:
+            app.location_route_access.add(b1)
+
+        a1 = approval.application.cert_public_liability_insurance.all()
+        for b1 in a1:
+            app.cert_public_liability_insurance.add(b1)
+
+        a1 = approval.application.risk_mgmt_plan.all()
+        for b1 in a1:
+            app.risk_mgmt_plan.add(b1)
+
+        a1 = approval.application.safety_mgmt_procedures.all()
+        for b1 in a1:
+            app.safety_mgmt_procedures.add(b1)
+
+        a1 = approval.application.brochures_itineries_adverts.all()
+        for b1 in a1:
+            app.brochures_itineries_adverts.add(b1)
+
+        a1 = approval.application.other_relevant_documents.all()
+        for b1 in a1:
+            app.other_relevant_documents.add(b1)
+
+        a1 = approval.application.land_owner_consent.all()
+        for b1 in a1:
+            app.land_owner_consent.add(b1)
+
+        a1 = approval.application.deed.all()
+        for b1 in a1:
+            app.deed.add(b1)
+
+
+        a1 = approval.application.river_lease_scan_of_application.all()
+        for b1 in a1:
+            app.river_lease_scan_of_application.add(b1)
+
+        a1 = approval.application.proposed_development_plans.all()
+        for b1 in a1:
+            app.proposed_development_plans.add(b1)
+
+        app.save()
+        locobj = Location.objects.get(application_id=application.id)
+        new_loc = Location()
+        new_loc.application_id = app.id
+        new_loc.title_volume = locobj.title_volume
+        new_loc.folio = locobj.folio
+        new_loc.dpd_number = locobj.dpd_number
+        new_loc.location = locobj.location
+        new_loc.reserve = locobj.reserve
+        new_loc.street_number_name = locobj.street_number_name
+        new_loc.suburb = locobj.suburb
+        new_loc.lot = locobj.lot
+        new_loc.intersection = locobj.intersection
+        new_loc.local_government_authority = locobj.local_government_authority
+        new_loc.save()
+
+        conditions = Condition.objects.filter(application_id=application.id)
+        for c in conditions:
+            copied_condition=Condition.objects.create(application=app,
+                                     condition_no=c.condition_no,
+                                     condition=c.condition,
+                                     referral=c.referral,
+                                     status=c.status,
+                                     due_date=c.due_date,
+                                     recur_pattern=c.recur_pattern,
+                                     recur_freq=c.recur_freq,
+                                     suspend=c.suspend,
+                                     advise_no=c.advise_no,
+                                     advise=c.advise,
+                                     )
+            a1 = c.records.all()
+            for b1 in a1:
+                copied_condition.records.add(b1)
+            copied_condition.save()
+
+        referrals=Referral.objects.filter(application=application)
+        for r in referrals:
+            copied_referral=Referral.objects.create(application=app,
+                                                    referee=r.referee,
+                                                    details=r.details,
+                                                    period=r.period
+                                                   )
+                                                    
+
+                                     
+        return app 
 
     def get_context_data(self, **kwargs):
         context = super(ApplicationChange, self).get_context_data(**kwargs)
@@ -3221,10 +3398,15 @@ class ApplicationChange(LoginRequiredMixin, CreateView):
 #       initial['cost'] = application.cost
 
         if action == "amend": 
-            if approval.ammendment_application: 
-                initial['app_type'] = 6
-            else:
-                raise ValidationError('There was and error raising your Application Change.')
+            if approval.app_type == 3:
+               if approval.ammendment_application: 
+                   initial['app_type'] = 6
+               else:
+                   raise ValidationError('There was and error raising your Application Change.')
+            elif approval.app_type == 1:
+                   initial['app_type'] = 1
+            elif approval.app_type == 2:
+                   initial['app_type'] = 2
         elif action == 'requestamendment': 
             initial['app_type'] = 5
         elif action == 'renewlicence':
@@ -5255,7 +5437,6 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
               from django.core.files.base import ContentFile
               from django.core.files.base import File 
               approval = Approval.objects.filter(application=app)[0]
-              print (app.approval_document_signed.upload.path)
               r = Record.objects.create(upload=app.approval_document_signed.upload.path, 
                                         name=app.approval_document_signed.name, 
                                         category=9, 
@@ -5309,7 +5490,27 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
                  approval.start_date = app.proposed_commence
                  approval.expiry_date = app.proposed_end
                  approval.save()
-     
+
+
+        if app.old_application:
+              app.old_application.status=2
+              app.old_application.save()
+              old_approval = Approval.objects.get(id=app.old_approval_id) 
+              old_approval.status = 3
+              old_approval.save()
+
+              action = Action(
+                  content_object=app.old_application, category=Action.ACTION_CATEGORY_CHOICES.cancel, user=self.request.user,
+                  action='Application cancelled due to amendment. New application : WO-{}, New Approval : AP-{}'.format(str(app.id), str(approval.id)))
+              action.save()
+
+              action = Action(
+                  content_object=old_approval, category=Action.ACTION_CATEGORY_CHOICES.cancel, user=self.request.user,
+                  action='Approval cancelled due to amendment. New application : WO-{}, New Approval : AP-{}'.format(str(app.id), str(approval.id)))
+              action.save()
+
+
+
         emailcontext = {}
         emailcontext['app'] = app
         emailcontext['approval'] = approval

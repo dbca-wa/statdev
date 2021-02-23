@@ -284,6 +284,8 @@ class Application(models.Model):
     land_description = models.TextField(null=True, blank=True)
     approval_document = models.ForeignKey(Record, null=True, blank=True, related_name='application_approval_document')
     approval_document_signed = models.ForeignKey(Record, null=True, blank=True, related_name='application_approval_document_signed')
+    old_application = models.ForeignKey('Application', null=True, blank=True, related_name='application_old_application')
+    old_approval_id = models.IntegerField(null=True, blank=True) 
 
     def __str__(self):
         return 'Application {}: {} - {} ({})'.format(
