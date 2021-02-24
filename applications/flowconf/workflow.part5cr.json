@@ -15,6 +15,7 @@
             "deed" : "True",
             "holder": "False",
             "address": "False",
+	    "assessments": "True",
             "emergencyworks": "False",
             "publication": "True",
             "stakeholdercommunication": "True",
@@ -32,9 +33,7 @@
                 "state" : 4,
                 "payment_redirect": "False"
             }
-
         ],
-
         "condition-based-actions": {
             "2-prevstep": {
                 "steplabel": "Save",
@@ -63,7 +62,6 @@
                 ]
             }
         },
-
         "formcomponent": {
             "update": {
                 "title": "Make Application Changes"
@@ -158,6 +156,7 @@
             "deed" : "True",
             "holder": "False",
             "address": "False",
+	    "assessments": "True",
             "emergencyworks": "False",
             "publication": "True",
             "stakeholdercommunication": "True",
@@ -334,12 +333,12 @@
         }
     },
     "3": {
-        "title": "Approved for Ammendments",
+        "title": "Approved for Amendment",
         "hidden": {
             "holder": "False",
             "address": "False",
-            "emergencyworks": "False"
-
+            "emergencyworks": "False",
+            "assessments": "True"
         },
         "actions": [
 
@@ -347,23 +346,41 @@
         "formcomponent": {
         },
         "groupaccess": {
-            "Processor": {
+
+            "Statdev Assessor": {
                 "may_update": "False",
-                "may_lodge":"True",
+                "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
-                "may_assign_customer": "False",
-                "may_assign_processor": "True",
-                "may_create_condition":"False",
-                "may_submit_approval": "False",
-                "may_issue": "False",
-                "may_generate_pdf": "False",
-                "may_assign_assessor": "True",
                 "may_assign_to_person" : "False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_assign_assessor": "Fallse",
+                "may_send_for_referral": "True",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_update_publication_newspaper": "True",
+                "may_update_publication_website": "True",
+                "may_publish_website": "True",
+                "may_update_publication_feedback_draft" : "True",
+                "may_publish_feedback_draft": "False",
+                "may_update_publication_feedback_final": "False",
+                "may_publish_feedback_final": "False",
+                "may_recall_resend": "False",
+                "may_assign_to_creator": "True",
+                "may_referral_delete": "True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "show_form_buttons": "True",
+                "may_assign_to_person": "False",
+                "may_create_condition":"False",
+                "may_update_condition": "False",
                 "allow_access_attachments": "True"
-
             },
-            "Assessor": {
+            "Statdev Approver": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -374,10 +391,12 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
                 "allow_access_attachments": "True"
-
             },
-            "Approver": {
+            "Statdev Director": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -388,8 +407,47 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True",
                 "allow_access_attachments": "True"
             }
+
+
+
         },
         "collapse": {
             "holder": "False",
@@ -400,7 +458,7 @@
         }
     },
     "4": {
-        "title": "Ammendment Rejected",
+        "title": "Amendment Rejected",
         "hidden": {
             "holder": "False",
             "address": "False",
@@ -434,9 +492,43 @@
             "allow_access_attachments": "True"
         },
         "groupaccess": {
-            "Processor": {
-                "may_update": "True",
-                "may_lodge":"True",
+
+            "Statdev Assessor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_to_person" : "False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_assign_assessor": "Fallse",
+                "may_send_for_referral": "True",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_update_publication_newspaper": "True",
+                "may_update_publication_website": "True",
+                "may_publish_website": "True",
+                "may_update_publication_feedback_draft" : "True",
+                "may_publish_feedback_draft": "False",
+                "may_update_publication_feedback_final": "False",
+                "may_publish_feedback_final": "False",
+                "may_recall_resend": "False",
+                "may_assign_to_creator": "True",
+                "may_referral_delete": "True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "show_form_buttons": "True",
+                "may_assign_to_person": "False",
+                "may_create_condition":"False",
+                "may_update_condition": "False",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
                 "may_assign_customer": "False",
@@ -445,9 +537,63 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "may_assign_to_creator": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "False",
+                "allow_admin_side_menu" : "True",
                 "allow_access_attachments": "True"
             }
+
+
+
         },
         "collapse": {
             "holder": "False",

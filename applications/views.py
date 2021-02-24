@@ -3155,81 +3155,15 @@ class ApplicationChange(LoginRequiredMixin, CreateView):
         if action == 'amend':
             if approval.app_type == 3:
                 if approval.ammendment_application:
-
-                     a1 = approval.application.river_lease_scan_of_application.all()
-                     multifilelist = []
-                     for b1 in a1:
-                         fileitem = {}
-                         fileitem['fileid'] = b1.id
-                         fileitem['path'] = b1.upload.name
-                         fileitem['name'] = b1.name
-                         fileitem['extension']  = b1.extension
-                         multifilelist.append(fileitem)
-
-
-                     app = Application.objects.create(applicant=approval.application.applicant,
-                                                  title=approval.application.title,
-                                                  assignee=self.request.user,
-                                                  submitted_by=self.request.user,
-                                                  app_type=6,
-                                                  submit_date=date.today(),
-                                                  state=Application.APP_STATE_CHOICES.new,
-                                                  approval_id=approval.id,
-                                                  river_lease_require_river_lease=approval.application.river_lease_require_river_lease,
-                                                  river_lease_reserve_licence=approval.application.river_lease_reserve_licence, 
-                                                  cost=approval.application.cost,
-                                                  proposed_development_current_use_of_land=approval.application.proposed_development_current_use_of_land,
-                                                  proposed_development_description=approval.application.proposed_development_description,
-                                                  old_approval_id = approval.id
-                                                 )
-
-                     a1 = approval.application.river_lease_scan_of_application.all()
-                     for b1 in a1:
-                         app.river_lease_scan_of_application.add(b1)
-
-                     a1 = approval.application.proposed_development_plans.all()
-                     for b1 in a1:
-                         app.proposed_development_plans.add(b1)
-
-                     a1 = approval.application.land_owner_consent.all()
-                     for b1 in a1:
-                         app.land_owner_consent.add(b1)
-
-                     a1 = approval.application.deed.all()
-                     for b1 in a1:
-                         app.deed.add(b1)
-
+                     app = self.copy_application(approval, application)
+                     app.app_type=6
                      app.save()
-                     locobj = Location.objects.get(application_id=application.id)
-                     new_loc = Location()
-                     new_loc.application_id = app.id
-                     new_loc.title_volume = locobj.title_volume
-                     new_loc.folio = locobj.folio
-                     new_loc.dpd_number = locobj.dpd_number
-                     new_loc.location = locobj.location
-                     new_loc.reserve = locobj.reserve
-                     new_loc.street_number_name = locobj.street_number_name
-                     new_loc.suburb = locobj.suburb
-                     new_loc.lot = locobj.lot
-                     new_loc.intersection = locobj.intersection
-                     new_loc.local_government_authority = locobj.local_government_authority
-                     new_loc.save()
 
                      action = Action(
                          content_object=app, category=Action.ACTION_CATEGORY_CHOICES.create, user=self.request.user,
                          action='Application copied from application : WO-{}, Approval : AP-{}'.format(str(approval.application.id), str(approval.id)))
                      action.save()
 
-                     #self.object.applicant = self.request.user
-                     #self.object.assignee = self.request.user
-                     #self.object.submitted_by = self.request.user
-                     #self.object.assignee = self.request.user
-                     #self.object.submit_date = date.today()
-                     #self.object.state = self.object.APP_STATE_CHOICES.new
-                     #self.object.approval_id = approval.id
-                     #self.object.save()
-                     print ("APPLICATION")
-                     print (app)
                      return HttpResponseRedirect(reverse('application_update', args=(app.id,)))
 
             elif approval.app_type == 1:
@@ -5234,15 +5168,16 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
             comms.details = forms_data['details']
             comms.state = route["state"]
             comms.comms_type = 4
-            comms.save()
-
+        comms.save()
+        print ("COMMS")
         if 'records_json' in self.request.POST:
             if is_json(self.request.POST['records_json']) is True:
+                print (self.request.POST['records_json'])
                 json_data = json.loads(self.request.POST['records_json'])
                 for i in json_data:
                     doc = Record.objects.get(id=i['doc_id'])
                     comms.records.add(doc)
-                    comms.save() 
+                    comms.save_m2m()
 
 
 #        if self.request.FILES.get('records'):
