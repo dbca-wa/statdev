@@ -1953,18 +1953,18 @@
         },
         "actions": [
             {
-                "title": "Send to Assessor Officer (Finalisation) - Publish",
-                "route": "24",
+                "title": "Completed - Approved",
+                "route": "25",
                 "routegroup": "assess",
                 "state": "2",
-                "required" : ["document_determination_approved","publish_determination_report"]
+                "required" : ["document_final_signed","document_determination_approved","publish_determination_report","assessment_start_date"]
             },
             {
-                "title": "Send to Assessor (Determination)",
+                "title": "Completed - Not Supported (not working)",
                 "route": "18",
                 "routegroup": "assess",
                 "state": "4",
-                "required" : []
+                "required" : ["document_final_signed","document_determination_approved","publish_determination_report","assessment_start_date"] 
             }	
         ],
         "formcomponent": {
@@ -2100,19 +2100,16 @@
             "river_lease_scan_of_application":"hide",
             "deed":"hide",
             "document_draft": "hide",
-            "assessment_start_date" : "hide",
             "document_new_draft" : "hide",
             "swan_river_trust_board_feedback" : "hide",
             "document_draft_signed": "hide",
             "document_new_draft_v3": "hide",
             "document_memo": "hide",
-            "document_final_signed": "hide",
             "document_briefing_note": "hide",
             "document_determination" : "hide",
             "landowner": "hide",
             "land_description": "hide",
-            "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document" : "hide"
 
         }
     },
