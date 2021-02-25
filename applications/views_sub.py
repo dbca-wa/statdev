@@ -310,8 +310,6 @@ class Referrals_Next_Action_Check():
             groupassignment = None
         route = flow.getNextRouteObj(action,app.routeid,workflowtype)
 
-        print ("go_next_action")
-        print (route)
 
         if "route"in route:
             app.routeid = route["route"]
@@ -324,10 +322,6 @@ class Referrals_Next_Action_Check():
         else:
             app.state = 0
 
-        print (app.routeid)
-        print (groupassignment)
-        print (assignee)
-        print ("go_next_action --end")
         
         app.group = groupassignment
         app.assignee = assignee
@@ -402,13 +396,10 @@ class FormsList():
                 for se_wo in query_str_split:
                     search_filter &= Q(Q(pk__icontains=se_wo) | Q(title__icontains=se_wo))
 
-        print ("SEARCH FILTER")
-        print (search_filter)
 #        applications = Application.objects.filter(Q(app_type__in=APP_TYPE_CHOICES_IDS) & Q(search_filter) ).exclude(state=17)[:200]
         applications = Application.objects.filter(Q(search_filter) ).exclude(exclude_search_filter).order_by('-id')[:200]
         usergroups = self_view.request.user.groups.all()
         context['app_list'] = []
-        print (' AM I HERE ')
         for app in applications:
              row = {}
              row['may_assign_to_person'] = 'False'

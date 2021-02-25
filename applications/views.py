@@ -3843,10 +3843,10 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
  #           if app.state != app.APP_STATE_CHOICES.draft and app.state != app.APP_STATE_CHOICES.new:
  #               messages.error(self.request, 'This application cannot be updated!')
  #               return HttpResponseRedirect(app.get_absolute_url())
-
         return super(ApplicationUpdate, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+
         context = super(ApplicationUpdate, self).get_context_data(**kwargs)
         context['page_heading'] = 'Update application details'
         context['left_sidebar'] = 'yes'
@@ -3931,7 +3931,6 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
         context['application_approval'] = " fdadsfdsa"
         if Approval.objects.filter(application=app).count() > 0:
               context['application_approval'] = Approval.objects.filter(application=app)[0]
-
         return context
 
     def get_success_url(self,app):
@@ -3957,8 +3956,6 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
     def get_initial(self):
         initial = super(ApplicationUpdate, self).get_initial()
         initial['application_id'] = self.kwargs['pk']
-        #print ("###get_initial###")
-        #print (self.request.POST)
 
 
         app = self.get_object()
@@ -4010,11 +4007,6 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
         if app.route_status == 'Draft':
             initial['submitter_comment'] = app.submitter_comment
         initial['state'] = app.state
-
-#       flow = Flow()
-        #workflow = flow.get()
-#       print (workflow)
-#       initial['land_owner_consent'] = app.land_owner_consent.all()
 
         multifilelist = []
         a1 = app.land_owner_consent.all()
@@ -4335,7 +4327,6 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
                 initial['local_government_authority'] = LocObj.local_government_authority
         except ObjectDoesNotExist:
             donothing = ''
-
         return initial
 
     def post(self, request, *args, **kwargs):
@@ -4663,13 +4654,11 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
 
         if self.object.app_type == self.object.APP_TYPE_CHOICES.licence:
             form.save_m2m()
-#        if self.request.POST.get('save'):
 #        if self.request.POST.get('nextstep') or self.request.POST.get('prevstep'):
             # print self.request.POST['nextstep']          
             # if self.request.POST.get('prevstep'):
             # print self.request.POST['nextstep']
             # print "CONDITION ROUTING"
-        print ('FLOW UPDATE')
 
         flow = Flow()
         workflowtype = flow.getWorkFlowTypeFromApp(application)
@@ -4792,7 +4781,7 @@ class ApplicationLodge(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         """Override form_valid to set the submit_date and status of the new application.
         """
-        print ("LODGE 1")
+        print ("FORM VALID")
         app = self.get_object()
         flowcontext = {}
         error_messages = False
@@ -4800,16 +4789,12 @@ class ApplicationLodge(LoginRequiredMixin, UpdateView):
         if app.routeid is None:
             app.routeid = 1
  
-        print ("LODGE 2")
         flow = Flow()
         workflowtype = flow.getWorkFlowTypeFromApp(app)
         flow.get(workflowtype)
         DefaultGroups = flow.groupList()
-        print ("LODGE 3")
         nextroute = flow.getNextRoute('lodge', app.routeid, workflowtype)
         route = flow.getNextRouteObj('lodge', app.routeid, workflowtype)
-        print ("ROUTE ID")
-        print (route) 
         app.routeid = nextroute
         flowcontext = flow.getRequired(flowcontext, app.routeid, workflowtype)
         if "required" in route:
@@ -4885,11 +4870,8 @@ class ApplicationLodge(LoginRequiredMixin, UpdateView):
         #sendHtmlEmail([app.submitted_by.email], emailcontext['application_name'] + ' application submitted ', emailcontext, 'application-lodged.html', None, None, None)
 
         if float(route['state']) == float("18"):
-            print ("TEST")
             if "payment_redirect" in route:
-                 print ("TEST 2")
                  if route["payment_redirect"] == "True":
-                      print ("TEST 3")
                       return HttpResponseRedirect(reverse('application_booking', args=(app.id,)))
 
 

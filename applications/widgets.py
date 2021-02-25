@@ -279,7 +279,6 @@ class AjaxFileUploader(FileInput):
               count = 1
            
               for fi in value:
-                 print (fi)
                  if 'short_name' in fi:
 #                    substitutions['ajax_uploader'] += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">'
 #                    substitutions['ajax_uploader'] += '</div>';
@@ -359,8 +358,6 @@ class AjaxFileUploader(FileInput):
         return super(AjaxFileUploader, self).use_required_attribute(initial) and not initial
 
     def value_omitted_from_data(self, data, files, name):
-        print ("####value_omitted_from_data####")
-        print (data)
         return (
             super(AjaxFileUploader, self).value_omitted_from_data(data, files, name) and
             self.clear_checkbox_name(name) not in data

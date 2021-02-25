@@ -778,9 +778,7 @@ class ApplicationLicencePermitForm(ApplicationFormMixin, ModelForm):
         may_update =  self.initial["workflow"]['may_update']
         show_form_buttons = self.initial["workflow"]['show_form_buttons']
 
-        print ("__INIT__")
         if 'brochures_itineries_adverts_json' in self.data:
-            print (self.data.get('brochures_itineries_adverts_json'))
             self.initial['brochures_itineries_adverts'] = self.data.get('brochures_itineries_adverts_json')
         #self.helper.add_input(Submit('save', 'Save', css_class='btn-lg'))
         #self.helper.add_input(Submit('cancel', 'Cancel'))
@@ -832,7 +830,6 @@ class ApplicationLicencePermitForm(ApplicationFormMixin, ModelForm):
 
         for fielditem in self.initial["fieldstatus"]:
             if fielditem in self.fields:
-                print (fielditem)
                 del self.fields[fielditem]
 
         for fielditem in self.initial["fieldrequired"]:
@@ -1083,14 +1080,9 @@ class ApplicationLicencePermitForm(ApplicationFormMixin, ModelForm):
         if 'proposed_location' in self.cleaned_data:
              proposed_location = self.cleaned_data.get('proposed_location')
              if proposed_location == 0 or proposed_location == 2:
-                  print ("land_owner_consent_json")
-                  print (self.data)
                   if '2-prevstep' in self.data:
-                      print ("YES")
                       pass
                   else:
-                      print ("NO")
-                      print (len(self.data.get('land_owner_consent_json')))
                       if len(self.data.get('land_owner_consent_json')) == 0 or self.data.get('land_owner_consent_json') == '[]':
                          raise forms.ValidationError('Landowner consent must be provided')
 
