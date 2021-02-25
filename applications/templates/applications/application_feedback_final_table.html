@@ -14,8 +14,9 @@
                                         <td>{{ feedpub.comments }}</td>
                                         <td>
                                             {% for doc in feedpub.documents_short %}
+					   
                                             <div class="col-sm-12 col-md-12 col-lg-12">
-                                                <a href="/media/{{ doc.path }}">{{ doc.path_short }}</a>
+						    <a href="{{ doc.file_url }}" target="new_tab_{{ doc.id }}">{{ doc.path_short }}</a>
                                             </div>
                                             {% endfor %}
                                         </td>
@@ -25,10 +26,10 @@
 
                                             {% else %}
                                                 
-                                            <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_update_feedbackpublication' object.pk feedpub.id %}');" type="button">Change</button>
-                                            <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_delete_feedbackpublication' object.pk feedpub.id %}');" type="button">Delete</button>
+                                            <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_update_feedbackpublication' object.pk feedpub.id %}','Change Feedback');" type="button">Change</button>
+                                            <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_delete_feedbackpublication' object.pk feedpub.id %}','Delete Feedback');" type="button">Delete</button>
 					    {% endif %}
-                                            <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_view_feedbackpublication' object.pk feedpub.id %}');" type="button">View</button>
+                                            <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'application_view_feedbackpublication' object.pk feedpub.id %}','View Feedback');" type="button">View</button>
 
 
 

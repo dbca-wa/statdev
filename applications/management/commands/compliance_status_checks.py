@@ -46,16 +46,10 @@ class Command(BaseCommand):
         today = date.today()
         due_period = due_time_frame + today
 
-        print 'PERIOD'
-        print due_period
-
         # print date.today()
         # Look for Compliance that have expired and set them to expired.
         compliance = Compliance.objects.filter(due_date__lt=due_period,status__in=[1,2,3,8])
         for co in compliance:
-            print co
-            print Compliance.COMPLIANCE_STATUS_CHOICES[co.status]
-            print co.due_date
 
             co.status = 2
             co.save()

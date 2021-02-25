@@ -128,13 +128,13 @@
 								<td>{{ app_obj.app.get_status_display }}</td>
 								<td>{{ app_obj.app.start_date|date:"d-M-Y" }}</td>
 								<td>{{ app_obj.app.expiry_date|date:"d-M-Y" }}</td>
-								<td align='center' valign='center'><A HREF='{% url "approvals_view_pdf" app_obj.app.pk %}'><img src='{% static "images/pdf.png" %}' title="Click to Download PDF"></A></td>
+								<td align='center' valign='center'>{% if app_obj.approval_url %}<A HREF='{{ app_obj.approval_url }}'><img src='{% static "images/pdf.png" %}' title="Click to Download PDF"></A>{% endif %}</td>
 								<td>
 									<ul class="nav navbar-nav">
 										<li class="dropdown">
 											<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true">Actions<span class="caret"></span></a>
 											<ul class="dropdown-menu" role="menu">
-                                                                                                <li><a href="{% url 'approval_detail' app_obj.app.pk %}">View Approval</a></li>
+                                                                                                <li><a href="{{ app_obj.approval_url }}">View Approval</a></li>
                                                                                                 <li><a href="{% url 'application_detail' app_obj.app.application.id %}">View Application</a></li>
                                                                                                 {% if app_obj.app.status == 1 %}
 												{% if app_obj.app.app_type == 3 %}
@@ -157,11 +157,14 @@
 												<li><a href="/">Renew</a></li>
 
 												<li><a href="/" title="Administration">Renewal Notice</a></li>
-												{% if app_obj.app.app_type == 3 %}
-												<li><a href="{% url 'application_change' app_obj.app.pk 'requestamendment' %}">Request Amendment</a></li>
 												{% endif %}
 												{% endif %}
-												{% endif %}
+
+                                                                                                {% if app_obj.app.app_type == 3 %}
+                                                                                                <li><a href="{% url 'application_change' app_obj.app.pk 'requestamendment' %}">Request Amendment</a></li>
+                                                                                                {% endif %}
+
+
                                                                                                 {% if app_obj.app.status == 5 or app_obj.app.status == 3 %}
 													<li><a href="{% url 'approval_status_change' app_obj.app.pk 'reinstate' %}" title="Reinstate">Reinstate</a></li>
 												{% endif %}
@@ -180,13 +183,35 @@
 		</div>
 	</div>
 </div>
+
 <script>
 
 function loadApprovalTable() { 
     $('#approvals-table').dataTable({searching: false, paging: true, "pageLength": 25,"order": [[ 0, "desc" ]],
+    dom: 'lrtipB',
+    buttons: [
+      'copy',
+      {
+        extend: "excelHtml5",
+        filename: function fred() { return "Excel - " + Date.now(); },
+        exportOptions: { orthogonal: "exportxls", columns: ':not(:last-child)', }
+      },
+      {
+        extend: "csvHtml5",
+        filename: function fred() { return "CSV - " + Date.now(); },
+        exportOptions: { orthogonal: "exportcsv", columns: ':not(:last-child)', }
+      },
+      {
+        extend: "pdfHtml5",
+        filename: function fred() { return "PDF - " + Date.now(); },
+        exportOptions: { orthogonal: "exportpdf",columns: ':not(:last-child)', }
+      },
+      'print'
+    ],
+     "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
      columnDefs: [
        { type: 'natural-nohtml', targets: 0 }, { type: 'date-dd-mmm-yyyy', targets: 5 }, { type: 'date-dd-mmm-yyyy', targets: 6 }, { 'bSortable': false, 'aTargets':  8 }
-     ]
+    ],
 
 });
 }

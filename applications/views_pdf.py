@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from .models import Location, Record, PublicationNewspaper, PublicationWebsite, PublicationFeedback,Referral,Application, Delegate, Compliance
+from .models import Location, Record, PublicationNewspaper, PublicationWebsite, PublicationFeedback,Referral,Application, Delegate, Compliance, Condition
 from django.utils.safestring import SafeText
 from django.contrib.auth.models import Group
 from django.db.models import Q
@@ -151,6 +151,36 @@ class PDFtool(FPDF):
   #      pdf.cell(6, 5, column2 ,0,1,'L')
         return pdf
 
+    def column_para_flexi(self,pdf,column1,column2,column1width,column1fs='',column2fs=''):
+        if column1width is None:
+           column1width = 60
+        current_font_family = pdf.font_family
+        current_font_size = pdf.font_size_pt
+        current_font_style = pdf.font_style
+
+        loop = 1
+        para_split =  textwrap.wrap(column2, 118 - column1width)
+        for p in para_split:
+
+            if loop > 1:
+                pdf.set_font('Arial', column1fs, current_font_size)
+                pdf.cell(6, 5, ' ',0,0,'L')
+                pdf.cell(column1width, 5, ' ' ,0,0,'L')
+                pdf.cell(6, 5, ' ',0,0,'L')
+                pdf.set_font(current_font_family,column2fs,current_font_size)
+                pdf.cell(6, 5, p ,0,1,'L')
+            else:
+                pdf.set_font('Arial', '', current_font_size)
+                pdf.cell(6, 5, ' ',0,0,'L')
+                pdf.cell(column1width, 5, column1 ,0,0,'L')
+                pdf.cell(6, 5, ':',0,0,'L')
+                pdf.set_font(current_font_family,column2fs,current_font_size)
+                pdf.cell(6, 5, p ,0,1,'L')
+            loop = loop + 1
+
+        pdf.set_font(current_font_family,current_font_style,current_font_size)
+        return pdf
+
 
     def column_para_bold(self,pdf,column1,column2,column1width):
         if column1width is None:
@@ -238,37 +268,114 @@ class PDFtool(FPDF):
          pdf = self.column_para(pdf,'Licence/Permit holder',holder_name,None)
          # group spacer
          pdf = self.space(pdf)
-         pdf = self.column_para(pdf,'Authorised works, acts or activities:','',None)
+         pdf = self.column_para(pdf,'Authorised works, acts or activities',app.title,None)
          pdf = self.space(pdf)
-         pdf = self.column_para(pdf,'Location of works, acts or activities:','',None)
+         pdf = self.column_para(pdf,'Location of works, acts or activities','',None)
          pdf = self.space(pdf)
-         pdf = self.column_para(pdf,'Vessel details:','',None)
+         pdf = self.column_para(pdf,'Approval date', app.start_date.strftime("%d %b %Y"),None)
          pdf = self.space(pdf)
-         pdf = self.column_para(pdf,'Approval date:',app.start_date.strftime("%d %b %Y"),None)
+         pdf = self.column_para(pdf,'Expiry date', app.expiry_date.strftime("%d %b %Y"),None)
          pdf = self.space(pdf)
-         pdf = self.column_para(pdf,'Expiry date:',app.expiry_date.strftime("%d %b %Y"),None)
+         pdf = self.column_para(pdf,'Vessel details','',None)
+
+         vessel_count = 0
+         for v in app.application.vessels.all():
+             vessel_count = vessel_count + 1
+             if v.vessel_type == 0:
+                 pdf = self.column_para_no_seperator(pdf,str(vessel_count)+'.',v.get_vessel_type_display()+' - Name : '+v.name+ ', Vessel ID : '+v.vessel_id+', size(m) : '+str(v.size)+' engine(kw) : '+str(v.engine)+' Passenger capacity : '+str(v.passenger_capacity),10,1.5)
+             if v.vessel_type == 1:
+                 pdf = self.column_para_no_seperator(pdf,str(vessel_count)+'.',v.get_vessel_type_display()+' - '+v.craft_type+' (max:'+str(v.number_of_crafts)+')',10,1.5)
+    #vessel_type = models.SmallIntegerField(choices=VESSEL_TYPE_CHOICES, null=True, blank=True)
+    ## Vessel Information
+    #name = models.CharField(max_length=256)
+    #vessel_id = models.CharField(max_length=256, null=True, blank=True, verbose_name='Vessel identification')
+    #registration = models.ManyToManyField(Record, blank=True, related_name='vessel_documents')
+    #size = models.PositiveIntegerField(null=True, blank=True, verbose_name='size (m)')
+    #engine = models.PositiveIntegerField(null=True, blank=True, verbose_name='engine (kW)')
+    #passenger_capacity = models.PositiveIntegerField(null=True, blank=True)
+    ## craft Information
+    #craft_type = models.CharField(max_length=256, null=True, blank=True, verbose_name='Craft Type')
+    #number_of_crafts = models.PositiveIntegerField(null=True, blank=True, verbose_name='Number of crafts')
+    #documents = models.ManyToManyField(Record, blank=True, related_name='craft_documents')
+
+
+         pdf = self.space(pdf)
+     
+
          pdf = self.horizontal_line(pdf)
 
          pdf = self.heading1_bold(pdf,'PERMIT LICENCE '+str(app.id))
-         pdf = self.heading2_bold(pdf,'CONDITION(S)')
-         pdf = self.bullet_numbers_para(pdf,'Whilst operating within the Swan Canning Riverpark, a copy of this approval shall remain with this operation at all times, and must be shown to a government inspector on demand.')
-         pdf = self.bullet_numbers_para(pdf,'The Operator shall abide by the Specific Licence Conditions and General Licence Conditions of Licence L'+str(app.id)+' (refer below).')
-         pdf = self.bullet_numbers_para(pdf,'The Operator does not have priority access over other users to any area of the Swan Canning Development Control Area.')
-         pdf = self.bullet_numbers_para(pdf,'The Operator shall not erect any structures (including signage) or store any equipment associated with the operation within the Swan Canning Development Control Area.')
-         pdf = self.bullet_numbers_para(pdf,'The Operator shall ensure that no damage to the riverbed, foreshore or vegetation within the Swan Canning Development Control Area occurs as a result of the Operation.  The Operator shall make good any damage to the river and/or foreshore area, to the satisfaction of the Department.')
-         pdf = self.bullet_numbers_para(pdf,'The Operator shall ensure that no damage to the riverbed, foreshore or vegetation within the Swan Canning Development Control Area occurs as a result of the Operation.  The Operator shall make good any damage to the river and/or foreshore area, to the satisfaction of the Department.')
-         pdf = self.bullet_numbers_para(pdf,'Refuelling within the River reserve shall be undertaken at a licensed refuelling facility and by a person with a coxswain\'s certificate, or higher maritime qualification.')
-         pdf = self.bullet_numbers_para(pdf,'The Operator shall ensure that no sewage, greywater, fuel, garbage or other solid or liquid waste material enters the River reserve as a result of the operation.')
-         pdf = self.bullet_numbers_para(pdf,'The Operator shall have sullage tanks installed and operational in the vessel.')
-         pdf = self.bullet_numbers_para(pdf,'General waste and refuse generated aboard the vessel must not be disposed of by use of public bins installed at jetties, parks or other locations, including commercial bins at East Street Jetty and Barrack Street Jetty (unless by prior arrangement with the relevant authority).')
-         pdf = self.bullet_numbers_para(pdf,'The Operator\'s vessel shall not anchor in any area that may cause restrictions to navigating traffic or secure the Operator\'s vessel to any mooring buoy that is not lawful to use.')
-         pdf = self.bullet_numbers_para(pdf,'The Operator shall not create undue noise or nuisance through its Operations.')
-         pdf = self.bullet_numbers_para(pdf,'The Operator\'s vessel shall not enter any gazetted marine park within the Swan River without lawful authority pursuant to the Conservation and Land Management Regulations 2002 from the Department.')
-         pdf = self.bullet_numbers_para(pdf,'The Operator shall not transit through the Narrows Personal Watercraft Area.')
-         pdf = self.bullet_numbers_para(pdf,'The Operator shall obtain all relevant approvals from other government authorities (e.g. relevant local government authorities, and Department of Transport) that may be required, including the permission to berth at any public jetties, and if requested by the Department, supply copies of such approvals to the Director of the Rivers and Estuaries Division.')
 
-         pdf = self.create_para(pdf,'<<Other conditions to follow here>>')
-         pdf = self.create_para(pdf,'<<Advice to Applicant>>')
+         # Conditions and advise
+
+         # group spacer
+         pdf.cell(0,5,' ', 0,1,'L')
+
+         pdf.cell(6, 5, ' ',0,0,'L')
+         pdf.set_font('Arial', 'B', 9)
+         pdf.cell(60, 5, 'CONDITIONS TO APPLICANT',0,1,'L')
+         pdf.set_font('Arial', '', 9)
+
+         application_condition = Condition.objects.filter(application=app.application).order_by('condition_no')
+
+         condition_count = 1
+         for c in application_condition:
+              #condition
+              if len(c.condition) > 0 and c.condition_no > 0:
+                  pdf = self.column_para_no_seperator(pdf,str(c.condition_no)+'.', c.condition,10,1)
+                  pdf = self.space(pdf)
+                  condition_count = condition_count + 1
+
+
+         # group spacer
+         pdf.cell(0,5,' ', 0,1,'L')
+
+         pdf.cell(6, 5, ' ',0,0,'L')
+         pdf.set_font('Arial', 'B', 9)
+         pdf.cell(60, 5, 'ADVISE TO APPLICANT',0,1,'L')
+         pdf.set_font('Arial', '', 9)
+
+         application_condition = Condition.objects.filter(application=app.application).order_by('advise_no')
+
+         condition_count = 1
+         for c in application_condition:
+
+              if c.advise_no is None:
+                  c.advise_no = 0
+
+              #advise
+              if len(c.advise) > 0 and c.advise_no:
+                  pdf = self.column_para_no_seperator(pdf,str(c.advise_no)+'.', c.advise,10,1)
+                  pdf = self.space(pdf)
+                  condition_count = condition_count + 1
+
+
+         # end of conditins and advise
+
+
+
+
+
+
+         #pdf = self.heading2_bold(pdf,'CONDITION(S)')
+         #pdf = self.bullet_numbers_para(pdf,'Whilst operating within the Swan Canning Riverpark, a copy of this approval shall remain with this operation at all times, and must be shown to a government inspector on demand.')
+         #pdf = self.bullet_numbers_para(pdf,'The Operator shall abide by the Specific Licence Conditions and General Licence Conditions of Licence L'+str(app.id)+' (refer below).')
+         #pdf = self.bullet_numbers_para(pdf,'The Operator does not have priority access over other users to any area of the Swan Canning Development Control Area.')
+         #pdf = self.bullet_numbers_para(pdf,'The Operator shall not erect any structures (including signage) or store any equipment associated with the operation within the Swan Canning Development Control Area.')
+         #pdf = self.bullet_numbers_para(pdf,'The Operator shall ensure that no damage to the riverbed, foreshore or vegetation within the Swan Canning Development Control Area occurs as a result of the Operation.  The Operator shall make good any damage to the river and/or foreshore area, to the satisfaction of the Department.')
+         #pdf = self.bullet_numbers_para(pdf,'The Operator shall ensure that no damage to the riverbed, foreshore or vegetation within the Swan Canning Development Control Area occurs as a result of the Operation.  The Operator shall make good any damage to the river and/or foreshore area, to the satisfaction of the Department.')
+         #pdf = self.bullet_numbers_para(pdf,'Refuelling within the River reserve shall be undertaken at a licensed refuelling facility and by a person with a coxswain\'s certificate, or higher maritime qualification.')
+         #pdf = self.bullet_numbers_para(pdf,'The Operator shall ensure that no sewage, greywater, fuel, garbage or other solid or liquid waste material enters the River reserve as a result of the operation.')
+         #pdf = self.bullet_numbers_para(pdf,'The Operator shall have sullage tanks installed and operational in the vessel.')
+         #pdf = self.bullet_numbers_para(pdf,'General waste and refuse generated aboard the vessel must not be disposed of by use of public bins installed at jetties, parks or other locations, including commercial bins at East Street Jetty and Barrack Street Jetty (unless by prior arrangement with the relevant authority).')
+         #pdf = self.bullet_numbers_para(pdf,'The Operator\'s vessel shall not anchor in any area that may cause restrictions to navigating traffic or secure the Operator\'s vessel to any mooring buoy that is not lawful to use.')
+         #pdf = self.bullet_numbers_para(pdf,'The Operator shall not create undue noise or nuisance through its Operations.')
+         #pdf = self.bullet_numbers_para(pdf,'The Operator\'s vessel shall not enter any gazetted marine park within the Swan River without lawful authority pursuant to the Conservation and Land Management Regulations 2002 from the Department.')
+         #pdf = self.bullet_numbers_para(pdf,'The Operator shall not transit through the Narrows Personal Watercraft Area.')
+         #pdf = self.bullet_numbers_para(pdf,'The Operator shall obtain all relevant approvals from other government authorities (e.g. relevant local government authorities, and Department of Transport) that may be required, including the permission to berth at any public jetties, and if requested by the Department, supply copies of such approvals to the Director of the Rivers and Estuaries Division.')
+
+         #pdf = self.create_para(pdf,'<<Other conditions to follow here>>')
+         #pdf = self.create_para(pdf,'<<Advice to Applicant>>')
          pdf = self.heading2_bold(pdf,'DEFINITIONS')
      
          pdf = self.column_para_bold(pdf,'Act','means the Swan and Canning Rivers Management Act 2006.',30)
@@ -480,7 +587,7 @@ class PDFtool(FPDF):
          pdf = self.space(pdf)
 
          pdf = self.create_para(pdf,'Glen McLeod-Thorpe')
-         pdf = self.create_para(pdf,'22/02/2018')
+         pdf = self.create_para(pdf,app.issue_date.strftime('%d/%m/%Y'))
 
 
          #pdf.cell(0, 5, 'Pursuant to Part 4 (Regulation 29) of the Swan and Canning Rivers Management Regulations 2007, this',0,1,'L')
@@ -496,7 +603,7 @@ class PDFtool(FPDF):
 #         pdf.cell(0, 8, 'DETERMINATION OF REQUEST FOR VARIATION',0,1,'C')
 #         pdf.set_font('Arial', '', 9)   
          BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-         pdf.output(BASE_DIR+'pdfs/approvals/'+str(app.id)+'-approval.pdf', 'F')
+         pdf.output(BASE_DIR+'/pdfs/approvals/'+str(app.id)+'-approval.pdf', 'F')
 
 
     def generate_section_84(self,app):
@@ -508,7 +615,7 @@ class PDFtool(FPDF):
 
          #swan_canning_riverpark_dbca.png
          BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-         pdf.image(BASE_DIR+'applications/static/images/swan_canning_riverpark_dbca.png', 30, 7, 144,24)
+         pdf.image(BASE_DIR+'/applications/static/images/swan_canning_riverpark_dbca.png', 30, 7, 144,24)
 
          pdf.set_font('Arial', 'I', 10)
          #pdf.cell(0,33,' ', 0,1,'L')
@@ -700,60 +807,41 @@ class PDFtool(FPDF):
          else:
              holder_name = app.applicant.first_name + ' ' + app.applicant.last_name
              holder_address = app.applicant.postal_address
-       
-         pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'APPLICANT',0,0,'L')
-         pdf.cell(6, 5, ':',0,0,'L')
-         pdf.cell(6, 5, holder_name,0,1,'L')
+         landowner = '----'
+         land_description = '----'
+         if app.application.landowner:
+                landowner = app.application.landowner
+         if app.application.land_description:
+                land_description = app.application.land_description
 
-         pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'APPLICANT\'S ADDRESS',0,0,'L')
-         pdf.cell(6, 5, ':',0,0,'L')
-         pdf.cell(6, 5, str(holder_address) ,0,1,'L')
 
-         #pdf.cell(6, 5, ' ',0,0,'L')
-         #pdf.cell(60, 5, 'LANDOWNER',0,0,'L')
-         #pdf.cell(6, 5, ':',0,0,'L')
-         #pdf.cell(6, 5, 'Bob Stans',0,1,'L')
+         pdf = self.column_para_flexi(pdf,'FILE NUMBER','AP-'+str(app.id),None)
+         pdf = self.column_para_flexi(pdf,'APPLICANT',holder_name,None)
+         pdf = self.column_para_flexi(pdf,'APPLICANT\'S ADDRESS',str(holder_address),None)
 
-         #pdf.cell(6, 5, ' ',0,0,'L')
-         #pdf.cell(60, 5, 'LAND DESCRIPTION',0,0,'L')
-         #pdf.cell(6, 5, ':',0,0,'L')
-         #pdf.cell(6, 5, 'Its a park',0,1,'L')
+         pdf = self.column_para_flexi(pdf,'LANDOWNER',landowner,None)
+         pdf = self.column_para_flexi(pdf,'LAND DESCRIPTION',land_description,None)
+         pdf = self.column_para_flexi(pdf,'DEVELOPMENT','yes developement allowed',None)
 
-         pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'DEVELOPMENT',0,0,'L')
-         pdf.cell(6, 5, ':',0,0,'L')
-         pdf.cell(6, 5, 'yes developement allowed',0,1,'L')
+         pdf = self.column_para_flexi(pdf,'VALID FORM 1 RECEIVED','Form 1 received yes',None)
+         pdf = self.column_para_flexi(pdf,'DETERMINATION','APPROVAL WITH CONDITIONS',None,'','B')
 
-         pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'VALID FORM 1 RECEIVED',0,0,'L')
-         pdf.cell(6, 5, ':',0,0,'L')
-         pdf.cell(6, 5, 'Form 1 received yes',0,1,'L')
-
-         pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'DETERMINATION',0,0,'L')
-         pdf.cell(6, 5, ':',0,0,'L')
-         pdf.set_font('Arial', 'B', 9)
-         pdf.cell(6, 5, 'APPROVAL WITH CONDITIONS',0,1,'L')
-         pdf.set_font('Arial', '', 9)
 
          # group spacer
          pdf.cell(0,5,' ', 0,1,'L')
 
          pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'The application to commence development in accordance with the information received on XX XX is',0,1,'L')
+         pdf.cell(60, 5, 'The application to commence development in accordance with the information received on '+app.application.submit_date.strftime("%d %b %Y")+' is',0,1,'L')
          pdf.cell(6, 5, ' ',0,0,'L')
          pdf.cell(60, 5, 'APPROVED subject to the following conditions:',0,1,'L')
          # group spacer
          pdf.cell(0,5,' ', 0,1,'L')
 
-         pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.set_font('Arial', 'B', 10)
-         pdf.cell(60, 5, 'Prior to the commencement of works',0,1,'L')
-         pdf.set_font('Arial', '', 9)
-
-         pdf.cell(0,2,' ', 0,1,'L')
+         #pdf.cell(6, 5, ' ',0,0,'L')
+         #pdf.set_font('Arial', 'B', 10)
+         #pdf.cell(60, 5, 'Prior to the commencement of works',0,1,'L')
+         #pdf.set_font('Arial', '', 9)
+         #pdf.cell(0,2,' ', 0,1,'L')
 
          pdf.cell(6, 5, ' ',0,0,'L')
          pdf.cell(10, 5, '1.',0,0,'L')
@@ -764,6 +852,47 @@ class PDFtool(FPDF):
          pdf.cell(6, 5, ' ',0,0,'L')
          pdf.cell(10, 5, ' ',0,0,'L')
          pdf.cell(60, 5, 'or completing the development.',0,1,'L')
+
+
+         # group spacer
+         pdf.cell(0,5,' ', 0,1,'L')
+
+         pdf.cell(6, 5, ' ',0,0,'L')
+         pdf.set_font('Arial', 'B', 9)
+         pdf.cell(60, 5, 'CONDITIONS TO APPLICANT',0,1,'L')
+         pdf.set_font('Arial', '', 9)
+
+         application_condition = Condition.objects.filter(application=app.application).order_by('condition_no')
+
+         condition_count = 1
+         for c in application_condition:
+              #condition
+              if len(c.condition) > 0 and c.condition_no > 0:
+                 pdf = self.column_para_no_seperator(pdf,str(c.condition_no)+'.', c.condition,10,1)
+                 pdf = self.space(pdf)
+                 condition_count = condition_count + 1
+
+
+         # group spacer
+         pdf.cell(0,5,' ', 0,1,'L')
+
+         pdf.cell(6, 5, ' ',0,0,'L')
+         pdf.set_font('Arial', 'B', 9)
+         pdf.cell(60, 5, 'ADVISE TO APPLICANT',0,1,'L')
+         pdf.set_font('Arial', '', 9)
+
+         application_condition = Condition.objects.filter(application=app.application).order_by('advise_no')
+         condition_count = 1
+         for c in application_condition:
+              #advise
+              if c.advise_no is None:
+                  c.advise_no = 0
+
+              if len(c.advise) > 0 and c.advise_no > 0:
+                 pdf = self.column_para_no_seperator(pdf,str(c.advise_no)+'.', c.advise,10,1)
+                 pdf = self.space(pdf)
+                 condition_count = condition_count + 1
+
 
          pdf.cell(0,30,' ', 0,1,'L')
          pdf.cell(6, 5, ' ',0,0,'L')
@@ -776,7 +905,7 @@ class PDFtool(FPDF):
          pdf.cell(11, 5, 'DATE:',0,0,'L')      
          pdf.cell(60, 5, '20 Feb 2018',0,1,'L')
          
-         pdf.output(BASE_DIRE+'/pdfs/approvals/'+str(app.id)+'-approval.pdf', 'F')
+         pdf.output(BASE_DIR+'/pdfs/approvals/'+str(app.id)+'-approval.pdf', 'F')
 
     def generate_permitold(self,app):
          BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -787,7 +916,7 @@ class PDFtool(FPDF):
 
 
     def generate_permit(self,app):
-
+         application_location = Location.objects.filter(application=app.application)
          pdf = PDFtool('P', 'mm', 'A4')
          pdf.alias_nb_pages()
          pdf.add_page()
@@ -831,13 +960,21 @@ class PDFtool(FPDF):
          pdf.cell(0,5,' ', 0,1,'L')
 
          pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'Authorised works, acts or activities',0,1,'L')
-         pdf.cell(6, 5, '',0,1,'L')
+         pdf.cell(60, 5, 'Authorised works, acts or activities',0,0,'L')
+         pdf.cell(6, 5, ':',0,0,'L')
+         pdf.cell(6, 5, app.title ,0,1,'L')
+
+         pdf.cell(0,5,' ', 0,1,'L')
 
          pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'Location of works, acts or activities:',0,1,'L')
-         pdf.cell(6, 5, '',0,1,'L')
+         pdf.cell(60, 5, 'Location of works, acts or activities',0,0,'L')
+         pdf.cell(6, 5, ':',0,0,'L')
 
+         if application_location.count() > 0:
+            pdf.cell(50, 5, application_location[0].lot + ' '+ application_location[0].street_number_name + ' '+application_location[0].suburb,0,0,'L')
+         else:
+            pdf.cell(50, 5, '' ,0,0,'L')
+         pdf.cell(6, 5, '',0,1,'L')
 
          pdf.cell(0,5,' ', 0,1,'L')
          pdf.cell(6, 5, ' ',0,0,'L')
@@ -854,43 +991,60 @@ class PDFtool(FPDF):
 #         pdf.line(7, 110, 205, 110)
 
 
+
+         # group spacer
          pdf.cell(0,5,' ', 0,1,'L')
-         pdf.set_font('Arial', 'B', 10)
 
-         pdf.cell(30, 8, 'CONDITIONS',0,1,'L')
-         pdf.cell(10, 8, ' 1.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         pdf.cell(6, 5, ' ',0,0,'L')
+         pdf.set_font('Arial', 'B', 9)
+         pdf.cell(60, 5, 'CONDITIONS TO APPLICANT',0,1,'L')
+         pdf.set_font('Arial', '', 9)
 
-         pdf.cell(10, 8, ' 2.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         application_condition = Condition.objects.filter(application=app.application).order_by('condition_no')
 
-         pdf.cell(10, 8, ' 3.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         condition_count = 1
+         for c in application_condition:
+              #condition
+              if len(c.condition) > 0 and c.condition_no > 0:
+                 pdf = self.column_para_no_seperator(pdf,str(c.condition_no)+'.', c.condition,10,1)
+                 pdf = self.space(pdf)
+                 condition_count = condition_count + 1
 
 
-         pdf.cell(30, 8, 'ADVICE TO APPLICANT',0,1,'L')
+         # group spacer
+         pdf.cell(0,5,' ', 0,1,'L')
 
-         pdf.cell(10, 8, ' 1.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         pdf.cell(6, 5, ' ',0,0,'L')
+         pdf.set_font('Arial', 'B', 9)
+         pdf.cell(60, 5, 'ADVISE TO APPLICANT',0,1,'L')
+         pdf.set_font('Arial', '', 9)
 
-         pdf.cell(10, 8, ' 2.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         application_condition = Condition.objects.filter(application=app.application).order_by('advise_no')
 
-         pdf.cell(10, 8, ' 3.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         condition_count = 1
+         for c in application_condition:
 
+              if c.advise_no is None:
+                   c.advise_no = 0
+
+              #advise
+              if len(c.advise) > 0 and c.advise_no > 0:
+                  pdf = self.column_para_no_seperator(pdf,str(c.advise_no)+'.', c.advise,10,1)
+                  pdf = self.space(pdf)
+                  condition_count = condition_count + 1
+
+         pdf.cell(6, 5, ' ',0,0,'L')
+         pdf.set_font('Arial', 'B', 9)
+         pdf.cell(60, 5, 'PERMIT APPROVED',0,1,'L')
+         pdf.set_font('Arial', '', 9)
+
+         # group spacer
+         pdf.cell(0,5,' ', 0,1,'L')
 
          pdf.cell(0,15,' ', 0,1,'L')
          pdf.set_font('Arial', '', 10)
          pdf.cell(30, 5, 'Glen Mcleod-Thorpe',0,1,'L')
-         pdf.cell(30, 5, '13-Feb-2018',0,1,'L')
-
+         pdf.cell(30, 5, app.issue_date.strftime('%d/%m/%Y'),0,1,'L')
 
 
 #      cell(0, 8, 'Swan and Canning Rivers Management Act 2006',0,1,'C')
@@ -906,7 +1060,7 @@ class PDFtool(FPDF):
          pdf.output(BASE_DIR+'/pdfs/approvals/'+str(app.id)+'-approval.pdf', 'F')
 
     def generate_emergency_works(self,app):
-
+         application_location = Location.objects.filter(application=app.application)
          pdf = PDFtool('P', 'mm', 'A4')
          pdf.alias_nb_pages()
          pdf.add_page()
@@ -935,69 +1089,89 @@ class PDFtool(FPDF):
          pdf.cell(0,5,' ', 0,1,'L')
 
          pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'Authorised works, acts or activities',0,1,'L')
-         pdf.cell(6, 5, '',0,1,'L')
+         pdf.cell(60, 5, 'Authorised works, acts or activities',0,0,'L')
+         pdf.cell(6, 5, ':',0,0,'L')
+         pdf.cell(6, 5, "Emergency works: "+app.title ,0,1,'L')
+
+         pdf.cell(0,5,' ', 0,1,'L')
 
          pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(60, 5, 'Location of works, acts or activities:',0,1,'L')
-         pdf.cell(6, 5, '',0,1,'L')
+         pdf.cell(60, 5, 'Location of works, acts or activities',0,0,'L')
+         pdf.cell(6, 5, ':',0,0,'L')
 
+         if application_location.count() > 0:
+            pdf.cell(50, 5, application_location[0].lot + ' '+ application_location[0].street_number_name + ' '+application_location[0].suburb,0,0,'L')
+         else:
+            pdf.cell(50, 5, '' ,0,0,'L')
+         pdf.cell(6, 5, '',0,1,'L')
 
          pdf.cell(0,5,' ', 0,1,'L')
          pdf.cell(6, 5, ' ',0,0,'L')
          pdf.cell(30, 5, 'Approval date:',0,0,'L')
          pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(50, 5, app.proposed_commence.strftime("%d %b %Y"),0,0,'L')
+         pdf.cell(50, 5, app.start_date.strftime("%d %b %Y"),0,0,'L')
 
          pdf.cell(30, 5, 'Expiry date:',0,0,'L')
          pdf.cell(6, 5, ' ',0,0,'L')
-         pdf.cell(30, 5, app.proposed_end.strftime("%d %b %Y"),0,1,'L')
+         pdf.cell(30, 5, app.expiry_date.strftime("%d %b %Y"),0,1,'L')
 
          pdf = self.horizontal_line(pdf)
          # horizontal line
 #         pdf.line(7, 110, 205, 110)
 
 
+
+         # group spacer
          pdf.cell(0,5,' ', 0,1,'L')
-         pdf.set_font('Arial', 'B', 10)
 
-         pdf.cell(30, 8, 'CONDITIONS',0,1,'L')
-         pdf.cell(10, 8, ' 1.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         pdf.cell(6, 5, ' ',0,0,'L')
+         pdf.set_font('Arial', 'B', 9)
+         pdf.cell(60, 5, 'CONDITIONS TO APPLICANT',0,1,'L')
+         pdf.set_font('Arial', '', 9)
 
-         pdf.cell(10, 8, ' 2.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         application_condition = Condition.objects.filter(application=app.application).order_by('condition_no')
 
-         pdf.cell(10, 8, ' 3.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         condition_count = 1
+         for c in application_condition:
+              #condition
+              if len(c.condition) > 0 and c.condition_no > 0:
+                 pdf = self.column_para_no_seperator(pdf,str(c.condition_no)+'.', c.condition,10,1)
+                 pdf = self.space(pdf)
+                 condition_count = condition_count + 1
 
 
-         pdf.cell(30, 8, 'ADVICE TO APPLICANT',0,1,'L')
+         # group spacer
+         pdf.cell(0,5,' ', 0,1,'L')
 
-         pdf.cell(10, 8, ' 1.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         pdf.cell(6, 5, ' ',0,0,'L')
+         pdf.set_font('Arial', 'B', 9)
+         pdf.cell(60, 5, 'ADVISE TO APPLICANT',0,1,'L')
+         pdf.set_font('Arial', '', 9)
 
-         pdf.cell(10, 8, ' 2.',0,0,'L')
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         application_condition = Condition.objects.filter(application=app.application).order_by('advise_no')
 
-         pdf.cell(6, 8, ' ',0,0,'L')
-         pdf.cell(200, 8, '',0,1,'L')
+         condition_count = 1
+         for c in application_condition:
+
+              if c.advise_no is None:
+                   c.advise_no = 0
+
+              #advise
+              if len(c.advise) > 0 and c.advise_no > 0:
+                  pdf = self.column_para_no_seperator(pdf,str(c.advise_no)+'.', c.advise,10,1)
+                  pdf = self.space(pdf)
+                  condition_count = condition_count + 1
 
 
          pdf.cell(0,15,' ', 0,1,'L')
          pdf.set_font('Arial', '', 10)
          pdf.cell(30, 5, 'Glen Mcleod-Thorpe',0,1,'L')
-         pdf.cell(30, 5, '13-Feb-2018',0,1,'L')
+         pdf.cell(30, 5, app.issue_date.strftime('%d/%m/%Y'),0,1,'L')
 
          # group spacer
          pdf.cell(0,5,' ', 0,1,'L')
 
-         pdf.output(BASE_DIR+'/pdfs/applications/'+str(app.id)+'-application.pdf', 'F')
+         pdf.output(BASE_DIR+'/pdfs/approvals/'+str(app.id)+'-approval.pdf', 'F')
 
     def get(self,app,self_view,context):
         request = self_view.request

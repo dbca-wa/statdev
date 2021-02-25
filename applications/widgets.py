@@ -37,7 +37,8 @@ class InputMultiFile(Widget):
     def render(self, name, value, attrs=None):
         if value is None:
             value = ''
-        final_attrs = self.build_attrs(attrs, type=self.input_type, name=name, )
+#        final_attrs = self.build_attrs(attrs, type=self.input_type, name=name, )
+        final_attrs = self.build_attrs(self.attrs, attrs)
         if value != '':
             # Only add the 'value' attribute if a value is non-empty.
             final_attrs['value'] = force_text(self.format_value(value))
@@ -206,7 +207,8 @@ class AjaxFileUploader(FileInput):
         }
 
         #if 'multiple' in attrs:
-        final_attrs = self.build_attrs(attrs, type=self.input_type, name=name,)
+        #final_attrs = self.build_attrs(attrs, type=self.input_type, name=name,)
+        final_attrs = self.build_attrs(self.attrs, attrs)
         upload_type = 'single'
 
         if 'multiple' in final_attrs:
@@ -228,6 +230,7 @@ class AjaxFileUploader(FileInput):
                   if fi:
                       fi['short_name'] =SafeText(fi['path'])[19:]
                       fi['doc_id'] = fi['fileid']
+                      fi['extension'] = fi['extension']
                       substitutions['clearfiles'] += "<div class='col-sm-8'><A HREF='/media/"+fi['path']+"'>"
                       if fi['name']:
                          substitutions['clearfiles'] += SafeText(fi['name'])
@@ -248,6 +251,7 @@ class AjaxFileUploader(FileInput):
                value1['path'] = value.upload.name
                value1['name'] = value.name
                value1['doc_id'] = value.id
+               value1['extension'] = value.extension
            value = value1 
 
         
@@ -258,6 +262,14 @@ class AjaxFileUploader(FileInput):
         else:
            substitutions['ajax_uploader'] += json.dumps(value)
         substitutions['ajax_uploader'] += '</TEXTAREA>'
+
+        #substitutions['ajax_uploader'] += '<TEXTAREA name="'+name+'" id="'+name+'" style="display:none">'
+        #if value == '':
+        #   donothing = ''
+        #else:
+        #   substitutions['ajax_uploader'] += json.dumps(value)
+        #substitutions['ajax_uploader'] += '</TEXTAREA>'
+
         substitutions['ajax_uploader'] += '<div id="'+name+'__uploader" ></div>'
         substitutions['ajax_uploader'] += '<div id="'+name+'__showfiles" ><BR>'
         if value == '':
@@ -267,6 +279,7 @@ class AjaxFileUploader(FileInput):
               count = 1
            
               for fi in value:
+                 print (fi)
                  if 'short_name' in fi:
 #                    substitutions['ajax_uploader'] += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">'
 #                    substitutions['ajax_uploader'] += '</div>';
@@ -274,7 +287,8 @@ class AjaxFileUploader(FileInput):
 
                      substitutions['ajax_uploader'] += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">'
                      substitutions['ajax_uploader'] += '<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">'
-                     substitutions['ajax_uploader'] += str(count)+'. <A HREF="/media/'+fi['path']+'">'
+                     #substitutions['ajax_uploader'] += str(count)+'. <A HREF="/media/'+fi['path']+'">'
+                     substitutions['ajax_uploader'] += str(count)+'. <A HREF="/private-media/view/'+str(fi['doc_id'])+'-file'+str(fi['extension'])+'" target="new_tab_'+str(fi['doc_id'])+'">'
 
                      if 'name' in fi:
                            substitutions['ajax_uploader'] += fi['name']
@@ -284,7 +298,7 @@ class AjaxFileUploader(FileInput):
                      substitutions['ajax_uploader'] += '</A>'
                      substitutions['ajax_uploader'] += '</div>'
                      substitutions['ajax_uploader'] += '<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">';
-                     substitutions['ajax_uploader'] += '<A onclick="ajax_loader_django.deleteFile(\''+name+'\',\''+str(fi['doc_id'])+'\',\''+upload_type+'\')" href="javascript:void(0);">X</A>'
+                     substitutions['ajax_uploader'] += '<A onclick="ajax_loader_django.deleteFile(\''+name+'\',\''+str(fi['doc_id'])+'\',\''+upload_type+'\')" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red"></span></A>'
                      substitutions['ajax_uploader'] += '</div>'
                      substitutions['ajax_uploader'] += '</div>'
 
@@ -294,7 +308,8 @@ class AjaxFileUploader(FileInput):
                      #substitutions['ajax_uploader'] += '<li>1. <A HREF="/media/'+value['path']+'">'+value['short_name']+'</A></li>'
 
                      substitutions['ajax_uploader'] += '<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">'
-                     substitutions['ajax_uploader'] += '<A HREF="/media/'+value['path']+'">'
+                     #substitutions['ajax_uploader'] += '<A HREF="/media/'+value['path']+'">'
+                     substitutions['ajax_uploader'] += '<A HREF="/private-media/view/'+str(value['doc_id'])+'-file'+str(value['extension'])+'"  target="new_tab_'+str(value['doc_id'])+'">'
                     
                      if 'name' in value:
                          substitutions['ajax_uploader'] += value['name']
@@ -305,7 +320,7 @@ class AjaxFileUploader(FileInput):
                      substitutions['ajax_uploader'] += '</A>'
                      substitutions['ajax_uploader'] += '</div>';
                      substitutions['ajax_uploader'] += '<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">'
-                     substitutions['ajax_uploader'] += '<A onclick="ajax_loader_django.deleteFile(\''+name+'\',\''+str(value['doc_id'])+'\',\''+upload_type+'\')" href="javascript:void(0);">X</A>'
+                     substitutions['ajax_uploader'] += '<A onclick="ajax_loader_django.deleteFile(\''+name+'\',\''+str(value['doc_id'])+'\',\''+upload_type+'\')" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red"></span></A>'
                      substitutions['ajax_uploader'] += '</div>'
                   
            #substitutions['ajax_uploader'] += '<li>1. <A HREF="">File 1</A></li>'
@@ -344,6 +359,8 @@ class AjaxFileUploader(FileInput):
         return super(AjaxFileUploader, self).use_required_attribute(initial) and not initial
 
     def value_omitted_from_data(self, data, files, name):
+        print ("####value_omitted_from_data####")
+        print (data)
         return (
             super(AjaxFileUploader, self).value_omitted_from_data(data, files, name) and
             self.clear_checkbox_name(name) not in data
@@ -581,4 +598,29 @@ class RadioFieldRenderer(ChoiceFieldRenderer):
 class RadioSelectWithCaptions(RendererMixin, Select):
     renderer = RadioFieldRenderer
     _empty_value = ''
+
+
+#class CaptchaImages(Widget):
+#
+#     #def __str__(self):
+#     #   return self.render()
+#
+#     def __init__(self, *args, **kwargs):
+#         pass
+#         #self.name = name
+#         #self.value = value
+#         self.attrs = {'test': 'test'} 
+#         print ("INITIAL")
+#         print (self)
+#
+#
+#     def render(self, name, value, *args, **kwargs):
+#     #def render(self, name=None, value=None, attrs=None, caption=None):
+#
+#         print ("RENDER 1")
+#         print (self.attrs)
+#         print (name)
+#         print (value) 
+#         return format_html("HELLO THIS IS IMAGE <input type='' name='"+name+"'>")
+
 

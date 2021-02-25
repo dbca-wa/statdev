@@ -1,0 +1,2 @@
+*/10 * * * * root eval $(grep -v '^#' /etc/.cronenv | xargs -d "\n" -I {} echo export \"{}\" ) && python /app/manage.py compliance_status_checks >> /app/logs/compliance_status_checks.log 2>&1
+*/10 * * * * root eval $(grep -v '^#' /etc/.cronenv | xargs -d "\n" -I {} echo export \"{}\" ) && python /app/manage.py compliance_generate_condition >> /app/logs/compliance_status_checks.log 2>&1

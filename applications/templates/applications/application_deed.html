@@ -14,7 +14,7 @@
                                 Print <a href=''>this deed</a>, sign it and attach it to this application<BR>
                             </div>
                             <div class="col-lg-12">
-                                <A HREF='/media/{{ object.deed.upload.name }}'>{{ deed_short }}</A>
+				    <A HREF='{{ object.deed.file_url }}' target="new_tab_{{ object.deed.id }}">{{ deed_short }}</A>
                             </div>
                         </div>
                     </div>

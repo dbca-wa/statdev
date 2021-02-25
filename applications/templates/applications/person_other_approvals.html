@@ -93,7 +93,7 @@
                                 <td>{{ app_obj.app.get_status_display }}</td>
                                 <td>{{ app_obj.app.start_date|date:"d-M-Y" }}</td>
                                 <td>{{ app_obj.app.expiry_date|date:"d-M-Y" }}</td>
-                                <td align='center' valign='center'><A HREF='{% url "approvals_view_pdf" app_obj.app.pk %}'><img src='{% static "images/pdf.png" %}'></A></td>
+                                <td align='center' valign='center'>{% if app_obj.approval_url %}<A HREF='{{ app_obj.approval_url }}'><img src='{% static "images/pdf.png" %}'></A>{% endif %}</td>
 				<td>
 
                                                                         <ul class="nav navbar-nav">
@@ -101,9 +101,26 @@
                                                                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true">Actions<span class="caret"></span></a>
                                                                                         <ul class="dropdown-menu" role="menu">
 												{% if app_obj.app.get_status_display == "Current" or app_obj.app.get_status_display == "Suspended" %}
-												<li><A HREF='{% url 'application_change' app_obj.app.pk 'amend' %}'>Amend</A></li>
+
+
+                                                                                                {% if app_obj.app.app_type == 3 %}
+                                                                                                            {% if app_obj.app.ammendment_application %}
+                                                                                                                       {% if app_obj.app.ammendment_application.get_state_display == "Approved" %}
+                                                                                                                           <li><A HREF='{% url 'application_change' app_obj.app.pk 'amend' %}'>Amend</A></li>
+                                                                                                                       {% endif %}
+                                                                                                            {% endif %}
+
+                                                                                                {% else %}
+             												<li><A HREF='{% url 'application_change' app_obj.app.pk 'amend' %}'>Amend</A></li>
+                                                                                                {% endif %}
 												
 												{% endif %}
+                                
+                                                                                                {% if app_obj.app.app_type == 3 %}
+                                                                                                             <li><a href="{% url 'application_change' app_obj.app.pk 'requestamendment' %}">Request Amendment</a></li>
+
+                                                                                                {% endif %}
+
 												<li><A HREF=''>Renew</A></li>
 												{% if app_obj.app.get_status_display == "Current" or app_obj.app.get_status_display == "Suspended" %}
 												<li><A HREF='{% url 'approval_status_change' app_obj.app.pk 'surrendered' %}'>Surrender</A></li>
@@ -126,11 +143,13 @@
 
     <script>
 
+
+
     function loadTable() {
-        $('#approvals-table').dataTable({searching: false, paging: true, "pageLength": 25,
+        $('#approvals-table').dataTable({searching: false, paging: true, "pageLength": 25, "order": [[ 0, "desc" ]],
 		 "aoColumnDefs": [
-          { 'bSortable': false, 'aTargets': [ 7 ] }
-       ]
+                 {type: 'natural-nohtml', targets: 0 , 'bSortable': false, 'aTargets': [ 7 ] }
+         ]
 
 });
     }

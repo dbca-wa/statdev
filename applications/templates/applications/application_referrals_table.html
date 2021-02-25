@@ -3,9 +3,12 @@
                                         <tr>
                                                 <th>Name</th>
                                                 <th>Sent date</th>
+						<th>Expiry</th>
                                                 <th>Period (days)</th>
                                                 <th>Status</th>
                                                 <th>Feedback</th>
+                                                <th>Proposed Conditions</th>
+                                                <th>Documents</th>
                                                 <th>Actions</th>
                                         </tr>
                                 </thead>
@@ -14,35 +17,44 @@
                                         <tr>
                                                 <td>{{ ref.referee }}</td>
                                                 <td>{{ ref.sent_date|date:"d-M-Y" }}</td>
+						<td>{{ ref.expire_date|date:"d-M-Y" }}</td>
                                                 <td>{{ ref.period }}</td>
                                                 <td>{{ ref.get_status_display }}</td>
                                                 <td>{{ ref.feedback }}</td>
+                                                <td>{{ ref.proposed_conditions }}</td>
                                                 <td>
-                                                        {% if ref.referee == user and ref.status == ref.REFERRAL_STATUS_CHOICES.referred %}
-                                                        <a class="btn btn-primary btn-sm" role="button" href="{% url 'condition_create' ref.application.pk %}">Create a condition</a>
-                                                            <a class="btn btn-primary btn-sm" role="button" href="{% url 'referral_complete' ref.pk %}">Complete with feedback</a>
+
+                                                      {% if ref.records.exists %}
+                                                                 {% for doc in ref.records.all %}
+                                                                         <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target='comms_attachment_{{ doc.id }}'>{{ doc.name }}</A></div>
+                                                                 {% endfor %}
+                                                      {% endif %}
+
+                                                </td>
+                                                <td>
+                                                        {% if may_referral_delete == "True" and mode == 'update'  %}
+                                                                    <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'referral_delete' ref.pk %}','Delete Referral');" type="button">Delete</button>
                                                         {% endif %}
 
-                                                        {% if may_referral_delete == "True" %}
-                                                                    <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'referral_delete' ref.pk %}');" type="button">Delete</button>
-                                                        {% endif %}
-
-                                                        {% if may_recall_resend %}
+                                                        {% if may_recall_resend and mode == 'update' %}
                                                              {% if may_recall_resend == "True" %}
                                                                         {% if ref.status == ref.REFERRAL_STATUS_CHOICES.referred %}
-                                                                        <a class="btn btn-primary btn-sm" role="button" href="{% url 'referral_recall' ref.pk %}">Recall</a>
-                                                                        <a class="btn btn-primary btn-sm" role="button" href="{% url 'referral_remind' ref.pk %}">Remind</a>
-                                                        {% endif %}
-                                             {% endif %}
+                                                                        <button class="btn btn-primary btn-sm" role="button" onclick="django_ajax_form.OpenForm('{% url 'referral_recall' ref.pk %}','Referral Recall');" type="button">Recall</button>
+                                                                        <button class="btn btn-primary btn-sm" role="button" onclick="django_ajax_form.OpenForm('{% url 'referral_remind' ref.pk %}','Referral Remind');" type="button" >Remind</button>
+                                                                        {% endif %}
+
+									{% if ref.status == ref.REFERRAL_STATUS_CHOICES.with_admin %}
+									   <button class="btn btn-primary btn-sm" role="button" onclick="django_ajax_form.OpenForm('{% url 'referral_send_refer' ref.pk %}','Send Referral');" type="button">Send</button>
+									{% endif %}
+                                                             {% endif %}
                                     {% endif %}
                                         {% comment %}{% endcomment %}
 
                             {% if may_referral_resend == "True" %}
-                                                           {% if ref.status == ref.REFERRAL_STATUS_CHOICES.recalled or ref.status == ref.REFERRAL_STATUS_CHOICES.responded %}
-                                                             {# TODO: Referral resend function #}
-                                 <a class="btn btn-primary btn-sm" role="button" href="{% url 'referral_resend' ref.pk %}">Resend</a>
-                                                           {% endif %}
-                           {% endif %}
+                                        {% if ref.status == ref.REFERRAL_STATUS_CHOICES.recalled or ref.status == ref.REFERRAL_STATUS_CHOICES.responded %}
+                                             <button class="btn btn-primary btn-sm" role="button" onclick="django_ajax_form.OpenForm('{% url 'referral_resend' ref.pk %}','Referral Resend')"  type="button">Resend</button>
+                                        {% endif %}
+                            {% endif %}
                                                 </td>
                                         </tr>
                                         {% endfor %}

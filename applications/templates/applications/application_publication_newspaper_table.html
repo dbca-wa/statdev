@@ -14,14 +14,14 @@
                                             {% if newspub.documents_short == None %}
                                             {% else %}
                                             {% for doc in newspub.documents_short %}
-                                            <div class="col-sm-12"><A href='/media/{{ doc.path }}'>{{ doc.path_short }}</a></div>
+					    <div class="col-sm-12"><A href='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc.path_short }}</a></div>
                                             {% endfor %}
                                             {% endif %}
                                             <td>
                                                 {% if workflow_actions %}
                                                 {% if may_update_publication_newspaper == "True" %}
-                                                <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'newspaperpublication_update' newspub.pk %}');" type="button">Edit</button>
-                                                <button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'newspaperpublication_delete' newspub.pk %}');" type="button">Delete</button>
+						<button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'newspaperpublication_update' newspub.pk %}','Edit Publication for id {{ newspub.pk }}');" type="button">Edit</button>
+						<button class="btn btn-primary btn-sm" onclick="django_ajax_form.OpenForm('{% url 'newspaperpublication_delete' newspub.pk %}','Delete Publication for id {{ newspub.pk }}');" type="button">Delete</button>
                                                 {% endif %}
                                                 {% endif %}
                                             </td>

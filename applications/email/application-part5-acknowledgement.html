@@ -1,8 +1,7 @@
 <p>Dear {{ person.first_name }}</p>
 
-<p>PART 5 – [LOCATION] – </p>
+<p>PART 5 – {{ app.location }} – {{ app.title }} – {% include "application-applicant.html" %} </p>
 
-<p>[DESCRIPTION OF WORKS]</p>
 <p>{{ app.proposed_development_description }}</p>
 
 <p>The Department of Biodiversity, Conservation and Attractions, Rivers and Estuaries Division acknowledges receipt of your application for approval of the above-mentioned proposal dated [date of application form] and received on [date received].</p>

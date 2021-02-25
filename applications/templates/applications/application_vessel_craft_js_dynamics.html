@@ -1,0 +1,45 @@
+<script>
+//$('#div_id_vessel_type').hide();
+$('#div_id_name').hide();
+$('#div_id_vessel_id').hide();
+$('#div_id_size').hide();
+$('#div_id_engine').hide();
+$('#div_id_passenger_capacity').hide();
+$('#div_id_registration').hide();
+$('#div_id_craft_type').hide();
+$('#div_id_number_of_crafts').hide();
+$('#div_id_documents').hide();
+
+function showVesselCraft() { 
+    $('#div_id_name').hide();
+    $('#div_id_vessel_id').hide();
+    $('#div_id_size').hide();
+    $('#div_id_engine').hide();
+    $('#div_id_passenger_capacity').hide();
+    $('#div_id_registration').hide();
+    $('#div_id_craft_type').hide();
+    $('#div_id_number_of_crafts').hide();
+    $('#div_id_documents').hide();
+
+    var vessel_type = $('#id_vessel_type').val();
+    if (vessel_type == 0) {
+       $('#div_id_name').show();
+       $('#div_id_vessel_id').show();
+       $('#div_id_size').show();
+       $('#div_id_engine').show();
+       $('#div_id_passenger_capacity').show();
+       $('#div_id_registration').show();
+    }
+    if (vessel_type == 1) {
+            $('#div_id_craft_type').show();
+	    $('#div_id_number_of_crafts').show();
+	    $('#div_id_documents').show();
+    }
+}
+
+$("#id_vessel_type").change(function() {
+     showVesselCraft();
+});
+showVesselCraft();
+
+</script>

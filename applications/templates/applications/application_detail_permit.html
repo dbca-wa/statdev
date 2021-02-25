@@ -2,14 +2,16 @@
 
 {% block page_content_inner %}
 {% load static %}
-<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}" />
+<script>
+{% if object.state == 1 %}{% if object.app_type == None %}window.location = "{% url 'application_apply_form' object.pk 'apptype' %}";{% else %}window.location = "{% url 'application_update' object.pk %}";{% endif %}{% else %}{% endif %}
+</script>
 
+<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}?ver={{ GIT_COMMIT_HASH }}" />
 <div class="container-fluid">
     <div class="row">
         <h1>Application for {{ object.get_app_type_display }} - {{ object.pk }}</h1>
         <br/>
     </div>
-
     <!-- Action panel start -->
     <div class="row">
         {% include "applications/application_side_menu.html" %}
@@ -229,7 +231,7 @@
                                 <div class='col-sm-12 col-lg-6'>
                                 {% if object.proposed_development_plans %}
                                 	{% for doc in object.proposed_development_plans.all %}
-		                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='/media/{{ doc.upload }}'>{{ doc }}</A></div>
+					<div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
                 	                {% endfor %}
                        	        {% else %}
                                		No Attachments
@@ -242,7 +244,9 @@
                                 </div>
                                 <div class='col-sm-12 col-lg-6'>
                                 {% if object.supporting_info_demonstrate_compliance_trust_policies %}
-                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='/media/{{ object.supporting_info_demonstrate_compliance_trust_policies.upload }}'>{{ object.supporting_info_demonstrate_compliance_trust_policies }}</A></div>
+                                        {% for doc in object.supporting_info_demonstrate_compliance_trust_policies.all %}
+					<div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                        {% endfor %}
                                 {% else %}
                                 No Attachments
                                 {% endif %}
@@ -271,7 +275,7 @@
                                 {% if  object.land_owner_consent %}
 
                                 {% for doc in object.land_owner_consent.all %}
-                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='/media/{{ doc.upload }}'>{{ doc }}</A></div>
+				<div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
                                 {% endfor %}
                                 {% else %}
                                 No Attachments Added
@@ -302,7 +306,7 @@
                                 Print <a href=''>this deed</a>, sign it and attach it to this application<BR>
                             </div>
                             <div class="col-lg-12">
-                                <A HREF='/media/{{ object.deed.upload.name }}'>{{ deed_short }}</A>
+				    <A HREF='{{ object.deed.file_url }}' target="new_tab_{{ object.deed.id }}">{{ deed_short }}</A>
                             </div>
                         </div>
                     </div>
@@ -310,11 +314,14 @@
             </div>
             {% endif %}
 
+            {% if is_staff == True %}
+
             <!-- Referrals panel -->
             {% include "applications/application_referrals.html" %}
 
             <!-- Conditions panel -->
             {% include "applications/application_conditions.html" %}
+            {% endif %}
 
         </div>
     </div>

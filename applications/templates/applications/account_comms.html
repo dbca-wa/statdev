@@ -1,6 +1,10 @@
 {% extends "base_statdev.html" %}
 
 {% block page_content_inner %}
+
+<input type='hidden' value='2003' id='file_group' name='file_group'>
+<input type='hidden' value='{{ application_id }}' id='file_group_ref_id' name='file_group_ref_id'>
+
 <div class="container-fluid">
     <div class="row">
         <h1>Communication for {{ object.application.get_app_type_display }} - {{ object.pk }}</h1>
@@ -32,7 +36,7 @@
 						{% if communication.record.exists %}
                         {% for doc in communication.records %}
 							
-                            <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='/media/{{ doc.path }}'>{{ doc.path_short }}</A></div>
+			<div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}" >{{ doc.path_short }}</A></div>
                         {% endfor %}
                         {% endif %}
                         </td>

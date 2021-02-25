@@ -1,7 +1,12 @@
 {% extends "base_statdev.html" %}
+
 {% load crispy_forms_tags %}
 
 {% block page_content_inner %}
+
+<input type='hidden' value='{{ file_group }}' id='file_group' name='file_group'>
+<input type='hidden' value='{{ file_group_ref_id }}' id='file_group_ref_id' name='file_group_ref_id'>
+
 <h1>{{ page_heading }}</h1>
 {% crispy form %}
 {% endblock %}

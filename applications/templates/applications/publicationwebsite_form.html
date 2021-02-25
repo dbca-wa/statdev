@@ -2,6 +2,9 @@
 {% load crispy_forms_tags %}
 
 {% block page_content_inner %}
+
+<input type='hidden' value='{{ application.app_type }}' id='file_group' name='file_group'>
+<input type='hidden' value='{{ application.id }}' id='file_group_ref_id' name='file_group_ref_id'>
 <h1>{{ page_heading }}</h1>
 {% crispy form %}
 {% endblock %}

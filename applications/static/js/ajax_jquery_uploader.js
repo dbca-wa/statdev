@@ -1,6 +1,6 @@
 // configuration
-var max_file_size 		= 12048576; //allowed file size. (1 MB = 1048576)
-var allowed_file_types 		= ['image/png', 'image/gif', 'image/jpeg', 'image/pjpeg','application/pdf','application/vnd.ms-excel','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','application/vnd.ms-outlook','application/octet-stream']; //allowed file types
+var max_file_size 		= 52428800; //allowed file size. (1 MB = 1048576)
+var allowed_file_types 		= ['text/plain','image/png', 'image/gif', 'image/jpeg', 'image/pjpeg','application/pdf','application/vnd.ms-excel','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','application/vnd.ms-outlook','application/octet-stream']; //allowed file types
 var result_output 		= '#output'; //ID of an element for response output
 var my_form_id 			= '#upload_form'; //ID of an element for response output
 var progress_bar_id 		= 'progress-wrp'; //ID of an element for response output
@@ -77,6 +77,9 @@ function bindForm(form_id,input_id,upload_type) {
 						});
 				console.log("FILES ATTACHED 2");
 				form_data.append('csrfmiddlewaretoken', $("input[name=csrfmiddlewaretoken]").val());
+                                form_data.append('file_group', $("#file_group").val());
+                                form_data.append('file_group_ref_id', $("#file_group_ref_id").val());
+                              
 				$.ajax({
 						//	url : post_url,
 url : '/applications-uploads/',
@@ -144,6 +147,7 @@ mimeType:"multipart/form-data"
             $(result_output).append('<div class="error">'+obj['message']+'</div>');
 	}
 	$('#'+input_id+'_json').val(JSON.stringify(input_array));
+	// $('#'+input_id).val(JSON.stringify(input_array));
 	submit_btn.val("Upload").prop( "disabled", false); //enable submit button once ajax is done
 	ajax_loader_django.showFiles(input_id,upload_type);
 	$('#'+input_id+'__submit__files').val('');
@@ -181,7 +185,9 @@ $(error).each(function(i){ //output any error to output element
 }
 
 var ajax_loader_django = {
-
+autoUpload: function(upload_button_id) {
+	$( "#"+upload_button_id ).click();
+},
 openUploader: function(input_id,upload_type) {
 
 		      // Get django csrf token. 
@@ -198,15 +204,15 @@ openUploader: function(input_id,upload_type) {
 		      htmlvalue += '        <button type="button" class="close"  onclick="ajax_loader_django.closeUploader(\''+input_id+'\');" >&times;</button>';
 		      htmlvalue += '        <h4 class="modal-title">File Uploader</h4>';
 		      htmlvalue += '      </div>';
-		      htmlvalue += '      <div class="modal-body">';
+		      htmlvalue += '      <div class="modal-body" >';
 		      htmlvalue += '<form action="/applications-uploads/" method="post" enctype="multipart/form-data" id="upload_form" id="'+input_id+'__uploadform" >';
 		      htmlvalue += '<input type="hidden" name="csrfmiddlewaretoken" value="'+csrfmiddlewaretoken+'" />';
 		      htmlvalue += '  <label class="custom-file">';
 		      //            htmlvalue += '  <input name="__files[]" type="file" ';
-		      htmlvalue += '  <input name="__files[]" id="'+input_id+'__submit__files" type="file" ';
+		      htmlvalue += '  <input name="__files[]" id="'+input_id+'__submit__files" type="file" onchange="ajax_loader_django.autoUpload('+"'"+input_id+"__submit'"+');" ';
 
 		      if (upload_type == 'multiple') { 
-			      htmlvalue += '  multiple ';
+			      // htmlvalue += '  multiple ';
 		      }
 
 		      htmlvalue += '  class="custom-file-input"';
@@ -253,7 +259,8 @@ openUploader: function(input_id,upload_type) {
 		      // bindForm('#upload_form',input_id,upload_type);
 		      ajax_loader_django.showFiles(input_id,upload_type);
 	      },
-showFiles: function(input_id,upload_type) { 
+showFiles: function(input_id,upload_type) {
+	           console.log("IN"+input_id)
 		   var input_id_obj = $('#'+input_id+'_json').val();
 		   var input_array = [];
 		   var htmlvalue = "<BR>";
@@ -267,7 +274,8 @@ showFiles: function(input_id,upload_type) {
 				   for (var file in input_array) {
 					   htmlvalue += '<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">';
                                             
-					   htmlvalue += filecount+'. <A HREF="/media/'+input_array[file].path+'">';
+					   //htmlvalue += filecount+'. <A HREF="/media/'+input_array[file].path+'">';
+                                           htmlvalue += filecount+'. <A HREF="/private-media/view/'+input_array[file].doc_id+'-file'+input_array[file].extension+'" target="new_tab_'+input_array[file].doc_id+'">';
                                            if (input_array[file].name.length > 2) {
                                                htmlvalue += input_array[file].name;
                                            }  else  {
@@ -275,7 +283,7 @@ showFiles: function(input_id,upload_type) {
 					   }
 					   htmlvalue += '</a></div>';
 					   htmlvalue += '<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">';
-					   htmlvalue += '<A onclick="ajax_loader_django.deleteFile(\''+input_id+'\',\''+input_array[file].doc_id+'\',\''+upload_type+'\')" href="javascript:void(0);">X</A>';
+					   htmlvalue += '<A onclick="ajax_loader_django.deleteFile(\''+input_id+'\',\''+input_array[file].doc_id+'\',\''+upload_type+'\')" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red"></span></A>';
 					   htmlvalue += '</div>';
 					   filecount++;
 				   }
@@ -286,7 +294,8 @@ showFiles: function(input_id,upload_type) {
 				   input_array = JSON.parse(input_id_obj);
 
 				   htmlvalue += '<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">';
-                                   htmlvalue += '<A HREF="/media/'+input_array.path+'">';
+                                   //htmlvalue += '<A HREF="/media/'+input_array.path+'">';
+                                   htmlvalue += '<A HREF="/private-media/view/'+input_array.doc_id+'-file'+input_array.extension+'" target="new_tab_'+input_array.doc_id+'">';
                                            if (input_array.name.length > 2) {
                                                htmlvalue += input_array.name;
                                            }  else  {
@@ -296,7 +305,7 @@ showFiles: function(input_id,upload_type) {
 				   htmlvalue += '</A>';
 				   htmlvalue += '</div>';
 				   htmlvalue += '<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">';
-				   htmlvalue += '<A onclick="ajax_loader_django.deleteFile(\''+input_id+'\',\''+input_array.doc_id+'\',\''+upload_type+'\')" href="javascript:void(0);">X</A>';
+				   htmlvalue += '<A onclick="ajax_loader_django.deleteFile(\''+input_id+'\',\''+input_array.doc_id+'\',\''+upload_type+'\')" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color: red"></span></A>';
 				   htmlvalue += '</div>';
 			   }
 

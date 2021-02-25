@@ -3,14 +3,15 @@
 {% block page_content_inner %}
 
 {% load static %}
-<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}" />
-
+<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}?ver={{ GIT_COMMIT_HASH }}" />
+<script>
+{% if object.state == 1 %}{% if object.app_type == None %}window.location = "{% url 'application_apply_form' object.pk 'apptype' %}";{% else %}window.location = "{% url 'application_update' object.pk %}";{% endif %}{% else %}{% endif %}
+</script>
 <div class="container-fluid">
     <div class="row">
         <h1>Application for {{ object.get_app_type_display }} - {{ object.pk }}</h1>
         <br/>
     </div>
-
     <!-- Action panel start -->
     <div class="row">
         {% include "applications/application_side_menu.html" %}
@@ -207,7 +208,7 @@
                             </div>
                             <div class="col-lg-12">
                                 {% if object.river_lease_scan_of_application %}
-                                <A HREF='/media/{{ object.river_lease_scan_of_application.upload.name }}'>{{ river_lease_scan_of_application_short }}</A>
+				<A HREF='{{ object.river_lease_scan_of_application.file_url }}' target="new_tab_{{ object.river_lease_scan_of_application.id }}">{{ river_lease_scan_of_application_short }}</A>
                                 {% else %}
                                 No Attachment Added
                                 {% endif %}
@@ -307,7 +308,7 @@
                                 {% if proposed_development_plans_list %}
 
                                 {% for doc in proposed_development_plans_list %}
-                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='/media/{{ doc.path }}'>{{ doc.path_short }}</A></div>
+				<div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc.path_short }}</A></div>
                                 {% endfor %}
                                 {% else %}
                                 No Attachments
@@ -339,7 +340,7 @@
                                 {% if land_owner_consent_list %}
 
                                 {% for doc in land_owner_consent_list %}
-                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='/media/{{ doc.path }}'>{{ doc.path_short }}</A></div>
+				<div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc.path_short }}</A></div>
                                 {% endfor %}
                                 {% else %}
                                 No Attachments Added
@@ -350,6 +351,7 @@
                 </div>
             </div>
             {% endif %}
+            {% if is_staff == True %}
             {% if hidden.deed == "False" %}
             <div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="deed_heading">
@@ -367,7 +369,7 @@
                                 Print <a href=''>this deed</a>, sign it and attach it to this application<BR>
                             </div>
                             <div class="col-lg-12">
-                                <A HREF='/media/{{ object.deed.upload.name }}'>{{ deed_short }}</A>
+				    <A HREF='{{ object.deed.file_url }}' target="new_tab_{{ object.deed.id }}">{{ deed_short }}</A>
                             </div>
                         </div>
                     </div>
@@ -380,170 +382,8 @@
             {% endif %}
 
             {% if hidden.stakeholdercommunication == "False" %}
-            <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="stakeholder_communication_heading">
-                    <h3 class="panel-title">
-                        <a role="button" data-toggle="collapse" href="#stakeholder_communication_collapse" aria-expanded="false" aria-controls="stakeholder_communication_collapse">
-                            Stakeholder Communication
-                            <span class="glyphicon glyphicon-chevron-down collapse-glyph"></span>
-                        </a>
-                    </h3>
-                </div>
-                <div class="panel-collapse collapse {{ collapse.stakeholder_communication }}" id="stakeholder_communication_collapse" role="tabpanel" aria-labelledby="stakeholder_communication_heading">
-                    <div class="panel-body">
-                        <div class="col-sm-12 col-md-12 col-lg-12">
-                            <div class="col-lg-12">
-                                <label><u>Application</u></label>
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="col-lg-6">
-                                    <label>The letter to stakeholders</label>
-                                </div>
-                                <div class="col-lg-6">
-                                    Generated Letter.PDF
-                                </div>
-                            </div>
-                            <div class="col-lg-12">
+                {% include "applications/application_stakeholder_comms.html" %}
 
-                                <div class="col-lg-6">
-                                    <label>Emailed to</label>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="col-lg-12">
-                                        joe@gmail.com (Jow Captian - Applicat)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        fredauthorised@agent.com (Fred Authorised - Submitter)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        example@a.com (Joe Talkback - Feedback)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        info@perth.wa.gov.au (Perth City - Referral)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        info@joon.wqa.gov.au (Joonfaloop City - Referral)
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-12">
-                                <label><u>Draft Report</u></label>
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="col-lg-6">
-                                    <label>The letter to stakeholders</label>
-                                </div>
-                                <div class="col-lg-6">
-                                    Generated Letter.PDF
-                                </div>
-                            </div>
-                            <div class="col-lg-12">
-
-                                <div class="col-lg-6">
-                                    <label>Emailed to</label>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="col-lg-12">
-                                        joe@gmail.com (Jow Captian - Applicat)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        fredauthorised@agent.com (Fred Authorised - Submitter)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        example@a.com (Joe Talkback - Feedback)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        info@perth.wa.gov.au (Perth City - Referral)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        info@joon.wqa.gov.au (Joonfaloop City - Referral)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="col-lg-6">Swan River Trust board</div> <div class="col-lg-6"> (Fred Van Dam 24/02/2017) </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-12">
-                                <label><u>Final Report</u></label>
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="col-lg-6">
-                                    <label>The letter to stakeholders</label>
-                                </div>
-                                <div class="col-lg-6">
-                                    Generated Letter.PDF
-                                </div>
-                            </div>
-                            <div class="col-lg-12">
-
-                                <div class="col-lg-6">
-                                    <label>Emailed to</label>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="col-lg-12">
-                                        joe@gmail.com (Jow Captian - Applicat)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        fredauthorised@agent.com (Fred Authorised - Submitter)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        example@a.com (Joe Talkback - Feedback)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        info@perth.wa.gov.au (Perth City - Referral)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        info@joon.wqa.gov.au (Joonfaloop City - Referral)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="col-lg-6">Swan River Trust board</div> <div class="col-lg-6"> (Fred Van Dam 24/02/2017)</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-12">
-                                <label><u>Determination</u></label>
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="col-lg-6">
-                                    <label>The letter to stakeholders</label>
-                                </div>
-                                <div class="col-lg-6">
-                                    Generated Letter.PDF
-                                </div>
-                            </div>
-                            <div class="col-lg-12">
-
-                                <div class="col-lg-6">
-                                    <label>Emailed to</label>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="col-lg-12">
-                                        joe@gmail.com (Jow Captian - Applicat)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        fredauthorised@agent.com (Fred Authorised - Submitter)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        example@a.com (Joe Talkback - Feedback)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        info@perth.wa.gov.au (Perth City - Referral)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        info@joon.wqa.gov.au (Joonfaloop City - Referral)
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="col-lg-6">Swan River Trust board</div> <div class="col-lg-6"> <input type='checkbox' > Click here when done.</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             {% endif %}
 
             {% if hidden.referrals == "False" %}
@@ -555,254 +395,10 @@
                 {% include "applications/application_conditions.html" %}
             {% endif %}
             <!-- Workflow - Assessment -->
-
             {% if hidden.assessments == "False" %}
-            <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="assessment_heading">
-                    <h3 class="panel-title">
-                        <a role="button" data-toggle="collapse" href="#assessment_collapse" aria-expanded="false" aria-controls="assessment_collapse">
-                            Assessment
-                            <span class="glyphicon glyphicon-chevron-down collapse-glyph"></span>
-                        </a>
-                    </h3>
-                </div>
-                <div class="panel-collapse collapse {{ collapse.assessments }}" id="assessment_collapse" role="tabpanel" aria-labelledby="assessment_heading">
-                    <div class="panel-body">
-                        <div class="col-sm-12 col-md-12 col-lg-12">
-                            {% if hidden.assessments_draft_report == "False" %}
-                            <div class="col-lg-12">
-                                <label><u>Draft Report</u></label>
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="col-lg-3">
-                                    <label>Current Version of Report</label>
-                                </div>
-                                <div class="col-lg-9">
-                                    {% if object.document_new_draft %}
-                                            <A HREF='/media/{{ object.document_new_draft.upload }}' target="_draft_report_part_5" >Assessment Report Version 2.PDF</A>
-                                    {% else %}
-                                    {% if object.document_draft %}
-                                    <A HREF='/media/{{ object.document_draft.upload }}' target="_draft_report_part_5" >Assessment Report.PDF</A>
-                                    {% else %}
-                                    No Attachment
-                                    {% endif %}
-                                    {% endif %}
-                                </div>
-                            </div>
+                {% include "applications/application_part5_assessment.html" %}
+            {% endif %}
 
-                            {% if hidden.assessments_swan_river_trust_board_feedback == "False" %}
-                            <div class="col-lg-12">
-
-                           	    <div class="col-lg-3">
-                                    <label>Swan River Trust Board Feedback</label>
-                                </div>
-                                <div class="col-lg-9">
-                                    {% if object.swan_river_trust_board_feedback %}
-                                    <A HREF='/media/{{ object.swan_river_trust_board_feedback.upload }}'>Feedback.PDF</A>
-                                    {% else %}
-                                    No Attachment
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            {% endif %}
-
-                            {% if hidden.assessments_new_draft == "False" %}
-                                {% if object.document_new_draft %}
-                                {% else %}
-                                <div class="col-lg-12">
-
-                                    <div class="col-lg-3">
-                                        <label>Attach new version of Report</label>
-                                    </div>
-                                    <div class="col-lg-9">
-                                        {% if object.document_new_draft %}
-                                        <A HREF='/media/{{ object.document_new_draft.upload }}'>Assessment Report Version 2.PDF</A>
-                                        {% else %}
-                                        <A HREF="{% url 'application_update' object.pk %}">{% if may_update == "True" %}Attach File{% else %}No Attachment{% endif %}</A>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                {% endif %}
-                            {% endif %}
-
-                            <div class="col-lg-12">
-                                <div class="col-lg-3">
-                                    <label> Start Date</label>
-                                </div>
-                                <div class="col-lg-9">
-                                    {{ object.assessment_start_date }}
-                                </div>
-                            </div>
-
-                            {% if hidden.swanriverpostaladdress == "False" %}
-                            <div class="col-lg-12">
-                                <div class="col-lg-3">
-                                       <label>To be posted to:</Label>
-                                </div>
-                                <div class="col-lg-9">
-                                    <strong>
-                                    Swan River Trust Board, attn Peter Secretary <BR>
-                                    PO Box 3344<br>
-                                    Perth WA 6000<br>
-                                    </strong>
-                                </div>
-                             </div>
-                             {% endif %}
-
-                       {% if hidden.publish_publication_feedback_draft == "False" %}
-                        <div class="col-sm-12 col-md-12 col-lg-12">
-                            <div class="col-lg-3">
-                                <label>Signed copy (signed by DG) of draft report</label>
-                            </div>
-                            <div class="col-lg-9">
-                                {% if object.document_draft_signed.upload.name %}
-                                <A HREF='/media/{{ object.document_draft_signed.upload.name }}'>Signed Document.pdf</A>
-                                {% else %}
-                                {% if may_update == "True" %}
-                                <A HREF="{% url 'application_update' object.pk %}">Attach File</A>
-                                {% else %}
-                                No Attachment
-                                {% endif %}
-                                {% endif %}
-                            </div>
-                        </div>
-						{% endif %}
-
-                             <div class="col-lg-12">
-                                 <div class="col-lg-3">
-                                     <label> {{ workflow.assessment_extra.label }}</label>
-                                 </div>
-                                 <div class="col-lg-9">
-                                     <strong style='{% if workflow.assessment_extra.color %}color: {{ workflow.assessment_extra.color }} {% endif %}' > {{ workflow.assessment_extra.description }} </strong>
-                                 </div>
-                              </div>
-                        <div class="col-lg-12">
-                        {% if may_update_assessment_draft == "True" %}
-                        <a href="{% url 'application_update' object.pk %}" class="btn btn-primary" role="button">
-                            Update
-                        </a>
-
-                        {% endif %}
-                        </div>
-
-                        {% endif %}
-
-                        </div>
-                        {% if hidden.assessments_draft_report_after_public_consultation == "False" %}
-                         <BR>
-                        <div class="col-lg-12">
-                            <div class="col-lg-12">
-                                <label><u>Draft Report after public consultation</u></label>
-                            </div>
-							{% if hidden.reportandmemoprint == "False" %}
-							 <div class="col-lg-12">
-                                 <div class="col-lg-12">
-                                     <label> Print the report and memo and send to Director General</label>
-                                 </div>
-                             </div>
-							{% endif %}
-
-                            <div class="col-lg-12">
-                                <div class="col-lg-3">
-                                    Attach new version of draft report
-                                </div>
-                                <div class="col-lg-9">
-                                    {% if object.document_new_draft_v3 %}
-                                    <A HREF='/media/{{ object.document_new_draft_v3.upload }}'>Assessment Report Version 3.PDF</A>
-                                    {% else %}
-                                    <A HREF="{% url 'application_update' object.pk %}">{% if may_update == "True" %}Attach File{% else %}No Attachment{% endif %}</A>
-                                    {% endif %}
-                                </div>
-
-                            </div>
-
-                            <div class="col-lg-12">
-                                <div class="col-lg-3">
-                                    Memo
-                                </div>
-                                <div class="col-lg-9">
-                                    {% if object.document_memo %}
-                                        <A HREF='/media/{{ object.document_memo.upload }}'>Memo.PDF</A>
-                                    {% else %}
-                                        <A HREF="{% url 'application_update' object.pk %}">{% if may_update == "True" %}Attach File{% else %}No Attachment{% endif %}</A>
-                                    {% endif %}
-                                 </div>
-                            </div>
-
-                        </div>
-                        {% endif %}
-
-                        {% if hidden.assessments_determination_and_briefing_note == "False" %}
-
-                        <div class="col-lg-12">
-                            <div class="col-lg-12">
-                                <label><u>Determination and Briefing Note</u></label>
-                            </div>
-							{% if hidden.finalreportdetermination == "False" %}
-                             <div class="col-lg-12">
-                                 <div class="col-lg-12">
-                                     <label> Print the determination, breifing note and final report and send to the Director General</label>
-                                 </div>
-                             </div>
-                            {% endif %}
-
-                            <div class="col-lg-12">
-                                <div class="col-lg-3">
-                                    Determination
-                                </div>
-                                <div class="col-lg-9">
-                                    {% if object.document_determination %}
-                                       <A HREF='/media/{{ object.document_determination.upload }}'>Determination.PDF</A>
-                                    {% else %}
-                                        <A HREF="{% url 'application_update' object.pk %}">{% if may_update == "True" %}Attach File{% else %}No Attachment{% endif %}</A>
-                                    {% endif %}
-
-                                </div>
-
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="col-lg-3">
-                                    Briefing Note
-                                </div>
-                                <div class="col-lg-9">
-									{% if object.document_briefing_note %}
-                                       <A HREF='/media/{{ object.document_briefing_note.upload }}'>Briefing.PDF</A>
-                                    {% else %}
-                                        <A HREF="{% url 'application_update' object.pk %}">{% if may_update == "True" %}Attach File{% else %}No Attachment{% endif %}</A>
-                                    {% endif %}
-                                </div>
-
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="col-lg-3">
-                                   	Final Report
-                                </div>
-                                <div class="col-lg-9">
-									{% if object.document_final_signed %}
-                                    <A HREF='/media/{{ object.document_final_signed.upload.name }}'>Signed Document.pdf</A>
-
-                                    {% else %}
-                                            No Attachment
-                                    {% endif %}
-                                </div>
-
-                            </div>
-
-
-                        </div>
-                        {% endif %}
-
-                        {% if may_update == "True" %}
-                        <div class="col-lg-12">
-
-                                <a class="btn btn-primary" role="button" href="{% url 'application_update' object.pk %}">{% if formcomponent.update.title %}{{ formcomponent.update.title }}{% else %} Update application{% endif %}</a>
-                        </div>
-                        {% endif %}
-
-                    </div>
-                </div>
-            </div>
             {% endif %}
 
 <script>

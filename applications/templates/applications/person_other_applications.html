@@ -27,15 +27,11 @@
                             <label>Status:</label>
                         </div>
                         <div class="col-sm-12 col-lg-12">
-                            <select class="select form-control" id="id_appstatus" name="appstatus">
-                                <option value="" selected="selected">All</option>
-                                {% for at in app_appstatus %}
-                                {% if appstatus == at.0 %}
-                                <option selected value="{{ at.0 }}">{{ at.1 }}</option>
-                                {% else %}
-                                <option value="{{ at.0 }}">{{ at.1 }}</option>
-                                {% endif %}
-                                {% endfor %}
+                            <select class="select form-control" id="id_appstatus_limited" name="appstatus_limited">
+                                <option value="" {% if appstatus_limited == '' %}selected="selected"{% endif %} >All</option>
+                                <option {% if appstatus_limited == 'draft' %}selected="selected"{% endif %} value="draft">Draft</option>
+                                <option {% if appstatus_limited == 'submitted' %}selected="selected"{% endif %} value="submitted">Submitted</option>
+                                <option {% if appstatus_limited == 'completed' %}selected="selected"{% endif %} value="completed">Completed</option>
                             </select>
                         </div>
                     </div>

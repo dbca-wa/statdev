@@ -2,11 +2,11 @@
 {% load crispy_forms_tags %}
 {% load static %} 
 {% block page_content_inner %}
-<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}?ver={{ GIT_COMMIT_HASH }}" />
 
 <div class="container-fluid">
     <div class="row">
-        <h1>New Application</h1>
+        <h1>New application</h1>
         <br />
     </div>
     <!-- Action panel start -->

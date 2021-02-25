@@ -3,14 +3,17 @@
 {% block page_content_inner %}
 {% load static %}
 
-<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}" />
+<script>
+{% if object.state == 1 %}{% if object.app_type == None %}window.location = "{% url 'application_apply_form' object.pk 'apptype' %}";{% else %}window.location = "{% url 'application_update' object.pk %}";{% endif %}{% else %}{% endif %}
+</script>
+
+<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}?ver={{ GIT_COMMIT_HASH }}" />
 
 <div class="container-fluid">
     <div class="row">
         <h1>Application for {{ object.get_app_type_display }} - {{ object.pk }}</h1>
         <br/>
     </div>
-
     <!-- Action panel start -->
     <div class="row">
         {% include "applications/application_side_menu.html" %}
@@ -96,7 +99,7 @@
                         </a>
                     </h3>
                 </div>
-                <div class="panel-collapse collapse {{ collapse.proposed_activities }} " id="vessel_details_collapse" role="tabpanel" aria-labelledby="vessel_details_heading">
+                <div class="panel-collapse collapse {{ collapse.vessel_details }} " id="vessel_details_collapse" role="tabpanel" aria-labelledby="vessel_details_heading">
                     <div class="panel-body">
                          {% include "applications/application_vessels.html" %}
                     </div>
@@ -121,6 +124,7 @@
                             <div class="row">
                                 <div class="col-xs-12">
                                     <h4>Purpose of application:</h4>
+
                                     {% if object.purpose %}
                                     <p>{{ object.purpose }}</p>
                                     {% else %}
@@ -159,11 +163,17 @@
                                     <p>Not stated</p>
                                     {% endif %}
                                     <h4>Location/route and access points (mark clearly on map):</h4>
-                                    {% if object.location_route_access %}
-                                    <p><a href="{{ object.location_route_access.upload.url }}">{{ object.location_route_access }}</a></p>
-                                    {% else %}
-                                    <p>Not stated</p>
-                                    {% endif %}
+
+
+                                        {% if object.location_route_access %}
+                                                {% for doc in object.location_route_access.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                                {% endfor %}
+                                        {% else %}
+                                                No Attachments
+                                        {% endif %}
+
+
                                     <h4>List of jetties to be used:</h4>
                                     {% if object.jetties %}
                                     <p>{{ object.jetties }}</p>
@@ -246,40 +256,59 @@
                     <div class ="row">
                         <div class="col-xs-12">
                             <h4>Certificate of survey:</h4>
-                            {% if object.cert_survey %}
-                            <p><a href="{{ object.cert_survey.upload.url }}">{{ object.cert_survey }}</a></p>
-                            {% else %}
-                            <p>None</p>
-                            {% endif %}
+
+                                        {% if object.cert_survey %}
+                                                {% for doc in object.cert_survey.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                                {% endfor %}
+                                        {% else %}
+                                                No Attachments
+                                        {% endif %}
                             <h4>Public liability insurance certificate:</h4>
-                            {% if object.cert_public_liability_insurance %}
-                            <p><a href="{{ object.cert_public_liability_insurance.upload.url }}">{{ object.cert_public_liability_insurance }}</a></p>
-                            {% else %}
-                            <p>None</p>
-                            {% endif %}
+
+                                        {% if object.cert_public_liability_insurance %}
+                                                {% for doc in object.cert_public_liability_insurance.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                                {% endfor %}
+                                        {% else %}
+                                                No Attachments
+                                        {% endif %}
+
+
                             <h4>Risk management plan (if available):</h4>
-                            {% if object.risk_mgmt_plan %}
-                            <p><a href="{{ object.risk_mgmt_plan.upload.url }}">{{ object.risk_mgmt_plan }}</a></p>
-                            {% else %}
-                            <p>None</p>
-                            {% endif %}
+
+                                        {% if object.risk_mgmt_plan %}
+                                                {% for doc in object.risk_mgmt_plan.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                                {% endfor %}
+                                        {% else %}
+                                                No Attachments
+                                        {% endif %}
                             <h4>Safety management procedures (if available):</h4>
-                            {% if object.safety_mgmt_procedures %}
-                            <p><a href="{{ object.safety_mgmt_procedures.upload.url }}">{{ object.safety_mgmt_procedures }}</a></p>
-                            {% else %}
-                            <p>None</p>
-                            {% endif %}
+
+                                        {% if object.safety_mgmt_procedures %}
+                                                {% for doc in object.safety_mgmt_procedures.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                                {% endfor %}
+                                        {% else %}
+                                                No Attachments
+                                        {% endif %}
+
                             <h4>Brochures, itineraries or advertisements (if applicable):</h4>
-                            {% if object.brochures_itineries_adverts.exists %}
-                            <p>{% for doc in object.brochures_itineries_adverts.all %}<a href="{{ doc.upload.url }}">{{ doc }}</a><br>{% endfor %}</p>
-                            {% else %}
-                            <p>None</p>
-                            {% endif %}
+
+                                        {% if object.brochures_itineries_adverts %}
+                                                {% for doc in object.brochures_itineries_adverts.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                                {% endfor %}
+                                        {% else %}
+                                                No Attachments
+                                        {% endif %}
+
                             {% comment %}
                             <h4>Other relevant supporting documentation (if available)</h4>
                             {% if other_supporting_docs.exists %}
                             <p>{% for doc in object.other_supporting_docs.all %}
-                                <a href="{{ doc.upload.url }}">{{ doc }}</a><br>
+			    <a href="{{ doc.file_url }}" target="new_tab_{{ doc.id }}">{{ doc }}</a><br>
                             {% endfor %}</p>
                             {% else %}
                             <p>None</p>
@@ -315,7 +344,7 @@
                                 {% if land_owner_consent_list %}
 
                                 {% for doc in land_owner_consent_list %}
-                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='/media/{{ doc.path }}'>{{ doc.path_short }}</A></div>
+				<div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc.path_short }}</A></div>
                                 {% endfor %}
                                 {% else %}
                                 No Attachments Added
@@ -346,21 +375,21 @@
                                 Print <a href=''>this deed</a>, sign it and attach it to this application<BR>
                             </div>
                             <div class="col-lg-12">
-                                <A HREF='/media/{{ object.deed.upload.name }}'>{{ deed_short }}</A>
+				    <A HREF='{{ object.deed.file_url }}' target="new_tab_{{ object.deed.id }}">{{ deed_short }}</A>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             {% endif %}
-
+            {% if is_staff == True %}
 
             <!-- Referrals panel -->
             {% include "applications/application_referrals.html" %}
 
             <!-- Conditions panel -->
             {% include "applications/application_conditions.html" %}
-
+            {% endif %}
         </div>
     </div>
 </div>
@@ -377,14 +406,15 @@
         });
     });
 
-function loadForm() {
-               $.ajax({
-                    url: '{% url 'application_conditions_table' object.pk %}',
-                    async: false,
-                    success: function(data) {
-                          $('#conditions_table').html(data);
-                    }
-               });
-}
+//function loadForm() {
+//               console.log("LOADED FORM");
+//               $.ajax({
+//                    url: '{% url 'application_conditions_table' object.pk %}',
+//                    async: false,
+//                    success: function(data) {
+//                          $('#conditions_table').html(data);
+//                    }
+//               });
+//}
 </script>
 {% endblock extra_js %}

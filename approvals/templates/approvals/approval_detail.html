@@ -19,10 +19,9 @@
 			<div class="panel panel-default">
 
 				<div class="panel-heading">
-					<h3 class="panel-title">Actions</h3>
+			              <h3 class="panel-title">Actions</h3>
 				</div>
 				<div class="panel-body">
-
 					<ul>
 						{% if may_update %}<li><a href="{% url 'application_update' object.pk %}">Update application</a></li>{% endif %}
 						{% if may_create_condition %}<li><a href="{% url 'condition_create' object.pk %}">Create a condition</a></li>{% endif %}
@@ -220,7 +219,7 @@
                                     <label>Document</label>
                                 </div>
                                 <div class="col-sm-12 col-md-9 col-lg-9">
-									<img src="/static/images/pdf.png">&nbsp;&nbsp;<A HREF=''>Document</A>
+									<img src="/static/images/pdf.png">&nbsp;&nbsp;<A HREF='{% url "approvals_view_pdf" object.pk %}'>Document</A>
                                 </div>
                             </div>
 

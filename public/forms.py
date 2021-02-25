@@ -5,8 +5,10 @@ from crispy_forms.bootstrap import FormActions
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django import forms
 from django.forms import Form, ModelForm, ChoiceField, FileField, CharField, Textarea, ClearableFileInput, HiddenInput, Field, EmailField
-from applications.widgets import ClearableMultipleFileInput
+from applications.widgets import ClearableMultipleFileInput, RadioSelectWithCaptions, AjaxFileUploader
+from django_crispy_jcaptcha.widget import CaptchaImages, CaptchaValidation
 from multiupload.fields import MultiFileField
 from ledger.accounts.models import EmailUser, Address, Organisation
 from applications.models import Application, PublicationFeedback
@@ -29,7 +31,9 @@ class ApplicationPart5(ModelForm):
     email = EmailField(required=False,max_length=255)
     email_confirm = EmailField(required=False,max_length=255)
     comments = CharField(required=False,max_length=255, widget=Textarea)
-    records = FileField(required=False, max_length=128 , widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'})) 
+    #records = FileField(required=False, max_length=128 , widget=ClearableMultipleFileInput(attrs={'multiple':'multiple'})) 
+    records = FileField(required=False, max_length=128, widget=AjaxFileUploader(attrs={'multiple':'multiple'}))
+    captcha = CharField(required=False,widget=CaptchaImages(attrs={}))
 
     class Meta:
         model = Application
@@ -57,10 +61,12 @@ class ApplicationPart5(ModelForm):
 
         crispy_boxes.append(crispy_box('title_collapse','form_title','Title',HTML('{% include "public/title.html" %}')))
 #        crispy_boxes.append(crispy_box('river_licence_collapse','river_licence_title','River Licence',HTML('{% include "public/river_reserve_licence_snippet.html" %}')))
-        crispy_boxes.append(HTML('{% include "public/river_reserve_licence_snippet.html" %}'))
+        # crispy_boxes.append(HTML('{% include "public/river_reserve_licence_snippet.html" %}'))
         crispy_boxes.append(HTML('{% include "public/details_of_proposed_develeopment_snipplet.html" %}'))
-
-        crispy_boxes.append(crispy_box('feedback_collapse','form_feecback','Feedback','name','address','suburb','state','post_code','phone','email','email_confirm','comments','records',Submit('submitfeedback', 'Submit', css_class='btn-lg')))
+        if self.initial['action'] == 'determination': 
+            pass
+        else:
+            crispy_boxes.append(crispy_box('feedback_collapse','form_feecback','Feedback','name','address','suburb','state','post_code','phone','email','email_confirm','comments','records','captcha',Submit('submitfeedback', 'Submit', css_class='btn-lg')))
 
 #        crispy_boxes.append(HTML('{% include "public/river_reserve_licence_snippet.html" %}'))
 
@@ -79,3 +85,6 @@ class ApplicationPart5(ModelForm):
 #        self.helper.add_input(Submit('cancel', 'Cancel'))
 
         # Limit the organisation queryset unless the user is a superuser.
+    def clean_captcha(self):
+        CaptchaValidation(self.cleaned_data['captcha'], forms) 
+        return self.cleaned_data['captcha']

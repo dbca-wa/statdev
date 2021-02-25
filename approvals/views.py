@@ -15,6 +15,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from statdev.context_processors import template_context
 from django.contrib import messages
 from applications.views_pdf import PDFtool
+from applications.email import sendHtmlEmail, emailGroup, emailApplicationReferrals
+
 import os.path
 import os 
 
@@ -53,7 +55,7 @@ class ApprovalList(ListView):
         APP_TYPE_CHOICES = []
         APP_TYPE_CHOICES_IDS = []
         for i in Application.APP_TYPE_CHOICES:
-            if i[0] in [4,5,6,7,8,9,10,11]:
+            if i[0] in [5,6,7,8,9,10,11]:
                skip = 'yes'
             else:
                APP_TYPE_CHOICES.append(i)
@@ -75,7 +77,7 @@ class ApprovalList(ListView):
             if self.request.GET['appstatus'] != '':
                 query_obj &= Q(status=int(self.request.GET['appstatus']))
 
-            objlist = ApprovalModel.objects.filter(query_obj)
+            objlist = ApprovalModel.objects.filter(query_obj).order_by('-id')
             context['query_string'] = self.request.GET['q']
 
             if self.request.GET['apptype'] != '':
@@ -91,7 +93,7 @@ class ApprovalList(ListView):
  #           query_str = self.request.GET['q']
   #          objlist = ApprovalModel.objects.filter(Q(pk__contains=query_str) | Q(title__icontains=query_str) | Q(applicant__email__icontains=query_str))
         else:
-            objlist = ApprovalModel.objects.filter()
+            objlist = ApprovalModel.objects.filter().order_by('-id')
         usergroups = self.request.user.groups.all()
 
         context['app_list'] = []
@@ -102,6 +104,7 @@ class ApprovalList(ListView):
         for app in objlist.order_by('title'):
             row = {}
             row['app'] = app
+            row['approval_url'] = app.approval_url
         #    if app.group is not None:
 
             if app.applicant:
@@ -118,7 +121,7 @@ class ApprovalList(ListView):
 #       context['app_list'] = context['app_list'].order_by('title')
 
         # TODO: any restrictions on who can create new applications?
-        processor = Group.objects.get(name='Processor')
+        processor = Group.objects.get(name='Statdev Processor')
 
         # Rule: admin officers may self-assign applications.
         if processor in self.request.user.groups.all() or self.request.user.is_superuser:
@@ -134,7 +137,38 @@ class ApprovalDetails(LoginRequiredMixin,DetailView):
         app = self.get_object()
         context_processor = template_context(self.request)
         context['admin_staff'] = context_processor['admin_staff']
+        context['approval_history'] = self.get_approval_history(app, [])
         return context
+
+    def get_approval_history(self,app,approvals):
+        approvals = self.get_approval_history_up(app,approvals)
+        approvals = self.get_approval_history_down(app,approvals)
+
+        return approvals
+
+    def get_approval_history_up(self,app,approvals):
+        if app:
+           application = Application.objects.filter(old_approval_id=app.id)
+           if application.count() > 0:
+
+                app = ApprovalModel.objects.filter(application=application[0])
+                if app.count() > 0:
+                    approvals.append({'id': app[0].id, 'title':  app[0].title})
+
+                    approvals = self.get_approval_history_up(app[0],approvals)
+        return approvals
+
+    def get_approval_history_down(self,app,approvals):
+        if app.application.old_approval_id:
+            app_old = ApprovalModel.objects.filter(id=app.application.old_approval_id)
+            approvals.append({'id': app_old[0].id, 'title':  app_old[0].title} )
+            app = ApprovalModel.objects.get(id=app.application.old_approval_id)
+            approvals = self.get_approval_history_down(app,approvals) 
+
+        return approvals
+
+
+
 
 class ApprovalStatusChange(LoginRequiredMixin,UpdateView):
     model = ApprovalModel
@@ -164,7 +198,7 @@ class ApprovalStatusChange(LoginRequiredMixin,UpdateView):
     def post(self, request, *args, **kwargs):
         #        self.initial = self.get_initial()
         self.object = self.get_object()
-        self.object.status = 2
+        #self.object.status = 2
         #print self.initial['status']
         if request.POST.get('cancel'):
             app = Application.objects.get(pk=self.kwargs['application'])
@@ -183,6 +217,10 @@ class ApprovalStatusChange(LoginRequiredMixin,UpdateView):
             content_object=app, category=Action.ACTION_CATEGORY_CHOICES.change,
             user=self.request.user, action='Approval Change')
         action.save()
+        if status == 'surrendered':
+             emailcontext = {'approval_id': app.id, 'app': app}
+             emailGroup('Approval surrendered AP-'+str(app.id) , emailcontext, 'approval_surrendered.html', None, None, None, 'Statdev Processor')
+
 
         return super(ApprovalStatusChange, self).form_valid(form)
 
@@ -290,7 +328,9 @@ def getPDF(request,approval_id):
       #app = ApprovalModel.objects.get(id=approval_id)
       BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
       filename = BASE_DIR+'/pdfs/approvals/'+str(app.id)+'-approval.pdf'
-      if os.path.isfile(filename) is False:
+
+      if app.status == 7 or os.path.isfile(filename) is False:
+      #if os.path.isfile(filename) is False:
 #      if app.id:
           pdftool = PDFtool()
           if app.app_type == 1:
@@ -301,7 +341,7 @@ def getPDF(request,approval_id):
               pdftool.generate_part5(app)
           elif app.app_type == 4:
               pdftool.generate_emergency_works(app)
-          elif app.app_type == 5:
+          elif app.app_type == 6:
               pdftool.generate_section_84(app)
 
       if os.path.isfile(filename) is True:

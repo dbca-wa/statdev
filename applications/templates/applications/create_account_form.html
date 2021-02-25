@@ -3,7 +3,7 @@
 {% load static %} 
 {% block page_content_inner %}
 
-<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}?ver={{ GIT_COMMIT_HASH }}" />
 
 <div class="container-fluid">
     <div class="row">

@@ -1,9 +1,8 @@
 <p>Dear {{ person.first_name }}</p>
 
-
 <p>A '{{ application_name }}' application has been assign to you for feedback.   You can view the application by logging in <A HREF='{{ default_url }}'>here</A></p>
 
-<p>Direct Link : {{ default_url }}{% url 'application_detail' application_id %}</p>
+<p>Direct Link : <A href='{{ default_url }}{% url 'referral_conditions' application_id %}'>{{ default_url }}{% url 'referral_conditions' application_id %}</A></p>
 
 {% include "signature.html" %}
 

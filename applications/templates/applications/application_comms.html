@@ -3,9 +3,20 @@
 {% block page_content_inner %}
 <div class="container-fluid">
     <div class="row">
-        <h1>Communication for {{ object.application.get_app_type_display }} - {{ object.pk }}</h1>
-        <p><a href="{% url 'application_detail' object.pk %}">Return to application details</a></p>
-        <h2>communication log</h2>
+<p><a class='btn btn-primary' href="{% url 'application_detail' object.pk %}">Return to application</a> </p>
+
+<div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="title_heading">
+        <h3 class="panel-title">
+            <a role="button" data-toggle="collapse" href="#application_list_collapse" aria-expanded="false" aria-controls="application_list_collapse">
+                Communication for {{ object.get_app_type_display }} - {{ object.pk }}
+                <span class="glyphicon glyphicon-chevron-down collapse-glyph"></span>
+            </a>
+        </h3>
+    </div>
+    <div class="panel-collapse collapse in" id="application_list_collapse" role="tabpanel" aria-labelledby="application_list_heading">
+        <div class="panel-body">
+        <a class='btn btn-danger' href="{% url 'application_comms_create' object.pk %}">Add entry</a><br><br>
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -16,6 +27,7 @@
                     <th>Subject</th>
                     <th>Details</th>
                     <th>Documents</th>
+                    <th>Action</th>
                 </tr>
             </thead>
          {% if communications.exists %}
@@ -26,20 +38,34 @@
                     <td>{{ communication.get_comms_type_display }}</td>
                     <td>{{ communication.comms_to }}</td>
                     <td>{{ communication.comms_from }}</td>
-                    <td>{{ communication.subject }}</td>
-                    <td>{{ communication.details }}</td>
+                    <td>{{ communication.subject|truncatechars:100 }}{% if communication.subject|length > 100 %}...{% endif %}</td>
+                    <td>{{ communication.details|truncatechars:100 }}{% if communication.details|length > 100 %}...{% endif %}</td>
                     <td>
 			{% if communication.records.exists %}
+                        {% if communication.records.all.count > 1 %}
+                              Mulitple Attachments ({{communication.records.all.count }})
+                        {% else %}
+
                         {% for doc in communication.records.all %}
-                            <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='/media/{{ doc.upload }}'>{{ doc.name }}</A></div>
+                            <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target='comms_attachment_{{ doc.id }}'>{{ doc.name }}</A></div>
                         {% endfor %}
                         {% endif %}
+                        {% endif %}
                         </td>
+                    <td>
+                       <input type='button' class='btn btn-primary' onclick="django_ajax_form.OpenForm('/applications/{{ communication.application.id }}/comms-view/{{ communication.id }}/','View Communication Log');" value='View'>
+                    </td>
                 </tr>
                 {% endfor %}
          {% endif %}
         </table>
-        <p><a href="{% url 'application_detail' object.pk %}">Return to application details</a></p>
+        </div>
+        </div>
+      </div>
+        <p><a class='btn btn-primary' href="{% url 'application_detail' object.pk %}">Return to application</a> </p>
+
+
+    
     </div>
 </div>
 {% endblock page_content_inner %}

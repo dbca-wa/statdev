@@ -1,0 +1,137 @@
+{% extends "base_statdev.html" %}
+
+{% block page_content_inner %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}?ver={{ GIT_COMMIT_HASH }}" />
+
+<div class="container-fluid">
+    <div class="row">
+        <h1>Clearance of Condition - {{ object.pk }}</h1>
+        <br/>
+    </div>
+    <!-- Action panel start -->
+    <div class="row">
+        <!--- remove everything eblow this tag to the end tag if everything has been moved -->
+        <div class="col-sm-12 col-md-9 col-lg-9">
+            <!-- Conditions -->
+            <div class="panel panel-default">
+                <div class="panel-heading" data-toggle="collapse" data-target="#conditions_collapse">
+                    <h3 class="panel-title">
+                        Clearance of Condition
+                        <span class="glyphicon glyphicon-minus collapse-glyph"></span>
+                    </h3>
+                </div>
+                <div class="panel-collapse collapse in" id="conditions_collapse">
+                    <div class="panel-body">
+                        <div>
+                            {% if conditions %} 
+                            {% for c in conditions %}
+
+                            <!-- Current -->
+                            {% if c.status == 1 %}
+                            {% endif %}
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <b>Condition ({{ c.id }})</b>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        {{ c.condition.condition }} 
+					</bR><BR>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+					<b>Comments</b>
+				    </div>
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                            {% if c.comments %}
+                                                {{ c.comments }}
+                                            {% else %}
+                                               <i>Please provide comment</i>
+                                            {% endif %}
+                                     </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-sm-12 col-md-12 col-lg-1">
+                                <label>Supporting Documents</label>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-9">
+                                {% for c in conditions %}
+                                     {% for d in c.records.all %}
+				     <img src="/static/images/pdf.png"> &nbsp; <A HREF='{{ d.file_url }}' target="new_tab_{{ doc.id }}">{{ d }}</A><BR>
+                                     {% endfor %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            {% if object.status == 4 %}
+            <div class="col-sm-12 col-md-12 col-lg-12">
+            <!-- Conditions -->
+            <div class="panel panel-default">
+                <div class="panel-heading" data-toggle="collapse" data-target="#ac_collapse">
+                    <h3 class="panel-title">
+                       Assessment 
+                       <span class="glyphicon glyphicon-minus collapse-glyph"></span>
+                    </h3>
+                </div>
+                
+                <div class="panel-collapse collapse in " id="ac_collapse">
+                    <div class="panel-body">
+                        <div class="col-sm-12 col-md-12 col-lg-12">
+				<div class="col-sm-12 col-md-3 col-lg-3">
+				    <label>Assessment Result</Label>
+				</div>
+				<div class="col-sm-12 col-md-9 col-lg-9">
+				Approved	
+				</div>
+			</div>
+                       <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div class="col-sm-12 col-md-3 col-lg-3">
+                                    <label>Assessed By</label>
+                                </div>
+                                <div class="col-sm-12 col-md-9 col-lg-9">
+				   {{ object.assessed_by.get_full_name }}
+                                </div>
+                        </div>
+
+                       <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div class="col-sm-12 col-md-3 col-lg-3">
+                                    <label>Date</label>
+                                </div>
+                                <div class="col-sm-12 col-md-9 col-lg-9">
+					{{ object.assessed_date }}
+                                </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            </div>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock page_content_inner %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+$(function() {
+    $('.collapse').on('shown.bs.collapse', function() {
+        $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
+    }).on('hidden.bs.collapse', function() {
+        $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
+    });
+});
+</script>
+{% endblock extra_js %}

@@ -1,0 +1,95 @@
+<script>
+
+	$("input[name=beverage]").click(function(e) {
+		var value = this.value;
+                if (value == 'True') { 
+			$('#div_id_liquor_licence').show();
+		} else {
+			$('#div_id_liquor_licence').hide();		
+		}
+	});
+
+        $("input[name=jetty_dot_approval]").click(function(e) {
+                var value = this.value;
+                if (value == 'True') {
+                        $('#div_id_jetty_dot_approval_expiry').show();
+                } else {
+                        $('#div_id_jetty_dot_approval_expiry').hide();
+                }
+        });
+
+
+	var beverage = $('#id_beverage_1').is(':checked');
+        if (beverage == true) {
+		$('#div_id_liquor_licence').show();
+        } else {
+	        $('#div_id_liquor_licence').hide();
+	}
+
+	var jetty_dot_approval = $('#id_jetty_dot_approval_1').is(':checked');
+        if (jetty_dot_approval == true) {
+                $('#div_id_jetty_dot_approval_expiry').show();
+        } else {
+                $('#div_id_jetty_dot_approval_expiry').hide();
+        }
+
+	// var vessel_or_craft = $('#id_vessel_or_craft_details_1').is(':checked');
+
+	$("input[name=vessel_or_craft_details]").click(function(e) {
+		var value = this.value;
+                if (value == '3') {
+                    $('#box_crafts_collapse').hide();
+                    $('#vessel_and_crafts_option').show();
+		} else if (value == '2') {
+		    $('#vessel_and_crafts_option').hide();
+                    $('#box_crafts_collapse').show();
+		} else {
+   		    $('#box_crafts_collapse').hide();
+                    $('#vessel_and_crafts_option').hide();
+		}
+	});
+
+        $('#box_crafts_collapse').hide();
+        $('#vessel_and_crafts_option').hide();
+	
+	var id_vessel_or_craft_details_1 = $('#id_vessel_or_craft_details_1').is(':checked');
+	if (id_vessel_or_craft_details_1 == true) {
+                    $('#box_crafts_collapse').hide();
+                    $('#vessel_and_crafts_option').show();
+	}
+
+	var id_vessel_or_craft_details_2 = $('#id_vessel_or_craft_details_2').is(':checked');
+	if (id_vessel_or_craft_details_2 == true) {
+               $('#vessel_and_crafts_option').hide();
+               $('#box_crafts_collapse').show();
+	}
+
+	function loadForm() { 
+
+               $.ajax({
+	            url: '{% url 'application_vessel_table' object.pk %}',
+	            success: function(data) {
+	        	  $('#vessels_table').html(data);
+                    }
+	       });
+               $.ajax({
+                    url: '{% url 'application_refer_table' object.pk %}',
+                    success: function(data) {
+                          console.log('Referral Refresh');
+                          $('#referrals_table').html(data);
+                    }
+               });
+
+               $.ajax({
+                    url: '{% url 'application_conditions_table' object.pk %}',
+                    async: false,
+                    success: function(data) {
+                          $('#conditions_table').html(data);
+                    }
+               });
+
+
+	}
+
+
+</script>

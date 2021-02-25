@@ -24,7 +24,7 @@
 			</div>
                         <div class='col-sm-12 col-md-9 col-lg-9'>
                                 {% for doc in object.proposed_development_plans.all %}
-                                         <a href="{{ doc.upload.url }}">{{ doc }}</a><br>
+				<a href="{{ doc.file_url }}" target="new_tab_{{ doc.id }}">{{ doc }}</a><br>
                                 {% endfor %}
                         </div>
 			</div>
@@ -35,7 +35,13 @@
                                 <label>Supporting info demonstrate compliance trust policies</label>
                         </div>
                         <div class='col-sm-12 col-md-9 col-lg-9'>
-				<a href="{{ object.supporting_info_demonstrate_compliance_trust_policies.upload.url }}">{{ object.supporting_info_demonstrate_compliance_trust_policies }}</a>
+                                {% if object.supporting_info_demonstrate_compliance_trust_policies %}
+                                        {% for doc in object.supporting_info_demonstrate_compliance_trust_policies.all %}
+					<div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                        {% endfor %}
+                                {% else %}
+                                No Attachments
+                                {% endif %}
                         </div>
 			</div>
                     </div>

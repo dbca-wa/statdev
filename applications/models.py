@@ -7,10 +7,13 @@ from django.core.urlresolvers import reverse
 from django.utils.encoding import python_2_unicode_compatible
 from model_utils import Choices
 from django.contrib.auth.models import Group
+from django.core.files.storage import FileSystemStorage
+from django.core.exceptions import ValidationError
 #from approvals.models import Approval
-from ledger.accounts.models import Organisation, Address as LedgerAddress
+from ledger.accounts.models import Organisation, Address as LedgerAddress, OrganisationAddress
 #from ledger.payments.models import Invoice
 
+upload_storage = FileSystemStorage(location=settings.PRIVATE_MEDIA_ROOT)
 
 @python_2_unicode_compatible
 class Record(models.Model):
@@ -30,11 +33,43 @@ class Record(models.Model):
         (9, 'completion', ('Completed document')),
     )
 
-    upload = models.FileField(max_length=512, upload_to='uploads/%Y/%m/%d')
+
+    FILE_GROUP = Choices(
+        (1, 'permit', ('Permit')),
+        (2, 'licence', ('Licence/permit')),
+        (3, 'part5', ('Part 5')),
+        (4, 'emergency', ('Emergency works')),
+        (5, 'part5cr', ('Part 5 - Amendment Request')),
+        (6, 'part5amend', ('Part 5 - Amendment Application')),
+        (7, 'test', ('Test - Application')),
+        (8, 'permitamend', ('Amend Permit')),
+        (9, 'licenceamend', ('Amend Licence')),
+        (10, 'permitrenew', ('Renew Permit')),
+        (11, 'licencerenew', ('Renew Licence')),
+        (2001, 'person', ('Person')),
+        (2002, 'organisation', ('Organistion')),
+        (2003, 'application_comms', ('Application Communication Logs')),    
+        (2004, 'account_comms', ('Account Communication Logs')),
+        (2005, 'approval', ('Approval')),
+        (2006, 'compliance', ('Compliance')),
+        (2007, 'approval_comms', ('Approval Communication Logs'))
+    )
+
+
+    upload = models.FileField(max_length=512, upload_to='uploads/%Y/%m/%d', storage=upload_storage)
     name = models.CharField(max_length=256)
     category = models.IntegerField(choices=DOC_CATEGORY_CHOICES, null=True, blank=True)
     metadata = JSONField(null=True, blank=True)
     text_content = models.TextField(null=True, blank=True, editable=False)  # Text for indexing
+    file_group = models.IntegerField(choices=FILE_GROUP, null=True, blank=True)
+    file_group_ref_id = models.IntegerField(null=True, blank=True) 
+    extension = models.CharField(max_length=5, null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    def file_url(self):
+         if self.extension is None: 
+                self.extension = ''
+         return settings.PRIVATE_MEDIA_URL+str(self.pk)+'-file'+self.extension
 
     def __str__(self):
         if self.category:
@@ -53,12 +88,17 @@ class Vessel(models.Model):
     )
 
     vessel_type = models.SmallIntegerField(choices=VESSEL_TYPE_CHOICES, null=True, blank=True)
+    # Vessel Information
     name = models.CharField(max_length=256)
     vessel_id = models.CharField(max_length=256, null=True, blank=True, verbose_name='Vessel identification')
-    registration = models.ManyToManyField(Record, blank=True)
+    registration = models.ManyToManyField(Record, blank=True, related_name='vessel_documents')
     size = models.PositiveIntegerField(null=True, blank=True, verbose_name='size (m)')
     engine = models.PositiveIntegerField(null=True, blank=True, verbose_name='engine (kW)')
     passenger_capacity = models.PositiveIntegerField(null=True, blank=True)
+    # craft Information
+    craft_type = models.CharField(max_length=256, null=True, blank=True, verbose_name='Craft Type')
+    number_of_crafts = models.PositiveIntegerField(null=True, blank=True, verbose_name='Number of crafts')
+    documents = models.ManyToManyField(Record, blank=True, related_name='craft_documents')
 
     def __str__(self):
         return self.name
@@ -91,7 +131,7 @@ class Application(models.Model):
         (3, 'part5', ('Part 5')),
         (4, 'emergency', ('Emergency works')),
         (5, 'part5cr', ('Part 5 - Amendment Request')),
-        (6, 'part5amend', ('Part 5 - Amendment Application')),
+        (6, 'part5amend', ('Section 84')),
         (7, 'test', ('Test - Application')),
         (8, 'permitamend', ('Amend Permit')),
         (9, 'licenceamend', ('Amend Licence')),
@@ -105,6 +145,10 @@ class Application(models.Model):
          (3, 'somebody_else_individual', ('On Behalf of indivdual as somebody else (as an authorised agent)')),
          (4, 'somebody_else_company', ('On Behalf of a company as somebody else (as an authorised agent)')),
          (5, 'internal', ('Internal'))
+    )
+    APP_STATUS = Choices(
+          (1, 'active', ('Active')),
+          (2, 'cancelled', ('Cancelled'))
     )
 
     APP_STATE_CHOICES = Choices(
@@ -125,7 +169,9 @@ class Application(models.Model):
         (14, 'completed', ('Completed')),
         (15, 'creator', ('Form Creator')),
         (16, 'current', ('Current')),
-        (17, 'discard', ('Deleted'))
+        (17, 'discard', ('Deleted')),
+        (18, 'payment', ('Pending Payment')),
+        (19, 'not_supported', ('Not Supported'))
     )
 
     APP_LOCATION_CHOICES = Choices(
@@ -140,9 +186,10 @@ class Application(models.Model):
     )
 
     APP_VESSEL_CRAFT = Choices(
-        (1, 'vessel', ('Vessel(s)')),
-        (2, 'craft', ('Craft(s)')),
-        (0, 'none', ('None'))
+        #(1, 'vessel', ('Vessel(s)')),
+        #(2, 'craft', ('Craft(s)')),
+        (3, 'yes', ('yes')),
+        (0, 'none', ('No'))
     )
 
     applicant = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.PROTECT, related_name='applicant')
@@ -150,7 +197,9 @@ class Application(models.Model):
     app_type = models.IntegerField(choices=APP_TYPE_CHOICES, blank=True, null=True)
     apply_on_behalf_of = models.IntegerField(choices=APP_APPLY_ON, blank=True, null=True)
     assignee = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.PROTECT, related_name='assignee')
-    state = models.IntegerField(choices=APP_STATE_CHOICES, default=APP_STATE_CHOICES.draft, editable=False)
+    assigned_officer = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.PROTECT, related_name='assigned_officer')
+    status = models.IntegerField(choices=APP_STATUS, default=APP_STATUS.active, editable=True, ) 
+    state = models.IntegerField(choices=APP_STATE_CHOICES, default=APP_STATE_CHOICES.draft, editable=True)
     title = models.CharField(max_length=256)
     description = models.TextField(null=True, blank=True)
     submit_date = models.DateField()
@@ -169,7 +218,7 @@ class Application(models.Model):
     max_participants = models.IntegerField(null=True, blank=True)
     proposed_location = models.SmallIntegerField(choices=APP_LOCATION_CHOICES, null=True, blank=True)
     address = models.TextField(null=True, blank=True)
-    location_route_access = models.ForeignKey(Record, null=True, blank=True, related_name='location_route_access')
+    location_route_access = models.ManyToManyField(Record, blank=True, related_name='location_route_access')
     jetties = models.TextField(null=True, blank=True)
     jetty_dot_approval = models.NullBooleanField(default=None)
     jetty_dot_approval_expiry = models.DateField(null=True, blank=True)
@@ -184,48 +233,59 @@ class Application(models.Model):
     berth_location = models.TextField(null=True, blank=True)
     anchorage = models.TextField(null=True, blank=True)
     operating_details = models.TextField(null=True, blank=True)
-    cert_survey = models.ForeignKey(Record, blank=True, null=True, related_name='cert_survey')
-    cert_public_liability_insurance = models.ForeignKey(Record, blank=True, null=True, related_name='cert_public_liability_insurace')
-    risk_mgmt_plan = models.ForeignKey(Record, blank=True, null=True, related_name='risk_mgmt_plan')
-    safety_mgmt_procedures = models.ForeignKey(Record, blank=True, null=True, related_name='safety_mgmt_plan')
+    cert_survey = models.ManyToManyField(Record, blank=True, related_name='cert_survey')
+    cert_public_liability_insurance = models.ManyToManyField(Record, blank=True, related_name='cert_public_liability_insurace')
+    risk_mgmt_plan = models.ManyToManyField(Record, blank=True, related_name='risk_mgmt_plan')
+    safety_mgmt_procedures = models.ManyToManyField(Record, blank=True, related_name='safety_mgmt_plan')
     brochures_itineries_adverts = models.ManyToManyField(Record, blank=True, related_name='brochures_itineries_adverts')
     other_relevant_documents = models.ManyToManyField(Record, blank=True, related_name='other_relevant_documents')
     land_owner_consent = models.ManyToManyField(Record, blank=True, related_name='land_owner_consent')
-    deed = models.ForeignKey(Record, blank=True, null=True, related_name='deed')
+    deed = models.ManyToManyField(Record, blank=True, related_name='deed')
     submitted_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.PROTECT, related_name='Submitted_by')
     river_lease_require_river_lease = models.NullBooleanField(default=None, null=True, blank=True)
-    river_lease_scan_of_application = models.ForeignKey(Record, null=True, blank=True, related_name='river_lease_scan_of_application')
+    river_lease_scan_of_application = models.ManyToManyField(Record, blank=True, related_name='river_lease_scan_of_application')
     river_lease_reserve_licence = models.NullBooleanField(default=None, null=True, blank=True)
     river_lease_application_number = models.CharField(max_length=30, null=True, blank=True)
     proposed_development_current_use_of_land = models.TextField(null=True, blank=True)
     proposed_development_plans = models.ManyToManyField(Record, blank=True, related_name='proposed_development_plans')
     proposed_development_description = models.TextField(null=True, blank=True)
-    document_draft = models.ForeignKey(Record, null=True, blank=True, related_name='document_draft')
-    document_new_draft = models.ForeignKey(Record, null=True, blank=True, related_name='document_newdraft')
-    document_new_draft_v3 = models.ForeignKey(Record, null=True, blank=True, related_name='document_newdraftv3')
-    document_draft_signed = models.ForeignKey(Record, null=True, blank=True, related_name='document_draft_signed')
-    document_final = models.ForeignKey(Record, null=True, blank=True, related_name='document_final')
-    document_final_signed = models.ForeignKey(Record, null=True, blank=True, related_name='document_final_signed')
-    document_determination = models.ForeignKey(Record, null=True, blank=True, related_name='document_determination')
-    document_completion = models.ForeignKey(Record, null=True, blank=True, related_name='document_completion')
+    document_draft = models.ManyToManyField(Record, blank=True, related_name='document_draft')
+    document_new_draft = models.ManyToManyField(Record, blank=True, related_name='document_newdraft')
+    document_new_draft_v3 = models.ManyToManyField(Record, blank=True, related_name='document_newdraftv3')
+    document_draft_signed = models.ManyToManyField(Record, blank=True, related_name='document_draft_signed')
+    document_final = models.ManyToManyField(Record, blank=True, related_name='document_final')
+    document_final_signed = models.ManyToManyField(Record, blank=True, related_name='document_final_signed')
+    document_determination = models.ManyToManyField(Record, blank=True, related_name='document_determination')
+    document_completion = models.ManyToManyField(Record, blank=True, related_name='document_completion')
     publish_documents = models.DateField(null=True, blank=True)
+    publish_documents_expiry = models.DateTimeField(blank=True, null=True)
     publish_draft_report = models.DateField(null=True, blank=True)
+    publish_draft_expiry = models.DateTimeField(blank=True, null=True)
     publish_final_report = models.DateField(null=True, blank=True)
+    publish_final_expiry = models.DateTimeField(blank=True, null=True)
     publish_determination_report = models.DateField(null=True, blank=True)
     routeid = models.CharField(null=True, blank=True, default=1, max_length=4)
     assessment_start_date = models.DateField(null=True, blank=True)
     group = models.ForeignKey(Group, null=True, blank=True, related_name='application_group_assignment')
-    swan_river_trust_board_feedback = models.ForeignKey(Record, null=True, blank=True, related_name='document_swan_river_board_feedback')
-    document_memo = models.ForeignKey(Record, null=True, blank=True, related_name='document_memo')
-    document_briefing_note = models.ForeignKey(Record, null=True, blank=True, related_name='document_briefing_note')
-    document_determination_approved = models.ForeignKey(Record, null=True, blank=True, related_name='document_determination_approved')
+    swan_river_trust_board_feedback = models.ManyToManyField(Record, blank=True, related_name='document_swan_river_board_feedback')
+    document_memo = models.ManyToManyField(Record, blank=True, related_name='document_memo')
+    document_memo_2 = models.ManyToManyField(Record, blank=True, related_name='document_memo_2')
+    document_briefing_note = models.ManyToManyField(Record, blank=True, related_name='document_briefing_note')
+    document_determination_approved = models.ManyToManyField(Record, blank=True, related_name='document_determination_approved')
     approval_id = models.IntegerField(null=True, blank=True)
     assessed_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.PROTECT, related_name='assessed_by')
-    supporting_info_demonstrate_compliance_trust_policies = models.ForeignKey(Record, null=True, blank=True, related_name='supporting_info_demonstrate_compliance_trust_policies')
+    supporting_info_demonstrate_compliance_trust_policies = models.ManyToManyField(Record, blank=True, related_name='supporting_info_demonstrate_compliance_trust_policies')
     type_of_crafts = models.ForeignKey(Craft, null=True, blank=True, related_name='craft') 
     number_of_crafts  = models.IntegerField(null=True, blank=True)
     route_status = models.CharField(null=True, blank=True, default='Draft', max_length=256)
-    submitter_comment = models.TextField(null=True, blank=True, default='', max_length=256)
+    submitter_comment = models.TextField(null=True, blank=True, default='', max_length=1000)
+    referral_comment = models.TextField(null=True, blank=True, default='', max_length=1000)
+    landowner = models.TextField(null=True, blank=True) 
+    land_description = models.TextField(null=True, blank=True)
+    approval_document = models.ForeignKey(Record, null=True, blank=True, related_name='application_approval_document')
+    approval_document_signed = models.ForeignKey(Record, null=True, blank=True, related_name='application_approval_document_signed')
+    old_application = models.ForeignKey('Application', null=True, blank=True, related_name='application_old_application')
+    old_approval_id = models.IntegerField(null=True, blank=True) 
 
     def __str__(self):
         return 'Application {}: {} - {} ({})'.format(
@@ -233,6 +293,94 @@ class Application(models.Model):
 
     def get_absolute_url(self):
         return reverse('application_detail', args=(self.pk,))
+
+@python_2_unicode_compatible
+class ApplicationLicenceFee(models.Model):
+    app_type = models.IntegerField(choices=Application.APP_TYPE_CHOICES, blank=True, null=True)
+    licence_fee = models.DecimalField(max_digits=8, decimal_places=2, default='0.00', blank=False, null=False)
+    start_dt = models.DateTimeField(blank=True, null=True)
+    end_dt = models.DateTimeField(blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+
+    def clean(self, *args, **kwargs):
+        if self.end_dt < self.start_dt:
+              raise ValidationError('End date must be greater than Start Date') 
+        if ApplicationLicenceFee.objects.filter(app_type=self.app_type,start_dt__lte=self.start_dt, end_dt__gte=self.start_dt).exclude(pk=self.pk).count() > 0:
+              raise ValidationError('Start Date matches existing record.')
+        if ApplicationLicenceFee.objects.filter(app_type=self.app_type,start_dt__lte=self.end_dt, end_dt__gte=self.end_dt).exclude(pk=self.pk).count() > 0:
+              raise ValidationError('End Date matches existing record.')
+        if ApplicationLicenceFee.objects.filter(app_type=self.app_type,start_dt__gte=self.start_dt, end_dt__lte=self.end_dt).exclude(pk=self.pk).count() > 0:
+              raise ValidationError('Dates matches existing record.')
+
+class Reason(models.Model):
+    text = models.TextField()
+    detailRequired = models.BooleanField(default=False)
+    editable = models.BooleanField(default=True,editable=False)
+
+    class Meta:
+        ordering = ('id',)
+        abstract = True
+
+    #def save(self, *args, **kwargs):
+    #    if self.mooring_group == None:
+    #        raise ValidationError("Mooring Group required, please select from list.")
+    #    else:
+    #        super(Reason,self).save(*args,**kwargs)
+
+    # Properties
+    # ==============================
+    def code(self):
+        return self.__get_code()
+
+    # Methods
+    # ==============================
+    def __get_code(self):
+        length = len(str(self.id))
+        val = '0'
+        return '{}{}'.format((val*(4-length)),self.id)
+
+class DiscountReason(Reason):
+    pass
+    def __str__(self):
+        return '{}'.format(self.text)
+    
+
+class Booking(models.Model):
+    BOOKING_TYPE_CHOICES = (
+        (0, 'Reception booking'),
+        (1, 'Internet booking'),
+        (2, 'Black booking'),
+        (3, 'Temporary reservation'),
+        (4, 'Cancelled Booking'),
+    )
+
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, blank=True, null=True)
+    details = JSONField(null=True, blank=True)
+    booking_type = models.SmallIntegerField(choices=BOOKING_TYPE_CHOICES, default=0)
+    expiry_time = models.DateTimeField(blank=True, null=True)
+    cost_total = models.DecimalField(max_digits=8, decimal_places=2, default='0.00')
+    override_price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    override_reason = models.ForeignKey('DiscountReason', null=True, blank=True)
+    override_reason_info = models.TextField(blank=True, null=True)
+    overridden_by = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT, blank=True, null=True, related_name='overridden_bookings')
+    application = models.ForeignKey('Application', null=True)
+    send_invoice = models.BooleanField(default=False)
+    cancellation_reason = models.TextField(null=True,blank=True)
+    cancelation_time = models.DateTimeField(null=True,blank=True)
+    confirmation_sent = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT, blank=True, null=True,related_name='created_by_booking')
+    canceled_by = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT, blank=True, null=True,related_name='canceled_bookings')
+
+
+class BookingInvoice(models.Model):
+    booking = models.ForeignKey(Booking, related_name='invoices')
+    invoice_reference = models.CharField(max_length=50, null=True, blank=True, default='')
+    system_invoice = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return 'Booking {} : Invoice #{}'.format(self.id,self.invoice_reference)
 
 
 @python_2_unicode_compatible
@@ -324,13 +472,13 @@ class Referral(models.Model):
         (2, 'responded', ('Responded')),
         (3, 'recalled', ('Recalled')),
         (4, 'expired', ('Expired')),
-        (5, 'with_admin',('With Admin'))
+        (5, 'with_admin',('Not Sent'))
     )
 
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
     referee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     details = models.TextField(blank=True, null=True)
-    sent_date = models.DateField()
+    sent_date = models.DateField(blank=True, null=True)
     period = models.PositiveIntegerField(verbose_name='period (days)')
     expire_date = models.DateField(blank=True, null=True, editable=False)
     response_date = models.DateField(blank=True, null=True)
@@ -348,7 +496,7 @@ class Referral(models.Model):
     def save(self, *args, **kwargs):
         """Override save to set the expire_date field.
         """
-        self.expire_date = self.sent_date + timedelta(days=self.period)
+        #self.expire_date = self.sent_date + timedelta(days=self.period)
         super(Referral, self).save(*args, **kwargs)
 
 
@@ -370,6 +518,7 @@ class Condition(models.Model):
     )
 
     application = models.ForeignKey(Application, on_delete=models.PROTECT)
+    condition_no = models.IntegerField(blank=True, null=True)
     condition = models.TextField(blank=True, null=True)
     referral = models.ForeignKey(Referral, null=True, blank=True, on_delete=models.PROTECT)
     status = models.IntegerField(choices=CONDITION_STATUS_CHOICES, default=CONDITION_STATUS_CHOICES.proposed)
@@ -381,6 +530,7 @@ class Condition(models.Model):
         null=True, blank=True, verbose_name='recurrence frequency',
         help_text='How frequently is the recurrence pattern applied (e.g. every 2 months)')
     suspend = models.BooleanField(default=False)
+    advise_no = models.IntegerField(blank=True, null=True)
     advise = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -465,6 +615,8 @@ class Compliance(models.Model):
     submit_date = models.DateTimeField(auto_now_add=True)
     due_date = models.DateField(blank=True, null=True)
     compliance = models.TextField(blank=True, null=True, help_text='Information to fulfil requirement of condition.')
+    external_comments = models.TextField(blank=True, null=True)
+    external_documents = models.ManyToManyField(Record, blank=True, related_name='compliance_external_documents')
     comments = models.TextField(blank=True, null=True)
     approve_date = models.DateField(blank=True, null=True)
     records = models.ManyToManyField(Record, blank=True)
@@ -603,8 +755,9 @@ class OrganisationPending(models.Model):
     abn = models.CharField(max_length=50, null=True, blank=True, verbose_name='ABN')
     status = models.IntegerField(choices=STATUS_CHOICES, default=STATUS_CHOICES.pending)
     identification = models.ForeignKey(Record, null=True, blank=True, on_delete=models.SET_NULL)
-    postal_address = models.ForeignKey(LedgerAddress, related_name='org_pending_postal_address', blank=True, null=True, on_delete=models.SET_NULL)
-    billing_address = models.ForeignKey(LedgerAddress, related_name='org_pending_billing_address', blank=True, null=True, on_delete=models.SET_NULL)
+    #identification = models.ManyToManyField(Record, blank=True, related_name='Identification Documents')
+    postal_address = models.ForeignKey(OrganisationAddress, related_name='org_pending_postal_address', blank=True, null=True, on_delete=models.SET_NULL)
+    billing_address = models.ForeignKey(OrganisationAddress, related_name='org_pending_billing_address', blank=True, null=True, on_delete=models.SET_NULL)
     email_user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.PROTECT, null=True)
     assignee = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.PROTECT, related_name='org_pending_assignee')
     company_exists = models.BooleanField(default=False)

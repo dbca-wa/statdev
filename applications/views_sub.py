@@ -20,11 +20,12 @@ class Application_Part5():
         flow = Flow()
         workflowtype = flow.getWorkFlowTypeFromApp(app)
         flow.get(workflowtype)
+
         context = flow.getAccessRights(request,context,app.routeid,workflowtype)
         context = flow.getCollapse(context,app.routeid,workflowtype)
-        context = flow.getHiddenAreas(context,app.routeid,workflowtype)
+        context = flow.getHiddenAreas(context,app.routeid,workflowtype,request)
         context['workflow'] = flow.getAllRouteConf(workflowtype,app.routeid)
-        context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
+        #context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
         context['formcomponent'] = flow.getFormComponent(app.routeid,workflowtype)
         context['workflowoptions'] = flow.getWorkflowOptions()
 
@@ -44,15 +45,15 @@ class Application_Part5():
 
         context['publication_newspaper'] = PublicationNewspaper.objects.filter(application_id=self_view.object)
         context['publication_website'] = PublicationWebsite.objects.filter(application_id=self_view.object)
-        if self_view.object.river_lease_scan_of_application:
-            context['river_lease_scan_of_application_short'] = SafeText(self_view.object.river_lease_scan_of_application.upload.name)[19:]
+        #if self_view.object.river_lease_scan_of_application:
+        #    context['river_lease_scan_of_application_short'] = SafeText(self_view.object.river_lease_scan_of_application.upload.name)[19:]
 
-        if self_view.object.document_draft:
-            context['document_draft_short'] = SafeText(self_view.object.document_draft.upload.name)[19:]
-        if self_view.object.document_final:
-            context['document_final_short'] = SafeText(self_view.object.document_final.upload.name)[19:]
-        if self_view.object.deed:
-            context['deed_short'] = SafeText(self_view.object.deed.upload.name)[19:]
+        #if self_view.object.document_draft:
+        #    context['document_draft_short'] = SafeText(self_view.object.document_draft.upload.name)[19:]
+        #if self_view.object.document_final:
+        #    context['document_final_short'] = SafeText(self_view.object.document_final.upload.name)[19:]
+        #if self_view.object.deed:
+        #    context['deed_short'] = SafeText(self_view.object.deed.upload.name)[19:]
 
 
         context['land_owner_consent_list'] = []
@@ -63,6 +64,7 @@ class Application_Part5():
             fileitem['path'] = doc.upload.name
             fileitem['path_short'] = SafeText(doc.upload.name)[19:]
             fileitem['name'] = doc.name
+            fileitem['file_url'] = doc.file_url()
             context['land_owner_consent_list'].append(fileitem)
 
 
@@ -84,6 +86,7 @@ class Application_Part5():
                 fileitem['fileid'] = doc.id
                 fileitem['path'] = doc.upload
                 fileitem['path_short'] = SafeText(doc.upload.name)[19:]
+                fileitem['file_url'] = doc.file_url()
                 rowitem['documents_short'].append(fileitem)
             context['publication_newspaper_list'].append(rowitem)
 
@@ -111,6 +114,7 @@ class Application_Part5():
                 fileitem['fileid'] = doc.id
                 fileitem['path'] = doc.upload
                 fileitem['path_short'] = SafeText(doc.upload.name)[19:]
+                fileitem['file_url'] = doc.file_url()
                 rowitem['documents_short'].append(fileitem)
             pub_feed_obj.append(rowitem)
 
@@ -127,54 +131,55 @@ class Application_Part5():
                 fileitem['fileid'] = doc.id
                 fileitem['path'] = doc.upload.name
                 fileitem['name'] = doc.name
+                fileitem['file_url'] = doc.file_url()
                 new_documents_to_publish[pub_doc.original_document_id] = fileitem
 
         orignaldoclist = []
-        if self_view.object.river_lease_scan_of_application:
-            fileitem = {}
-            fileitem['fileid'] = self_view.object.river_lease_scan_of_application.id
-            fileitem['path'] = self_view.object.river_lease_scan_of_application.upload.name
-            fileitem['path_short'] = SafeText(self_view.object.river_lease_scan_of_application.upload.name)[19:]
-            fileitem['name'] = self_view.object.river_lease_scan_of_application.name
-            fileitem['group_name'] = "River Lease Scan of Application"
-            if self_view.object.river_lease_scan_of_application.id in new_documents_to_publish:
-                fileitem['publish_doc'] = new_documents_to_publish[self_view.object.river_lease_scan_of_application.id]['path']
-                fileitem['publish_doc_name'] = new_documents_to_publish[self_view.object.river_lease_scan_of_application.id]['name']
-                fileitem['publish_doc_short'] = SafeText(new_documents_to_publish[self_view.object.river_lease_scan_of_application.id]['path'])[19:]
-              
-            orignaldoclist.append(fileitem)
+        #if self_view.object.river_lease_scan_of_application:
+        #    fileitem = {}
+        #    fileitem['fileid'] = self_view.object.river_lease_scan_of_application.id
+        #    fileitem['path'] = self_view.object.river_lease_scan_of_application.upload.name
+        #    fileitem['path_short'] = SafeText(self_view.object.river_lease_scan_of_application.upload.name)[19:]
+        #    fileitem['name'] = self_view.object.river_lease_scan_of_application.name
+        #    fileitem['group_name'] = "River Lease Scan of Application"
+        #    if self_view.object.river_lease_scan_of_application.id in new_documents_to_publish:
+        #        fileitem['publish_doc'] = new_documents_to_publish[self_view.object.river_lease_scan_of_application.id]['path']
+        #        fileitem['publish_doc_name'] = new_documents_to_publish[self_view.object.river_lease_scan_of_application.id]['name']
+        #        fileitem['publish_doc_short'] = SafeText(new_documents_to_publish[self_view.object.river_lease_scan_of_application.id]['path'])[19:]
+        #      
+        #    orignaldoclist.append(fileitem)
 
-        if self_view.object.deed:
-             fileitem = {}
-             fileitem['fileid'] = self_view.object.deed.id
-             fileitem['path'] = self_view.object.deed.upload.name
-             fileitem['path_short'] = SafeText(self_view.object.deed.upload.name)[19:]
-             fileitem['name'] = self_view.object.deed.name
-             fileitem['group_name'] = "Deed"
-             if self_view.object.deed.id in new_documents_to_publish:
-                 fileitem['publish_doc'] = new_documents_to_publish[self_view.object.deed.id]['path']
-                 fileitem['publish_doc_name'] = new_documents_to_publish[self_view.object.deed.id]['name']
-                 fileitem['publish_doc_short'] = SafeText(new_documents_to_publish[self_view.object.deed.id]['path'])[19:]
-             orignaldoclist.append(fileitem)
+        #if self_view.object.deed:
+        #     fileitem = {}
+        #     fileitem['fileid'] = self_view.object.deed.id
+        #     fileitem['path'] = self_view.object.deed.upload.name
+        #     fileitem['path_short'] = SafeText(self_view.object.deed.upload.name)[19:]
+        #     fileitem['name'] = self_view.object.deed.name
+        #     fileitem['group_name'] = "Deed"
+        #     if self_view.object.deed.id in new_documents_to_publish:
+        #         fileitem['publish_doc'] = new_documents_to_publish[self_view.object.deed.id]['path']
+        #         fileitem['publish_doc_name'] = new_documents_to_publish[self_view.object.deed.id]['name']
+        #         fileitem['publish_doc_short'] = SafeText(new_documents_to_publish[self_view.object.deed.id]['path'])[19:]
+        #     orignaldoclist.append(fileitem)
 
-        landoc = app.land_owner_consent.all()
-        for doc in landoc:
-            fileitem = {}
-            fileitem['fileid'] = doc.id
-            fileitem['path'] = doc.upload.name
-            fileitem['path_short'] = SafeText(doc.upload.name)[19:]
-            fileitem['name'] = doc.name
-            fileitem['group_name'] = "Land Owner Consent"
-            if doc.id in new_documents_to_publish:
-                fileitem['publish_doc'] = new_documents_to_publish[doc.id]['path']
-                fileitem['publish_doc_name'] = new_documents_to_publish[doc.id]['name']
-                fileitem['publish_doc_short'] = SafeText(new_documents_to_publish[doc.id]['path'])[19:]
-            else:
-                fileitem['publish_doc'] = ""
-                fileitem['publish_doc_name'] = ""
-                fileitem['publish_doc_short'] = ""
+        #landoc = app.land_owner_consent.all()
+        #for doc in landoc:
+        #    fileitem = {}
+        #    fileitem['fileid'] = doc.id
+        #    fileitem['path'] = doc.upload.name
+        #    fileitem['path_short'] = SafeText(doc.upload.name)[19:]
+        #    fileitem['name'] = doc.name
+        #    fileitem['group_name'] = "Land Owner Consent"
+        #    if doc.id in new_documents_to_publish:
+        #        fileitem['publish_doc'] = new_documents_to_publish[doc.id]['path']
+        #        fileitem['publish_doc_name'] = new_documents_to_publish[doc.id]['name']
+        #        fileitem['publish_doc_short'] = SafeText(new_documents_to_publish[doc.id]['path'])[19:]
+        #    else:
+        #        fileitem['publish_doc'] = ""
+        #        fileitem['publish_doc_name'] = ""
+        #        fileitem['publish_doc_short'] = ""
 
-            orignaldoclist.append(fileitem)
+        #    orignaldoclist.append(fileitem)
 
         doclist = app.proposed_development_plans.all()
         for doc in doclist:
@@ -184,16 +189,18 @@ class Application_Part5():
             fileitem['name'] = doc.name
             fileitem['path_short'] = SafeText(doc.upload.name)[19:]
             fileitem['group_name'] = "Proposed Development Plans"
+            fileitem['file_url'] = doc.file_url()
 
             if doc.id in new_documents_to_publish:
                 fileitem['publish_doc'] = new_documents_to_publish[doc.id]['path']
                 fileitem['publish_doc_name'] = new_documents_to_publish[doc.id]['name']
                 fileitem['publish_doc_short'] = SafeText(new_documents_to_publish[doc.id]['path'])[19:]
-                
+                fileitem['publish_file_url'] = new_documents_to_publish[doc.id]['file_url']
             else:
                 fileitem['publish_doc'] = ""
                 fileitem['publish_doc_name'] = ""
                 fileitem['publish_doc_short'] = ""
+                fileitem['publish_file_url'] = ""
             orignaldoclist.append(fileitem)
 
         context['original_document_list'] = orignaldoclist
@@ -206,6 +213,7 @@ class Application_Part5():
             fileitem['path'] = doc.upload.name
             fileitem['path_short'] = SafeText(doc.upload.name)[19:]
             fileitem['name'] = doc.name
+            fileitem['file_url'] = doc.file_url()
             context['proposed_development_plans_list'].append(fileitem)
 
         return context
@@ -224,8 +232,8 @@ class Application_Emergency():
         flow.get(workflowtype)
         context = flow.getAccessRights(request,context,app.routeid,workflowtype)
         context = flow.getCollapse(context,app.routeid,workflowtype)
-        context = flow.getHiddenAreas(context,app.routeid,workflowtype)
-        context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
+        context = flow.getHiddenAreas(context,app.routeid,workflowtype,request)
+        #context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
         context['formcomponent'] = flow.getFormComponent(app.routeid,workflowtype)
         context['workflowoptions'] = flow.getWorkflowOptions()
 
@@ -248,8 +256,8 @@ class Application_Permit():
         flow.get(workflowtype)
         context = flow.getAccessRights(request,context,app.routeid,workflowtype)
         context = flow.getCollapse(context,app.routeid,workflowtype)
-        context = flow.getHiddenAreas(context,app.routeid,workflowtype)
-        context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
+        context = flow.getHiddenAreas(context,app.routeid,workflowtype,request)
+        #context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
         context['formcomponent'] = flow.getFormComponent(app.routeid,workflowtype)
         context['workflowoptions'] = flow.getWorkflowOptions()
 
@@ -267,8 +275,8 @@ class Application_Licence():
         flow.get(workflowtype)
         context = flow.getAccessRights(request,context,app.routeid,workflowtype)
         context = flow.getCollapse(context,app.routeid,workflowtype)
-        context = flow.getHiddenAreas(context,app.routeid,workflowtype)
-        context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
+        context = flow.getHiddenAreas(context,app.routeid,workflowtype,request)
+        #context['workflow_actions'] = flow.getAllRouteActions(app.routeid,workflowtype)
         context['formcomponent'] = flow.getFormComponent(app.routeid,workflowtype)
         context['workflowoptions'] = flow.getWorkflowOptions()
 
@@ -288,7 +296,7 @@ class Referrals_Next_Action_Check():
 
     def go_next_action(self,app):
         app = Application.objects.get(id=app.id)
-        app.status = ''
+        #app.status = ''
         flow = Flow()
         workflowtype = flow.getWorkFlowTypeFromApp(app)
         DefaultGroups = flow.groupList()
@@ -302,15 +310,25 @@ class Referrals_Next_Action_Check():
             groupassignment = None
         route = flow.getNextRouteObj(action,app.routeid,workflowtype)
 
+        print ("go_next_action")
+        print (route)
+
         if "route"in route:
             app.routeid = route["route"]
         else:
             app.routeid = None
+
         if "state" in route:
             app.state = route["state"]
             app.route_status = flow.json_obj[route['route']]['title']
         else:
-            app.state = 0 
+            app.state = 0
+
+        print (app.routeid)
+        print (groupassignment)
+        print (assignee)
+        print ("go_next_action --end")
+        
         app.group = groupassignment
         app.assignee = assignee
         app.save()
@@ -345,6 +363,8 @@ class FormsList():
 
         context['app_appstatus'] = list(Application.APP_STATE_CHOICES)
         search_filter = Q(applicant=userid) | Q(organisation__in=delegate)
+        exclude_search_filter = Q(state=17)
+
         if 'searchaction' in self_view.request.GET and self_view.request.GET['searchaction']:
             query_str = self_view.request.GET['q']
             if self_view.request.GET['apptype'] != '':
@@ -352,9 +372,9 @@ class FormsList():
             else:
                 end = ''
 
-
-            if self_view.request.GET['appstatus'] != '':
-                search_filter &= Q(state=int(self_view.request.GET['appstatus']))
+            if 'appstatus' in self_view.request.GET:
+                if self_view.request.GET['appstatus'] != '':
+                   search_filter &= Q(state=int(self_view.request.GET['appstatus']))
 
             context['query_string'] = self_view.request.GET['q']
 
@@ -364,17 +384,31 @@ class FormsList():
                 if self_view.request.GET['appstatus'] != '':
                     context['appstatus'] = int(self_view.request.GET['appstatus'])
 
+            if 'appstatus_limited' in self_view.request.GET:
+                if self_view.request.GET['appstatus_limited'] != '':
+                    context['appstatus_limited'] = self_view.request.GET['appstatus_limited']
+                    if context['appstatus_limited'] == 'draft':
+                         search_filter &= Q(state=int(1))
+                    if context['appstatus_limited'] == 'submitted':
+                         search_filter &= Q(state__gt=1)
+                         exclude_search_filter &= Q(state=14) 
+                         #search_filter &= Q(state__ne=14) 
+                    if context['appstatus_limited'] == 'completed':
+                         search_filter &= Q(state=14)
+
             if 'q' in self_view.request.GET and self_view.request.GET['q']:
                 query_str = self_view.request.GET['q']
                 query_str_split = query_str.split()
                 for se_wo in query_str_split:
                     search_filter &= Q(Q(pk__icontains=se_wo) | Q(title__icontains=se_wo))
 
+        print ("SEARCH FILTER")
+        print (search_filter)
 #        applications = Application.objects.filter(Q(app_type__in=APP_TYPE_CHOICES_IDS) & Q(search_filter) ).exclude(state=17)[:200]
-        applications = Application.objects.filter(Q(search_filter) ).exclude(state=17)[:200]
+        applications = Application.objects.filter(Q(search_filter) ).exclude(exclude_search_filter).order_by('-id')[:200]
         usergroups = self_view.request.user.groups.all()
         context['app_list'] = []
-
+        print (' AM I HERE ')
         for app in applications:
              row = {}
              row['may_assign_to_person'] = 'False'
@@ -438,6 +472,7 @@ class FormsList():
         for app in approval:
             row = {}
             row['app'] = app
+            row['approval_url'] = app.approval_url
             if app.applicant:
                 if app.applicant.id in context['app_applicants']:
                     donothing = ''

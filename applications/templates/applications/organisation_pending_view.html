@@ -2,7 +2,7 @@
 
 {% block page_content_inner %}
 {% load static %}
-<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}?ver={{ GIT_COMMIT_HASH }}" />
 
 <div class="container-fluid">
     <div class="row">
@@ -65,7 +65,7 @@
                                     <label>Certificate of Incorportation</label>
                                     </div>
                                     <div class="col-sm-12 col-md-6 col-lg-8">
-                                        <A HREF='/media/{{ object.identification.upload }}'>{{ object.identification }}</A>
+                                        <A HREF='{{ object.identification.path }}'>{{ object.identification }}</A>
                                      </div>
                                 </div>
                                 <div class="col-sm-12 col-md-12 col-lg-12">

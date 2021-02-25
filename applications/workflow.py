@@ -86,6 +86,8 @@ class Flow():
             context["may_update_publication_website" ] = "False"
         if "may_publish_website" not in context:
             context["may_publish_website" ] = "False"
+        if "may_update_publication_feedback_review" not in context:
+            context["may_update_publication_feedback_review"] = "False"
         if "may_update_publication_feedback_draft" not in context:
             context["may_update_publication_feedback_draft"] = "False"
         if "may_publish_feedback_draft" not in context:
@@ -112,6 +114,8 @@ class Flow():
             context["may_update_publication_feedback_final"] = "False"
         if "may_view_action_log" not in context:
             context["may_view_action_log"] = "False"
+        if "may_view_comm_log" not in context:
+            context["may_view_comm_log"] = "False"
         if "may_publish_publication_feedback_draft" not in context:
             context["may_publish_publication_feedback_draft"] = "False"
         if "may_publish_publication_feedback_final" not in context:
@@ -130,20 +134,49 @@ class Flow():
             context['show_form_buttons'] = "False"
         if "may_assessor_advise" not in context:
             context['may_assessor_advise'] = "False"
+        if "may_assign_to_person" not in context:
+            context['may_assign_to_person'] = "False"
+        if "may_payment" not in context:
+            context['may_payment'] = "False"
+        if "allow_access_attachments" not in context:
+            context['allow_access_attachments'] = "False"       
+        if "may_assign_to_officer" not in context:
+            context['may_assign_to_officer'] = "False"
 
         # Form Components
         if "form_component_update" not in context:
             context["form_component_update_title"] = "Update Application"
         if "application_assignee_id" not in context:
             context['application_assignee_id'] = None
+        if "application_submitter_id" not in context:
+            context['application_submitter_id'] = None
+        if "application_owner" not in context:
+            context['application_owner'] = None
 
         return context
 
     def getAccessRights(self,request,context,route,flow):
         context = self.setAccessDefaults(context)
         context = self.getAllGroupAccess(request,context,route)
+        if context['application_assignee_id'] is None:
+              context['application_assignee_id'] = -100000
+        if context['application_submitter_id'] is None:
+              context['application_submitter_id'] = -100000
+
+        print ("REQIEST ID")
+        print (request.user)
+        print (request.user.id)
+        print (context['application_assignee_id'])
+        print (context['application_submitter_id'])
+
         if context['application_assignee_id'] == request.user.id:
             context = self.getAssignToAccess(context,route)
+            print ("ASSSI")
+        if context['application_submitter_id'] == request.user.id:
+            context = self.getSubmitterAccess(context,route)
+            print ("Submit")
+        if context['application_owner'] is True:
+            context = self.getOwnerAccess(context,route)
         return context
 
     def getAssignToAccess(self,context,route):
@@ -161,6 +194,39 @@ class Flow():
                         else:
                            context[at] = assigntoaccess[at]
         return context
+
+    def getSubmitterAccess(self,context,route):
+        json_obj = self.json_obj
+        if json_obj[str(route)]:
+           if "submitteraccess" in json_obj[str(route)]:
+                 assigntoaccess = json_obj[str(route)]['submitteraccess']
+                 for at in assigntoaccess:
+                     if at in context:
+                        if context[at]:
+                           if context[at] in 'True':
+                              donothing = ''
+                           else:
+                              context[at] = assigntoaccess[at]
+                        else:
+                           context[at] = assigntoaccess[at]
+        return context
+
+    def getOwnerAccess(self,context,route):
+        json_obj = self.json_obj
+        if json_obj[str(route)]:
+           if "owneraccess" in json_obj[str(route)]:
+                 assigntoaccess = json_obj[str(route)]['owneraccess']
+                 for at in assigntoaccess:
+                     if at in context:
+                        if context[at]:
+                           if context[at] in 'True':
+                              donothing = ''
+                           else:
+                              context[at] = assigntoaccess[at]
+                        else:
+                           context[at] = assigntoaccess[at]
+        return context
+
 
     def getGroupAccess(self,context,route,group):
         json_obj = self.json_obj
@@ -188,36 +254,35 @@ class Flow():
         director = None
         executive = None
 
-        if Group.objects.filter(name='Processor').exists():
-            processor = Group.objects.get(name='Processor')
-        if Group.objects.filter(name='Assessor').exists():
-            assessor = Group.objects.get(name='Assessor')
-        if Group.objects.filter(name='Approver').exists():
-            approver = Group.objects.get(name='Approver')
-        if Group.objects.filter(name='Referee').exists():
-            referee = Group.objects.get(name='Referee')
-        if Group.objects.filter(name='Director').exists():
-            director = Group.objects.get(name='Director')
-        if Group.objects.filter(name='Executive').exists():
-            executive = Group.objects.get(name='Executive')
-        if Group.objects.filter(name='Emergency').exists():
-            emergency = Group.objects.get(name='Emergency')
-
+        if Group.objects.filter(name='Statdev Processor').exists():
+            processor = Group.objects.get(name='Statdev Processor')
+        if Group.objects.filter(name='Statdev Assessor').exists():
+            assessor = Group.objects.get(name='Statdev Assessor')
+        if Group.objects.filter(name='Statdev Approver').exists():
+            approver = Group.objects.get(name='Statdev Approver')
+        if Group.objects.filter(name='Statdev Referee').exists():
+            referee = Group.objects.get(name='Statdev Referee')
+        if Group.objects.filter(name='Statdev Director').exists():
+            director = Group.objects.get(name='Statdev Director')
+        if Group.objects.filter(name='Statdev Executive').exists():
+            executive = Group.objects.get(name='Statdev Executive')
+        if Group.objects.filter(name='Statdev Emergency').exists():
+            emergency = Group.objects.get(name='Statdev Emergency')
 
         if processor in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Processor')
+            context = self.getGroupAccess(context,route,'Statdev Processor')
         if assessor in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Assessor')
+            context = self.getGroupAccess(context,route,'Statdev Assessor')
         if approver in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Approver')
+            context = self.getGroupAccess(context,route,'Statdev Approver')
         if referee in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Referee')
+            context = self.getGroupAccess(context,route,'Statdev Referee')
         if director in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Director')
+            context = self.getGroupAccess(context,route,'Statdev Director')
         if executive in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Executive')
+            context = self.getGroupAccess(context,route,'Statdev Executive')
         if emergency in request.user.groups.all():
-            context = self.getGroupAccess(context,route,'Emergency')
+            context = self.getGroupAccess(context,route,'Statdev Emergency')
 
         return context
 
@@ -231,7 +296,7 @@ class Flow():
                   context['collapse'][c] = "in"
         return context
 
-    def getHiddenAreas(self,context,route,flow):
+    def getHiddenAreas(self,context,route,flow, request):
         context['hidden'] = {}
         json_obj = self.json_obj
         if json_obj[str(route)]:
@@ -304,11 +369,29 @@ class Flow():
                               a["required"]= []
                            return a
         return None
+    def getNextRouteObjViaId(self,actionid,route,flow):
+        json_obj = self.json_obj
+        if json_obj[str(route)]:
+            if json_obj[str(route)]['actions']:
+               a = json_obj[str(route)]['actions'][actionid]
+               if "required" not in a:
+                  a["required"]= []
+               return a
 
+        return None
     def getAllRouteActions(self,route,flow):
         json_obj = self.json_obj
         if json_obj[str(route)]:
             if json_obj[str(route)]['actions']:
+               print ("WorkFlow Actions")
+               print (len(json_obj[str(route)]['actions']))
+               i =0
+               while i < len(json_obj[str(route)]['actions']):
+                     json_obj[str(route)]['actions'][i]['actionid'] = i
+                     print (json_obj[str(route)]['actions'][i])
+                     i += 1 
+               #for a in json_obj[str(route)]['actions']:
+               #     print (a)
                return json_obj[str(route)]['actions']
 
     def getAllConditionBasedRouteActions(self,route):
@@ -347,13 +430,13 @@ class Flow():
     def groupList(self):
 
         DefaultGroups = {'grouplink': {}, 'group': {}}
-        DefaultGroups['grouplink']['admin'] = 'Processor'
-        DefaultGroups['grouplink']['assess'] = 'Assessor'
-        DefaultGroups['grouplink']['manager'] = 'Approver'
-        DefaultGroups['grouplink']['director'] = 'Director'
-        DefaultGroups['grouplink']['exec'] = 'Executive'
-        DefaultGroups['grouplink']['referral'] = 'Referee'
-        DefaultGroups['grouplink']['emergency'] = 'Emergency'
+        DefaultGroups['grouplink']['admin'] = 'Statdev Processor'
+        DefaultGroups['grouplink']['assess'] = 'Statdev Assessor'
+        DefaultGroups['grouplink']['manager'] = 'Statdev Approver'
+        DefaultGroups['grouplink']['director'] = 'Statdev Director'
+        DefaultGroups['grouplink']['exec'] = 'Statdev Executive'
+        DefaultGroups['grouplink']['referral'] = 'Statdev Referee'
+        DefaultGroups['grouplink']['emergency'] = 'Statdev Emergency'
 
         # create reverse mapping groups
         for g in DefaultGroups['grouplink']:

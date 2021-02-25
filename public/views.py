@@ -7,6 +7,11 @@ from django.db.models import Q
 from public import forms as apps_forms
 from django.core.urlresolvers import reverse
 from django.utils.safestring import SafeText
+from applications.validationchecks import Attachment_Extension_Check, is_json
+from datetime import datetime, date, timedelta
+from django.contrib import messages
+
+import json
 
 class PublicApplicationsList(TemplateView):
     #model = appmodel.Application
@@ -21,13 +26,20 @@ class PublicApplicationsList(TemplateView):
         context['action'] = action
         search = None
         query_obj = None
+        current_datetime = datetime.now()
 
-        if action == 'draft':
-            query_obj = Q(publish_documents__isnull=False,publish_draft_report__isnull=True) & Q(app_type__in=[3])
+        if action == 'review':
+            query_obj = Q(publish_documents__isnull=False,publish_draft_report__isnull=True, publish_documents_expiry__gte=current_datetime) & Q(app_type__in=[3])
+            context['home_nav_review'] = 'active'
+        elif action == 'draft':
+            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=True,publish_draft_expiry__gte=current_datetime ) & Q(app_type__in=[3])
+            context['home_nav_draft'] = 'active'
         elif action == 'final':
-            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=True) & Q(app_type__in=[3])
+            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=False, publish_determination_report__isnull=True,publish_final_expiry__gte=current_datetime) & Q(app_type__in=[3])
+            context['home_nav_final'] = 'active'
         elif action == 'determination':
-            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False, publish_final_report__isnull=False,publish_determination_report__isnull=True) & Q(app_type__in=[3])
+            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False, publish_final_report__isnull=False,publish_determination_report__isnull=False) & Q(app_type__in=[3])
+            context['home_nav_determination'] = 'active'
         else:
             query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=False) & Q(app_type__in=[3])
             #query_obj = Q(publish_documents__isnull=False) & Q(app_type__in=[3])
@@ -53,6 +65,28 @@ class PublicApplicationFeedback(UpdateView):
     def get(self, request, *args, **kwargs):
         # TODO: business logic to check the application may be changed.
         app = self.get_object()
+        action = self.kwargs['action']
+        app_id = self.kwargs['pk']
+        query_obj = Q()
+        current_datetime = datetime.now()
+        if action == 'review':
+            query_obj = Q(publish_documents__isnull=False,publish_draft_report__isnull=True, publish_documents_expiry__gte=current_datetime) & Q(app_type__in=[3]) & Q(id=app_id)
+        elif action == 'draft':
+            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=True,publish_draft_expiry__gte=current_datetime ) & Q(app_type__in=[3]) & Q(id=app_id)
+        elif action == 'final':
+            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=False, publish_determination_report__isnull=True,publish_final_expiry__gte=current_datetime) & Q(app_type__in=[3]) & Q(id=app_id)
+        elif action == 'determination':
+            query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False, publish_final_report__isnull=False,publish_determination_report__isnull=False) & Q(app_type__in=[3]) & Q(id=app_id)
+        else:
+            messages.error(self.request, 'Forbidden from viewing this page.')
+            return HttpResponseRedirect("/")
+        if Application.objects.filter(query_obj).count() > 0:
+             pass
+        else:
+            messages.error(self.request, 'Forbidden from viewing this page.')
+            return HttpResponseRedirect("/")
+
+
         return super(PublicApplicationFeedback, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -64,7 +98,9 @@ class PublicApplicationFeedback(UpdateView):
         app = self.get_object()
 
         doclist = app.proposed_development_plans.all()
+        print ("AOOO")
         context['proposed_development_plans_list'] = []
+
         for doc in doclist:
             pub_web = None
             try:
@@ -79,12 +115,14 @@ class PublicApplicationFeedback(UpdateView):
                fileitem['path'] = doc.upload.name
                fileitem['path_short'] = SafeText(doc.upload.name)[19:]
                fileitem['name'] = doc.name
+               fileitem['file_url'] = doc.file_url()
                context['proposed_development_plans_list'].append(fileitem)
             else:
                fileitem['fileid'] = pub_web.published_document.id
                fileitem['path'] = pub_web.published_document.upload.name
                fileitem['path_short'] = SafeText(pub_web.published_document.upload.name)[19:]
                fileitem['name'] = pub_web.published_document.name
+               fileitem['file_url'] = pub_web.published_document.file_url()
                context['proposed_development_plans_list'].append(fileitem)
 
         if app.river_lease_scan_of_application:
@@ -109,6 +147,9 @@ class PublicApplicationFeedback(UpdateView):
        
         initial['application_id'] = self.kwargs['pk']
         initial['organisation'] = app.organisation
+        initial['captcha'] = 'CaPtA'
+        initial['action'] = self.kwargs['action']
+
         if app.river_lease_scan_of_application:
             pub_web = None
             try:
@@ -142,13 +183,15 @@ class PublicApplicationFeedback(UpdateView):
         action = self.kwargs['action']
         status=None
         application = Application.objects.get(id=app_id)
-      
-        if action == 'draft':
+     
+        if action == 'review':
+             status= 'review'
+        elif action == 'draft':
              status='draft'
         elif action == 'final': 
              status='final' 
         elif action == 'determination':
-             status=='determination'
+             status='determination'
 
         # ToDO remove dupes of this line below. doesn't need to be called
         # multiple times
@@ -164,13 +207,21 @@ class PublicApplicationFeedback(UpdateView):
                                                       status=status
 	)
 
+        if 'records_json' in self.request.POST:
+             if is_json(self.request.POST['records_json']) is True:
+                  json_data = json.loads(self.request.POST['records_json'])
+                  for i in json_data:
+                      doc = Record.objects.get(id=i['doc_id'])
+                      pfcreate.records.add(doc)
+                  pfcreate.save()
 
-        if self.request.FILES.get('records'):
-            for f in self.request.FILES.getlist('records'):
-                doc = Record()
-                doc.upload = f
-                doc.save()
-                pfcreate.records.add(doc)
+
+        #if self.request.FILES.get('records'):
+        #    for f in self.request.FILES.getlist('records'):
+        #        doc = Record()
+        #        doc.upload = f
+        #        doc.save()
+        #        pfcreate.records.add(doc)
 
 
 

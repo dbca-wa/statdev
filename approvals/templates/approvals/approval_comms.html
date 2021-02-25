@@ -29,11 +29,19 @@
                     <td>{{ communication.subject }}</td>
                     <td>{{ communication.details }}</td>
                     <td>
-			{% if communication.records.exists %}
+                        {% if communication.records.exists %}
+                        {% if communication.records.all.count > 1 %}
+                              Mulitple Attachments ({{communication.records.all.count }})
+                        {% else %}
+
                         {% for doc in communication.records.all %}
-                            <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='/media/{{ doc.upload }}'>{{ doc.name }}</A></div>
+                            <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target='comms_attachment_{{ doc.id }}'>{{ doc.name }}</A></div>
                         {% endfor %}
                         {% endif %}
+                        {% endif %}
+
+
+
                         </td>
                 </tr>
                 {% endfor %}

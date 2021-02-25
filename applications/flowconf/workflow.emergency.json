@@ -7,57 +7,72 @@
             "emergencyworks": "False"
         },
         "actions": [
+            {
+                "title": "Approve (Issue)",
+                "route": "3",
+                "routegroup":"assess",
+		"state" : "14"
+            },
+            {
+                "title": "Assign to Manager",
+                "route": "4",
+                "routegroup":"manager",
+		"state" : "5"
+
+            },
+            {
+                "title": "Cancel Emergency Works",
+                "route": "2",
+                "routegroup":"assess",
+		"state" : "4"
+            }
+
         ],
         "formcomponent": {
             "update": {
-                "title": "Make Application Changes"
-            }
-        },
-        "condition-based-actions": {
-            "2-issue": {
-                "steplabel": "Issue",
-                "routeoptions": [{
-                    "field": "2-issue",
-                    "fieldvalue": "Issue",
-                    "fieldoperator":"equals",
-                    "route": "3",
-                    "routeurl": "application_issue",
-                    "required" : [],
-                    "state": "16"
-                }
-                ]
-            },
-            "1-nextstep": {
-                "steplabel": "Save",
-                "routeoptions": [{
-                    "field": "1-nextstep",
-                    "fieldvalue": "Save",
-                    "fieldoperator":"equals",
-                    "route": "2",
-                    "routeurl": "application_update",
-                    "required" : [],
-                    "state": "1"
-                }
-                ]
+                "title": "Make Changes"
             }
         },
         "groupaccess": {
-            "Processor": {
+            "Statdev Processor": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
                 "may_assign":"False",
                 "may_assign_customer": "False",
-                "may_assign_processor": "False",
+                "may_assign_processor": "True",
                 "may_create_condition":"True",
                 "may_update_condition" : "True",
-                "may_submit_approval": "False",
+                "may_submit_approval": "True",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
+                "allow_admin_side_menu" : "True",
+		"may_view_action_log": "True",
+		"may_view_comm_log": "True",
+		"allow_access_attachments" : "True"
+		
+            },
+            "Statdev Assessor": {
+                "may_update": "True",
+                "may_lodge":"True",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+		"may_assign_assessor": "True",
+                "may_assign_processor": "True",
+                "may_submit_approval": "True",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "allow_admin_side_menu" : "True",
+		"may_view_action_log": "True",
+                "may_create_condition":"True",
+                "may_update_condition": "True",
+                "may_view_comm_log": "True",
+		"may_assign_to_person": "True",
+		"allow_access_attachments" : "True"
 
             },
-            "Assessor": {
+            "Statdev Approver": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -68,23 +83,11 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
-
-            },
-            "Approver": {
-                "may_update": "True",
-                "may_lodge":"True",
-                "may_refer":"False",
-                "may_assign":"False",
-                "may_assign_customer": "False",
-                "may_assign_processor": "False",
-                "may_create_condition":"False",
-                "may_submit_approval": "False",
-                "may_issue": "False",
-                "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
+                "allow_admin_side_menu" : "True",
+		"may_view_action_log": "True",
+		"may_view_comm_log": "True",
+		"allow_access_attachments" : "True"
             }
-
         },
         "collapse": {
             "holder": "False",
@@ -107,46 +110,17 @@
             {
                 "title": "Assign to Assessor",
                 "route": "3",
-                "routegroup":"assess"
+                "routegroup":"assess",
+		"state" : "4"
             }
         ],
-
-        "condition-based-actions": {
-            "2-issue": {
-                "steplabel": "Issue",
-                "routeoptions": [{
-                    "field": "2-issue",
-                    "fieldvalue": "Issue",
-                    "fieldoperator":"equals",
-                    "route": "3",
-                    "routeurl": "application_issue",
-                    "required" : [],
-                    "state": "16"
-                }
-                ]
-            },
-            "1-nextstep": {
-                "steplabel": "Save",
-                "routeoptions": [{
-                    "field": "1-nextstep",
-                    "fieldvalue": "Save",
-                    "fieldoperator":"equals",
-                    "route": "2",
-                    "routeurl": "application_update",
-                    "required" : [],
-                    "state": "1"
-                }
-                ]
-            }
-        },
-
         "formcomponent": {
             "update": {
-                "title": "Make Application Changes"
+                "title": "Make Changes"
             }
         },
         "groupaccess": {
-            "Processor": {
+            "Statdev Processor": {
                 "may_update": "True",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -158,10 +132,30 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "may_assign_assessor": "True"
-
+                "may_assign_assessor": "True",
+		"allow_admin_side_menu" : "True",
+		"may_view_action_log": "True",
+		"may_view_comm_log": "True",
+		"allow_access_attachments" : "True"
             },
-            "Assessor": {
+            "Statdev Assessor": {
+                "may_update": "True",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+		"may_assign_assessor": "True",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+		"allow_admin_side_menu" : "True",
+		"may_view_action_log": "True",
+		"may_view_comm_log": "True",
+		"allow_access_attachments" : "True"
+            },
+            "Statdev Approver": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -171,20 +165,11 @@
                 "may_create_condition":"False",
                 "may_submit_approval": "False",
                 "may_issue": "False",
-                "may_generate_pdf": "False"
-
-            },
-            "Approver": {
-                "may_update": "False",
-                "may_lodge":"False",
-                "may_refer":"False",
-                "may_assign":"False",
-                "may_assign_customer": "False",
-                "may_assign_processor": "False",
-                "may_create_condition":"False",
-                "may_submit_approval": "False",
-                "may_issue": "False",
-                "may_generate_pdf": "False"
+                "may_generate_pdf": "False",
+		"allow_admin_side_menu" : "True",
+		"may_view_action_log": "True",
+		"may_view_comm_log": "True",
+		"allow_access_attachments" : "True"
             }
 
         },
@@ -217,7 +202,7 @@
             }
         },
         "groupaccess": {
-            "Processor": {
+            "Statdev Processor": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -229,10 +214,14 @@
                 "may_issue": "False",
                 "may_update_condition" : "False",
                 "may_generate_pdf": "False",
-                "may_assign_assessor": "True"
+                "may_assign_assessor": "True",
+		"allow_admin_side_menu" : "True",
+		"may_view_action_log": "True",
+		"may_view_comm_log": "True",
+		"allow_access_attachments" : "True"
 
             },
-            "Assessor": {
+            "Statdev Assessor": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -242,10 +231,14 @@
                 "may_create_condition":"False",
                 "may_submit_approval": "False",
                 "may_issue": "False",
-                "may_generate_pdf": "False"
+                "may_generate_pdf": "False",
+		"allow_admin_side_menu" : "True",
+		"may_view_action_log": "True",
+		"may_view_comm_log": "True",
+		"allow_access_attachments" : "True"
 
             },
-            "Approver": {
+            "Statdev Approver": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -255,7 +248,11 @@
                 "may_create_condition":"False",
                 "may_submit_approval": "False",
                 "may_issue": "False",
-                "may_generate_pdf": "False"
+                "may_generate_pdf": "False",
+		"allow_admin_side_menu" : "True",
+		"may_view_action_log": "True",
+		"may_view_comm_log": "True",
+		"allow_access_attachments" : "True"
             }
 
         },
@@ -270,7 +267,202 @@
         },
         "disabled": ["proposed_commence","proposed_end"]
         
+    },
+    "4": {
+        "title": "Manager",
+        "hidden": {
+            "holder": "False",
+            "address": "False",
+            "emergencyworks": "False"
+        },
+        "actions": [
+            {
+                "title": "Approved (Issue)",
+                "route": "3",
+                "routegroup":"assess",
+		"state" : "14"
+            },
+            {
+                "title": "Assign to Assessor",
+                "route": "5",
+                "routegroup":"assess",
+		"state" : "4"
+            }
+
+        ],
+        "formcomponent": {
+            "update": {
+                "title": "Make Changes"
+            }
+        },
+        "groupaccess": {
+            "Statdev Processor": {
+                "may_update": "True",
+                "may_lodge":"True",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"True",
+                "may_update_condition" : "True",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "allow_admin_side_menu" : "True",
+		"may_view_action_log": "True",
+		"may_view_comm_log": "True",
+		"allow_access_attachments" : "True"
+            },
+            "Statdev Assessor": {
+                "may_update": "True",
+                "may_lodge":"True",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_assessor": "True",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "allow_admin_side_menu" : "True",
+		"may_view_action_log": "True",
+		"may_view_comm_log": "True",
+		"allow_access_attachments" : "True"
+	
+            },
+            "Statdev Approver": {
+                "may_update": "True",
+                "may_lodge":"True",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "True",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_assign_assessor": "True",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "allow_admin_side_menu" : "True",
+                "may_assign_to_person": "True",
+                "allow_access_attachments": "True",
+		"may_view_action_log": "True",
+		"may_view_comm_log": "True",
+		"allow_access_attachments" : "True"
+            }
+
+        },
+        "collapse": {
+            "holder": "False",
+            "address": "False",
+            "emergencyworks": "False",
+            "conditions": "False"
+        },
+        "fields": {
+        }
+    },
+    "5": {
+        "title": "Assessor",
+        "hidden": {
+            "holder": "False",
+            "address": "False",
+            "emergencyworks": "False"
+        },
+        "actions": [
+            {   
+                "title": "Approve (Issue)",
+                "route": "3",
+                "routegroup":"assess",
+                "state" : "14"
+            },
+
+	
+            {   
+                "title": "Assign to Manager",
+                "route": "4",
+                "routegroup":"manager",
+                "state" : "5"
+
+            },
+            {   
+                "title": "Cancel Emergency Works",
+                "route": "2",
+                "routegroup":"assess",
+                "state" : "4"
+            }
+
+        ],
+        "formcomponent": {
+            "update": {
+                "title": "Make Changes"
+            }
+        },
+        "groupaccess": {
+            "Statdev Processor": {
+                "may_update": "True",
+                "may_lodge":"True",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"True",
+                "may_update_condition" : "True",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "allow_admin_side_menu" : "True",
+		"may_view_action_log": "True",
+		"may_assign_to_person": "False",
+		"may_view_comm_log": "True",
+		"allow_access_attachments" : "True"
+            },
+            "Statdev Assessor": {
+                "may_update": "True",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_assessor": "True",
+                "may_assign_processor": "True",
+                "may_create_condition":"False",
+                "may_submit_approval": "True",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "allow_admin_side_menu" : "True",
+		"may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+		"may_view_comm_log": "True",
+		"allow_access_attachments" : "True"
+            },
+            "Statdev Approver": {
+                "may_update": "True",
+                "may_lodge":"True",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "allow_admin_side_menu" : "True",
+		"may_view_action_log": "True",
+		"may_assign_to_person": "False",
+		"may_view_comm_log": "True",
+		"allow_access_attachments" : "True"
+            }
+        },
+        "collapse": {
+            "holder": "False",
+            "address": "False",
+            "emergencyworks": "False",
+            "conditions": "False"
+        },
+        "fields": {
+        }
     }
+
 
 }
 

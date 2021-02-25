@@ -1,5 +1,16 @@
 from __future__ import unicode_literals
 from django.db.models import Q
+from ledger.payments.invoice import utils
+from ledger.payments.models import Invoice,OracleInterface,CashTransaction
+from ledger.payments.utils import oracle_parser_on_invoice,update_payments
+from ledger.checkout.utils import create_basket_session, create_checkout_session, place_order_submission, get_cookie_basket
+from oscar.apps.order.models import Order
+from django.conf import settings
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.contrib import messages
+from applications.email import sendHtmlEmail, emailGroup, emailApplicationReferrals
+from applications import models
 import random
 import re
 import string
@@ -39,3 +50,96 @@ def get_query(query_string, search_fields):
 
 def random_generator(size=12, chars=string.digits):
         return ''.join(random.choice(chars) for _ in range(size))
+
+
+def set_session_booking(session, key, value):
+    session[key] = value
+    session.modified = True
+
+def checkout(request, booking, lines, invoice_text=None, vouchers=[], internal=False):
+    basket_params = {
+        'products': lines,
+        'vouchers': vouchers,
+        'system': settings.PS_PAYMENT_SYSTEM_ID,
+        'custom_basket': True,
+    }
+    set_session_booking(request.session, 'test', 'JASON TEST')
+
+    basket, basket_hash = create_basket_session(request, basket_params)
+    checkout_params = {
+        'system': settings.PS_PAYMENT_SYSTEM_ID,
+        'fallback_url': request.build_absolute_uri('/'),
+        'return_url': request.build_absolute_uri(reverse('payment_success')), #request.build_absolute_uri(reverse('public_booking_success')),
+        'return_preload_url': request.build_absolute_uri(reverse('payment_success')), #request.build_absolute_uri(reverse('public_booking_success')),
+        'force_redirect': True,
+        'proxy': True if internal else False,
+        'invoice_text': invoice_text,
+    }
+#    if not internal:
+#        checkout_params['check_url'] = request.build_absolute_uri('/api/booking/{}/booking_checkout_status.json'.format(booking.id))
+    if internal or request.user.is_anonymous():
+        checkout_params['basket_owner'] = booking.customer.id
+
+
+    create_checkout_session(request, checkout_params)
+    set_session_booking(request.session, 'basket_id', basket.id)
+    set_session_booking(request.session, 'application_id', booking['app'].id)
+    set_session_booking(request.session, 'booking_id', booking['booking'].id)
+    set_session_booking(request.session, 'routeid', booking['app'].routeid)
+
+
+#    if internal:
+#        response = place_order_submission(request)
+#    else:
+    response = HttpResponseRedirect(reverse('checkout:index'))
+    # inject the current basket into the redirect response cookies
+    # or else, anonymous users will be directionless
+    response.set_cookie(
+            settings.OSCAR_BASKET_COOKIE_OPEN, basket_hash,
+            max_age=settings.OSCAR_BASKET_COOKIE_LIFETIME,
+            secure=settings.OSCAR_BASKET_COOKIE_SECURE, httponly=True
+    )
+
+    #if booking.cost_total < 0:
+    #    response = HttpResponseRedirect('/refund-payment')
+    #    response.set_cookie(
+    #        settings.OSCAR_BASKET_COOKIE_OPEN, basket_hash,
+    #        max_age=settings.OSCAR_BASKET_COOKIE_LIFETIME,
+    #        secure=settings.OSCAR_BASKET_COOKIE_SECURE, httponly=True
+    #    )
+
+    ## Zero booking costs
+    #if booking.cost_total < 1 and booking.cost_total > -1:
+    #    response = HttpResponseRedirect('/no-payment')
+    #    response.set_cookie(
+    #        settings.OSCAR_BASKET_COOKIE_OPEN, basket_hash,
+    #        max_age=settings.OSCAR_BASKET_COOKIE_LIFETIME,
+    #        secure=settings.OSCAR_BASKET_COOKIE_SECURE, httponly=True
+    #    )
+
+    return response
+
+
+def application_lodgment_info(request,app):
+
+        # Success message.
+        msg = """Your {0} application has been successfully submitted. The application
+        number is: <strong>WO-{1}</strong>.<br>
+        Please note that routine applications take approximately 4-6 weeks to process.<br>
+        If any information is unclear or missing, Parks and Wildlife may return your
+        application to you to amend or complete.<br>
+        The assessment process includes a 21-day external referral period. During this time
+        your application may be referred to external departments, local government
+        agencies or other stakeholders. Following this period, an internal report will be
+        produced by an officer for approval by the Manager, Rivers and Estuaries Division,
+        to determine the outcome of your application.<br>
+        You will be notified by email once your {0} application has been determined and/or
+        further action is required.""".format(app.get_app_type_display(), app.pk)
+        messages.success(request, msg)
+        emailcontext = {}
+        emailcontext['app'] = app
+        emailcontext['application_name'] = models.Application.APP_TYPE_CHOICES[app.app_type]
+        emailcontext['person'] = app.submitted_by
+        emailcontext['body'] = msg
+        sendHtmlEmail([app.submitted_by.email], emailcontext['application_name'] + ' application submitted ', emailcontext, 'application-lodged.html', None, None, None)
+

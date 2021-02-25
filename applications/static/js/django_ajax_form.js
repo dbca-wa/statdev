@@ -2,15 +2,21 @@ var django_ajax_form = {
       var: {
           form_html: '',
           url: '',
+	  title: '',
       },
-      OpenForm: function(url) {
+      OpenForm: function(url,title) {
+	console.log("OpenForm");
         console.log(url);
+        $('.modal-body').height('auto');
 	django_ajax_form.var.url = url;
+	django_ajax_form.var.title = title;
 
         //  var crispy_form_load = $.get( "/applications/272/vessel/" ).responseText;
         //  alert(crispy_form_load);
         $('#vesselModal').remove();
-
+        if (title == null) {
+	    title="";
+	}
 	$.ajax({
 	    url: url,
 	    async: false,
@@ -27,15 +33,16 @@ var django_ajax_form = {
             htmlvalue += '    <div class="modal-content">';
             htmlvalue += '      <div class="modal-header">';
             htmlvalue += '        <button type="button" class="close" data-dismiss="modal">&times;</button>';
-            htmlvalue += '        <h4 class="modal-title"></h4>';
+            htmlvalue += '        <h4 class="modal-title" id="modal-popup-title">'+title+'</h4>';
             htmlvalue += '      </div>';
-            htmlvalue += '      <div class="modal-body">';
+            htmlvalue += '      <div class="modal-body" style="overflow: auto;">';
             htmlvalue += django_ajax_form.var.form_html;
             htmlvalue += '<form action="/applications-uploads/" method="post" enctype="multipart/form-data" id="upload_form">';
             htmlvalue += '<input type="hidden" name="csrfmiddlewaretoken" value="'+csrfmiddlewaretoken+'" />';
             htmlvalue += '</form>';
             htmlvalue += '<BR><BR>';
             htmlvalue += '<BR><BR>';
+            htmlvalue += '</div>';
             htmlvalue += '<div class="modal-footer">';
             htmlvalue += '<BR><BR><button name="close" type="button" class="btn btn-primary" value="Close" class="close" data-dismiss="modal" value="Close">Close</button>';
             htmlvalue += '</div>';
@@ -46,8 +53,15 @@ var django_ajax_form = {
 
             $('html').prepend(htmlvalue);
 	    $('#vesselModal').modal({
-        show: 'false'
- });
+                 show: 'false'
+            });
+            $( window ).resize(function() {
+                             var modalbodyheight = window.innerHeight * 0.7;
+                             $('.modal-body').height(modalbodyheight+'px');
+            });
+            var modalbodyheight = window.innerHeight * 0.7;
+            $('.modal-body').height(modalbodyheight+'px');
+
  // $('#vesselModal').modal('show');
 $('#vesselModal').show();
 
@@ -63,7 +77,11 @@ $('.ajax-submit').on("click", function(event) {
 $('.ajax-close').on("click", function(event) {
     django_ajax_form.CloseForm();
 });
-
+$("#vesselModal").on("hidden.bs.modal", function () {
+    $('.modal-body').html('');
+    $('.modal-body').height('auto');
+    // put your default event here
+});
 
     $(function() {
         // Initialise datepicker widgets.
@@ -78,7 +96,7 @@ $('.ajax-close').on("click", function(event) {
       },
       saveForm: function()  { 
 
-
+django_ajax_form.CloseForm()
 var form_data = new FormData($('#id_form_modals')[0]);
 $.ajax({
 url : django_ajax_form.var.url,
@@ -86,6 +104,7 @@ type: "POST",
 data : form_data,
 contentType: false,
 cache: false,
+async: false,
 processData:false,
 xhr: function() {
 //upload Progress
@@ -98,19 +117,23 @@ mimeType:"multipart/form-data"
 //        console.log('upload complete');
 //        var input_array =[];
 $('#vesselModal').modal('hide');
-if (res.indexOf('alert-danger') >= 0 ) { 
+if (res.indexOf('alert-danger') >= 0 || res.indexOf('id="error') >= 0) { 
 
+        console.log("ERROR Found in response");
         var csrfmiddlewaretoken = $("input[name=csrfmiddlewaretoken]").val();
 
+	$('#vesselModal').remove();
+        $('.modal-backdrop').remove();
+        console.log(res);
         var htmlvalue = "";
             htmlvalue += '<div id="vesselModal" class="modal fade" role="dialog">';
             htmlvalue += '<div class="modal-dialog modal-lg">';
             htmlvalue += '    <div class="modal-content">';
             htmlvalue += '      <div class="modal-header">';
             htmlvalue += '        <button type="button" class="close" data-dismiss="modal">&times;</button>';
-            htmlvalue += '        <h4 class="modal-title"></h4>';
+            htmlvalue += '        <h4 class="modal-title">'+django_ajax_form.var.title+'</h4>';
             htmlvalue += '      </div>';
-            htmlvalue += '      <div class="modal-body">';
+            htmlvalue += '      <div class="modal-body" style="overflow: auto;">';
             htmlvalue += res;
             htmlvalue += '<form action="/applications-uploads/" method="post" enctype="multipart/form-data" id="upload_form">';
             htmlvalue += '<input type="hidden" name="csrfmiddlewaretoken" value="'+csrfmiddlewaretoken+'" />';
@@ -125,18 +148,17 @@ if (res.indexOf('alert-danger') >= 0 ) {
             htmlvalue += '</div>';
             htmlvalue += '</div>';
             htmlvalue += '</div>';
-
+            console.log(htmlvalue);
             $('html').prepend(htmlvalue);
-            $('#vesselModal').modal({
-        show: 'false'
- });
+            $('#vesselModal').modal({show: 'false'});
 
 if (typeof loadForm == 'function') { 
   loadForm(); 
+} else {
+  console.log("no loadForm");
 }
-
 $('#id_form_modals').submit(function(event) {
-event.preventDefault();
+ event.preventDefault();
 });
 
 
@@ -145,9 +167,15 @@ django_ajax_form.saveForm();
 
 });
 $('.ajax-close').on("click", function(event) {
-django_ajax_form.CloseForm();
+ django_ajax_form.CloseForm();
 
 });
+$("#vesselModal").on("hidden.bs.modal", function () {
+	    $('.modal-body').html('');
+	    $('.modal-body').height('auto');
+	    // put your default event here
+});
+	
 
     $(function() {
         // Initialise datepicker widgets.
@@ -187,8 +215,11 @@ django_ajax_form.CloseForm();
 // $('#vesselModal').hide();
 $('#vesselModal').show();
 }
+
 if (typeof loadForm == 'function') {
   loadForm();
+} else {
+  console.log('no loadForm');
 }
 
 // $( "#vesselModal" ).remove();
@@ -216,8 +247,7 @@ $('#vesselModal').show();
 
 },
 CloseForm: function() {
-$('#vesselModal').modal('hide');
-
+   $('#vesselModal').modal('hide');
 }
 
 }

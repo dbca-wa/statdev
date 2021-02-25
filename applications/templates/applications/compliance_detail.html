@@ -2,7 +2,7 @@
 
 {% block page_content_inner %}
 {% load static %}
-<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "/css/applications.css" %}?ver={{ GIT_COMMIT_HASH }}" />
 
 <div class="container-fluid">
     <div class="row">
@@ -67,12 +67,23 @@
                 </div>
                 <div class="panel-body">
                     <h5>Communications</h5>
-                    <p><a href="{% url 'compliance_comms' object.pk %}">Show</a> | <a href="{% url 'compliance_comms_create' object.pk %}">Add Entry</a></p>
+                    <p><a href="{% url 'approvals_comms' object.approval_id %}">Show</a> | <a href="{% url 'approvals_comms_create' object.approval_id %}">Add Entry</a></p>
                     <hr />
                     <h5>Actions</h5>
                     <ul>
+	            <li><a href="{% url 'compliance_actions' object.pk %}">Actions log</a></li>
+                    </ul>
+                    <ul>
+                </div>
+
+                <div class="panel-body" style='display:none'>
+                    <h5>Communications</h5>
+                    <p><a href="{% url 'compliance_comms' object.pk %}">Show</a> | <a href="{% url 'compliance_comms_create' object.pk %}">Add Entry</a></p>
+                    <hr/>
+                    <h5>Actions</h5>
+                    <ul>
                         <!-- Action log -->
-                        {% if admin_staff == True %} <li><a href="{% url 'compliance_actions' object.pk %}">Actions log</a></li>{% endif %}
+                        {% if admin_staff == True %}<li><a href="{% url 'compliance_actions' object.pk %}">Actions log</a></li>{% endif %}
                         <!-- Action log end -->
                     </ul>
                 </div>
@@ -140,7 +151,7 @@
                             <div class="col-sm-12 col-md-12 col-lg-9">
                                 {% for c in conditions %}
                                      {% for d in c.records.all %}
-                                     <img src="/static/images/pdf.png"> &nbsp; <A HREF='/media/{{ d.upload.name }}'>{{ d }}</A><BR>
+				     <img src="/static/images/pdf.png"> &nbsp; <A HREF='{{ d.file_url }}' target="new_tab_{{ doc.id }}">{{ d }}</A><BR>
                                      {% endfor %}
                                 {% endfor %}
                             </div>

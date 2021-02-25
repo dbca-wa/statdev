@@ -17,7 +17,7 @@
             "river_reserve_lease_section_29": "False",
             "river_reserve_lease_section_32": "False",
             "landowner_consent": "False",
-            "deed": "False",
+            "deed": "True",
             "publication": "True",
             "conditions": "True",
             "assessments": "True",
@@ -35,7 +35,7 @@
                     "route": "1",
                     "routeurl": "application_update",
                     "required" : [],
-                    "state": "15"
+                    "state": "1"
                 }
                 ]
             },
@@ -45,21 +45,26 @@
                     "field": "1-nextstep",
                     "fieldvalue": "Lodge Application",
                     "fieldoperator":"equals",
-                    "route": "3.2",
+                    "route": "2",
                     "routeurl": "application_lodge",
                     "required" : [],
-                    "state": "15"
+                    "state": "18"
                 }
                 ]
             }
         },
         "actions": [
-            {
+           {
                 "title": "Lodge Application",
-                "route": "3.2",
+                "route": "27",
                 "routegroup":"lodge",
-                "required" : []
+                "lodgegroup": "assess",
+                "required": ["title","proposed_commence","description","land_owner_consent"],
+                "state" : 18,
+                "payment_redirect": "True"
             }
+
+
         ],
         "formcomponent": {
             "update": {
@@ -79,10 +84,11 @@
             "may_generate_pdf": "False",
             "may_assign_to_creator": "False",
             "may_update_vessels_list": "True",
-            "show_form_buttons": "True"
+            "show_form_buttons": "True",
+            "allow_access_attachments": "True"
         },
         "groupaccess": {
-            "Processor": {
+            "Statdev Processor": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -94,111 +100,30 @@
                 "may_issue": "False",
                 "may_generate_pdf": "False",
                 "may_change_application_applicant" :"True",
-		"may_update_vessels_list": "True",
-                "show_form_buttons": "True"
-            }
-        },
-        "collapse": {
-            "applicant": "False",
-            "title": "False",
-            "proposed_activities": "False",
-            "certificate_commerical_acts_and_activities": "False",
-            "river_reserve_lease_section_29": "False",
-            "river_reserve_lease_section_32": "False",
-            "details_of_proposed_development": "False",
-            "publication": "True",
-            "referrals": "True",
-            "deed": "False",
-            "landowner_consent": "False"
-        },
-        "fields": {
-            "assessment_start_date": "hide",
-            "expire_date" : "hide",
-            "document_final" :" hide"
-        },
-        "required" : []
-    },
-    "1.1": {
-        "title": "Add Vessels (Licence/Permit)",
-        "hidden": {
-            "applicant": "False",
-            "title": "False",
-            "certificate_commerical_acts_and_activities": "False",
-            "vessels": "False",
-            "proposed_details": "False",
-            "certificate_of_survery":"False",
-            "proposed_activities": "False",
-            "details_of_proposed_development": "False",
-            "river_reserve_lease_section_29": "False",
-            "river_reserve_lease_section_32": "False",
-            "landowner_consent": "False",
-            "deed": "False",
-            "publication": "True",
-            "conditions": "True",
-            "assessments": "True",
-            "stakeholdercommunication": "True",
-            "referrals": "True",
-            "crafts" : "True",
-            "hide_form_buttons": "False"
-        },
-        "condition-based-actions": {
-            "2-prevstep": {
-                "steplabel": "Prev Step",
-                "routeoptions": [{
-                    "field": "2-prevstep",
-                    "fieldvalue": "Prev Step",
-                    "fieldoperator":"equals",
-                    "route": "1",
-                    "routeurl": "application_update",
-                    "required" : [],
-                    "state": "15"
-                }
-                ]
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "show_form_buttons": "True",
+                "allow_access_attachments": "True"
+
             },
-            "1-nextstep": {
-                "steplabel": "Next Step",
-                "routeoptions": [{
-                    "field": "1-nextstep",
-                    "fieldvalue": "Next Step",
-                    "fieldoperator":"equals",
-                    "route": "3.1",
-                    "routeurl": "application_update",
-                    "required" : [],
-                    "state": "15"
-                }
-                ]
-            }
-        },
-        "actions": [
-            {
-                "title": "Lodge Application",
-                "route": "2",
-                "routegroup":"lodge",
-                "required" : []
+            "Statdev Assessor": {
+                "may_update": "True",
+                "may_lodge":"True",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_change_application_applicant" :"True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "show_form_buttons": "True",
+                "allow_access_attachments": "True"
 
             }
-        ],
-        "formcomponent": {
-            "update": {
-                "title": "Make Application Changes"
-            }
-        },
-        "assigntoaccess": {
-            "may_update": "True",
-            "may_lodge":"True",
-            "may_refer":"False",
-            "may_assign":"False",
-            "may_assign_customer": "False",
-            "may_assign_processor": "False",
-            "may_create_condition":"False",
-            "may_submit_approval": "False",
-            "may_issue": "False",
-            "may_generate_pdf": "False",
-            "may_assign_to_creator": "False",
-            "may_update_vessels_list": "True"
-        },
-        "groupaccess": {
-
         },
         "collapse": {
             "applicant": "False",
@@ -214,47 +139,16 @@
             "landowner_consent": "False"
         },
         "fields": {
-            "applicant" : "hide",
-            "title" : "hide",
-            "purpose" : "hide",
-            "proposed_commence" : "hide",
-            "proposed_end" : "hide",
-            "max_participants" : "hide",
-            "proposed_location" : "hide",
-            "address" : "hide",
-            "jetties" : "hide",
-            "jetty_dot_approval" :"hide",
-            "drop_off_pick_up" : "hide",
-            "food" : "hide",
-            "beverage" : "hide",
-            "byo_alcohol" : "hide",
-            "sullage_disposal" : "hide",
-            "waste_disposal" : "hide",
-            "refuel_location_method" : "hide",
-            "berth_location" : "hide",
-            "anchorage" : "hide",
-            "operating_details" : "hide",
-            "vessel_or_craft_details" : "hide",
-            "cert_survey" :"hide",
-            "cert_public_liability_insurance" : "hide",
-            "risk_mgmt_plan" : "hide",
-            "safety_mgmt_procedures" : "hide",
-            "brochures_itineries_adverts" : "hide",
-            "other_relevant_documents" : "hide",
-            "land_owner_consent" : "hide",
-            "deed": "hide",
-            "description" : "hide",
             "assessment_start_date": "hide",
             "expire_date" : "hide",
             "document_final" :" hide",
-            "type_of_crafts" : "show",
-            "number_of_crafts" : "show",
-	    "liquor_licence" : "hide"
+            "deed" : "hide"
         },
-        "required" : ["type_of_crafts","number_of_crafts"]
+        "required" : []
     },
-    "1.2": {
-        "title": "Form Lodgement (Licence/Permit)",
+
+    "27": {
+        "title": "Pending Payment",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -269,58 +163,36 @@
             "landowner_consent": "False",
             "deed": "False",
             "publication": "True",
-            "conditions": "True",
-            "assessments": "True",
+            "conditions": "False",
+            "assessments": "False",
             "stakeholdercommunication": "True",
             "referrals": "True",
-            "vessels" : "True",
-            "crafts" : "False",
-            "hide_form_buttons": "False"
-        },
-        "condition-based-actions": {
-            "2-prevstep": {
-                "steplabel": "Prev Step",
-                "routeoptions": [{
-                    "field": "2-prevstep",
-                    "fieldvalue": "Prev Step",
-                    "fieldoperator":"equals",
-                    "route": "1",
-                    "routeurl": "application_update",
-                    "required" : [],
-                    "state": "15"
-                }
-                ]
-            },
-            "1-nextstep": {
-                "steplabel": "Next Step",
-                "routeoptions": [{
-                    "field": "1-nextstep",
-                    "fieldvalue": "Next Step",
-                    "fieldoperator":"equals",
-                    "route": "3.1",
-                    "routeurl": "application_detail",
-                    "required" : [],
-                    "state": "15"
-                }
-                ]
-            }
+            "hide_form_buttons": "True",
+            "location": "False",
+            "other_information" : "False",
+            "description": "False",
+            "landowner_consent": "False"
+
         },
         "actions": [
             {
-                "title": "Lodge Application",
+                "title": "Payment Completed",
                 "route": "2",
-                "routegroup":"lodge",
-                "required" : []
+                "routegroup": "assess",
+                "state": "4",
+                "payment": "success"
+            },
+            {
+                "title": "Payment Failed",
+                "route": "1",
+                "routegroup": "creator",
+                "state": "1",
+                "payment": "failed"
+            }
 
-            }
         ],
-        "formcomponent": {
-            "update": {
-                "title": "Make Application Changes"
-            }
-        },
         "assigntoaccess": {
-            "may_update": "True",
+            "may_update": "False",
             "may_lodge":"False",
             "may_refer":"False",
             "may_assign":"False",
@@ -331,10 +203,128 @@
             "may_issue": "False",
             "may_generate_pdf": "False",
             "may_assign_to_creator": "False",
-            "may_update_vessels_list": "False"
+            "may_payment": "True",
+            "show_form_buttons": "True",
+            "allow_access_attachments": "True"
+        },
+        "submitteraccess": {
+            "may_update": "False",
+            "may_lodge":"False",
+            "may_refer":"False",
+            "may_assign":"False",
+            "may_assign_customer": "False",
+            "may_assign_processor": "False",
+            "may_create_condition":"False",
+            "may_submit_approval": "False",
+            "may_issue": "False",
+            "may_generate_pdf": "False",
+            "may_assign_to_creator": "False",
+            "may_payment": "True",
+            "show_form_buttons": "True",
+            "allow_access_attachments": "True"
+        },
+        "owneraccess": {
+            "may_update": "False",
+            "may_lodge":"False",
+            "may_refer":"False",
+            "may_assign":"False",
+            "may_assign_customer": "False",
+            "may_assign_processor": "False",
+            "may_create_condition":"False",
+            "may_submit_approval": "False",
+            "may_issue": "False",
+            "may_generate_pdf": "False",
+            "may_assign_to_creator": "False",
+            "may_payment": "True",
+            "show_form_buttons": "True",
+            "allow_access_attachments": "True"
         },
         "groupaccess": {
-
+            "Statdev Assessor": {
+                "may_update": "False",
+                "may_lodge":"True",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_to_person" : "False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_assign_assessor": "True",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "allow_admin_side_menu" : "True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "may_payment": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True",
+                "allow_access_attachments": "True"
+            }
         },
         "collapse": {
             "applicant": "False",
@@ -350,46 +340,33 @@
             "landowner_consent": "False"
         },
         "fields": {
-            "applicant" : "hide",
-            "title" : "hide",
-            "purpose" : "hide",
+            "applicant":"hide",
+            "title": "hide",
+            "description" :"hide",
             "proposed_commence" : "hide",
             "proposed_end" : "hide",
-            "max_participants" : "hide",
-            "proposed_location" : "hide",
-            "address" : "hide",
-            "jetties" : "hide",           
-            "jetty_dot_approval" :"hide",
-            "drop_off_pick_up" : "hide", 
-            "food" : "hide",
-            "beverage" : "hide",
-            "byo_alcohol" : "hide",
-            "sullage_disposal" : "hide",
-            "waste_disposal" : "hide",
-            "refuel_location_method" : "hide",
-            "berth_location" : "hide",
-            "anchorage" : "hide",
-            "operating_details" : "hide",
-            "vessel_or_craft_details" : "hide",
-            "cert_survey" :"hide",
-            "cert_public_liability_insurance" : "hide",
-            "risk_mgmt_plan" : "hide",
-            "safety_mgmt_procedures" : "hide",
-            "brochures_itineries_adverts" : "hide",
-            "other_relevant_documents" : "hide",
+            "cost" : "hide",
+            "project_no" : "hide",
+            "related_permits" : "hide",
+            "records" : "hide",
             "land_owner_consent" : "hide",
-            "deed": "hide",
-            "description" : "hide",
-            "assessment_start_date": "hide",
-            "expire_date" : "hide",
-            "document_final" :"hide",
-	    "liquor_licence" : "hide"
+            "deed" : "hide",
+            "lot" : "hide",
+            "reserve_number" : "hide",
+            "town_suburb" : "hide",
+            "nearest_road_intersection" : "hide",
+            "local_government_authority" : "hide",
+            "over_water" : "hide",
+            "proposed_development_plans" : "hide",
+            "supporting_info_demonstrate_compliance_trust_policies" : "hide",
+            "assessment_start_date" : "hide",
+            "expire_date": "hide"
+        }
+},
 
-        },
-        "required" : []
-    },
-    "3.1": {
-        "title": "Form Lodgement (Licence/Permit)",
+
+   "28": {
+        "title": "Draft",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -408,20 +385,19 @@
             "assessments": "True",
             "stakeholdercommunication": "True",
             "referrals": "True",
-            "crafts": "False",
-            "hide_form_buttons": "False"
+            "vessels" : "False"
         },
         "condition-based-actions": {
             "2-prevstep": {
-                "steplabel": "Prev Step",
+                "steplabel": "Save",
                 "routeoptions": [{
                     "field": "2-prevstep",
-                    "fieldvalue": "Prev Step",
+                    "fieldvalue": "Save",
                     "fieldoperator":"equals",
                     "route": "1",
                     "routeurl": "application_update",
                     "required" : [],
-                    "state": "15"
+                    "state": "1"
                 }
                 ]
             },
@@ -431,22 +407,25 @@
                     "field": "1-nextstep",
                     "fieldvalue": "Lodge Application",
                     "fieldoperator":"equals",
-                    "route": "3.2",
+                    "route": "2",
                     "routeurl": "application_lodge",
                     "required" : [],
-                    "state": "15"
+                    "state": "4"
                 }
                 ]
             }
         },
         "actions": [
-            {
+           {
                 "title": "Lodge Application",
-                "route": "3.2",
+                "route": "2",
                 "routegroup":"lodge",
-                "required" : []
-
+                "lodgegroup": "assess",
+                "required": ["title","proposed_commence","description","land_owner_consent"],
+                "state" : 4
             }
+
+
         ],
         "formcomponent": {
             "update": {
@@ -464,10 +443,13 @@
             "may_submit_approval": "False",
             "may_issue": "False",
             "may_generate_pdf": "False",
-            "may_assign_to_creator": "False"
+            "may_assign_to_creator": "False",
+            "may_update_vessels_list": "True",
+            "show_form_buttons": "True",
+            "allow_access_attachments": "True"
         },
         "groupaccess": {
-            "Processor": {
+            "Statdev Processor": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -479,11 +461,13 @@
                 "may_issue": "False",
                 "may_generate_pdf": "False",
                 "may_change_application_applicant" :"True",
-                "may_update_vessels_list": "True",
-	"may_view_action_log": "True"
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "show_form_buttons": "True",
+                "allow_access_attachments": "True"
 
             },
-            "Assessor": {
+            "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
@@ -493,22 +477,14 @@
                 "may_create_condition":"False",
                 "may_submit_approval": "False",
                 "may_issue": "False",
-                "may_generate_pdf": "False"
+                "may_generate_pdf": "False",
+                "may_change_application_applicant" :"True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "show_form_buttons": "True",
+                "allow_access_attachments": "True"
 
-            },
-            "Approver": {
-                "may_update": "True",
-                "may_lodge":"True",
-                "may_refer":"False",
-                "may_assign":"False",
-                "may_assign_customer": "False",
-                "may_assign_processor": "False",
-                "may_create_condition":"False",
-                "may_submit_approval": "False",
-                "may_issue": "False",
-                "may_generate_pdf": "False"
             }
-
         },
         "collapse": {
             "applicant": "False",
@@ -527,12 +503,11 @@
             "assessment_start_date": "hide",
             "expire_date" : "hide",
             "document_final" :" hide"
-
         },
         "required" : []
     },
-    "3.2": {
-        "title": "Admin Officer",
+    "2": {
+        "title": "Assessor Officer",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -545,12 +520,12 @@
             "river_reserve_lease_section_29": "False",
             "river_reserve_lease_section_32": "False",
             "landowner_consent": "False",
-            "deed": "False",
+            "deed": "True",
             "publication": "True",
-            "conditions": "True",
+            "conditions": "False",
             "assessments": "True",
             "stakeholdercommunication": "True",
-            "referrals": "True"
+            "referrals": "False"
            
         },
         "actions": [
@@ -561,14 +536,15 @@
                 "state" : "3"
             },
             {
-                "title": "Send to Assessor",
-                "route": "3",
-                "routegroup":"assess",
-                "state": "4"
+                "title": "Send to Manager/s",
+                "route": "5",
+                "routegroup": "manager",
+                "state": "5",
+                "required": ["assessment_start_date","expiry_date","document_final"]
             },
             {
                 "title": "Return to submitter",
-                "route": "1",
+                "route": "28",
                 "routegroup":"creator",
                 "state": "1"
             }
@@ -591,18 +567,19 @@
             "may_generate_pdf": "False",
             "may_assign_to_creator": "False",
             "allow_admin_side_menu" : "True",
-            "show_form_buttons": "True"
+            "show_form_buttons": "True",
+            "allow_access_attachments": "True"
         },
         "groupaccess": {
-            "Processor": {
+            "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"False",
                 "may_refer":"True",
                 "may_assign":"True",
                 "may_assign_customer": "False",
-                "may_assign_processor": "True",
-                "may_create_condition":"False",
-                "may_submit_approval": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"True",
+                "may_submit_approval": "True",
                 "may_assign_assessor": "True",
                 "may_send_for_referral": "True",
                 "may_issue": "False",
@@ -619,12 +596,18 @@
                 "may_referral_delete": "True",
                 "may_view_action_log": "True",
                 "allow_admin_side_menu" : "True",
-		"may_view_action_log": "True",
-                "show_form_buttons": "True"
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "show_form_buttons": "True",
+                "may_assign_to_person": "True",
+                "may_update_vessels_list": "True",
+                "may_update_condition": "True",
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             },
-            "Approver": {
+            "Statdev Approver": {
                 "may_update": "False",
-                "may_lodge":"True",
+                "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
                 "may_assign_customer": "False",
@@ -632,8 +615,65 @@
                 "may_create_condition":"False",
                 "may_submit_approval": "False",
                 "may_issue": "False",
-                "may_generate_pdf": "False"
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_update_vessels_list": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Processor": {
+	        "may_assign_to_officer": "True",
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True",
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
+
         },
         "collapse": {
             "applicant": "True",
@@ -644,161 +684,21 @@
             "river_reserve_lease_section_32": "False",
             "details_of_proposed_development": "False",
             "publication": "True",
-            "referrals": "True",
+            "referrals": "False",
             "deed": "False",
-            "landowner_consent": "False"
+            "landowner_consent": "False",
+            "conditions": "False"
         },
         "fields": {
             "location": "hide",
             "document_draft": "hide",
-            "document_final": "hide",
             "document_determination": "hide",
             "document_completion": "hide",
-            "assessment_start_date": "hide",
             "type_of_crafts" : "hide",
-            "number_of_crafts" : "hide",
-            "assessment_start_date": "hide",
-            "expire_date" : "hide",
-            "document_final" :" hide"
+            "deed": "hide"
 
         },
         "required": []
-    },
-    "3": {
-        "title": "Asessor",
-        "hidden": {
-            "applicant": "False",
-            "title": "False",
-            "certificate_commerical_acts_and_activities": "False",
-            "vessels": "False",
-            "proposed_details": "False",
-            "certificate_of_survery":"False",
-            "proposed_activities": "False",
-            "details_of_proposed_development": "False",
-            "river_reserve_lease_section_29": "False",
-            "river_reserve_lease_section_32": "False",
-            "landowner_consent": "False",
-            "deed": "False",
-            "publication": "True",
-            "conditions": "False",
-            "assessments": "False",
-            "stakeholdercommunication": "True",
-            "referrals": "True",
-            "vessels": "True"
-
-        },
-        "actions": [
-            {
-                "title": "Reject to Admin Officer/s",
-                "route": "3.2",
-                "routegroup": "admin",
-                "state": "3",
-                "required": []
-
-            },
-            {
-                "title": "Send to Manager/s",
-                "route": "5",
-                "routegroup": "manager",
-                "state": "5",
-                "required": ["assessment_start_date","expiry_date","document_final"]
-            }
-        ],
-        "formcomponent": {
-            "update": {
-                "title": "Assess Application"
-            }
-        },
-        "groupaccess": {
-            "Assessor": {
-                "may_update": "True",
-                "may_lodge":"True",
-                "may_refer":"False",
-                "may_assign":"False",
-                "may_assign_customer": "False",
-                "may_assign_processor": "True",
-                "may_create_condition":"True",
-                "may_submit_approval": "True",
-                "may_issue": "False",
-                "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True",
-                "show_form_buttons": "True",
-                "may_assessor_advise": "True"
-            },
-            "Approver": {
-                "may_update": "True",
-                "may_lodge":"True",
-                "may_refer":"False",
-                "may_assign":"False",
-                "may_assign_customer": "False",
-                "may_assign_processor": "False",
-                "may_create_condition":"False",
-                "may_submit_approval": "False",
-                "may_issue": "False",
-                "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True",
-                "show_form_buttons": "True"
-            },
-	    "Processor": {
-		"may_view_action_log": "True"
-            }
-
-        },
-        "collapse": {
-            "applicant": "False",
-            "title": "False",
-            "proposed_activities": "False",
-            "certificate_commerical_acts_and_activities": "False",
-            "river_reserve_lease_section_29": "False",
-            "river_reserve_lease_section_32": "False",
-            "details_of_proposed_development": "False",
-            "publication": "True",
-            "referrals": "True",
-            "deed": "False",
-            "landowner_consent": "False"
-        },
-        "fields": {
-            "applicant": "hide",
-            "title": "hide",
-            "description" :"hide",
-            "proposed_commence" : "hide",
-            "proposed_end" : "hide",
-            "cost" : "hide",
-            "project_no" : "hide",
-            "related_permits" : "hide",
-            "records" : "hide",
-            "land_owner_consent" : "hide",
-            "deed" : "hide",
-            "purpose" : "hide",
-            "max_participants" : "hide",
-            "proposed_location" : "hide",
-            "address" : "hide",
-            "jetties" : "hide",
-            "jetty_dot_approval_expiry" : "hide",
-            "drop_off_pick_up" : "hide",
-            "food" : "hide",
-            "beverage" : "hide",
-            "byo_alcohol" : "hide",
-            "sullage_disposal" : "hide",
-            "waste_disposal" : "hide",
-            "refuel_location_method" : "hide",
-            "berth_location" : "hide",
-            "anchorage" : "hide",
-            "operating_details" : "hide",
-            "cert_survey" : "hide",
-            "cert_public_liability_insurance" : "hide",
-            "risk_mgmt_plan" : "",
-            "safety_mgmt_procedures" : "hide",
-            "brochures_itineries_adverts" : "hide",
-            "jetty_dot_approval" : "hide",
-            "type_of_crafts" : "hide",
-            "number_of_crafts" : "hide",
-            "vessel_or_craft_details" :"hide",
-            "other_relevant_documents":"hide",
-            "liquor_licence" : "hide"
-
-        },
-        "required" : ["assessment_start_date","expire_date"]
     },
     "4": {
         "title": "Referrals",
@@ -814,7 +714,7 @@
             "river_reserve_lease_section_29": "False",
             "river_reserve_lease_section_32": "False",
             "landowner_consent": "False",
-            "deed": "False",
+            "deed": "True",
             "publication": "True",
             "conditions": "True",
             "assessments": "True",
@@ -824,8 +724,8 @@
         },
         "actions": [
             {
-                "title": "Send to Assessor",
-                "route": "3",
+                "title": "Send to Statdev Assessor",
+                "route": "2",
                 "routegroup":"assess",
                 "state": "4"
             }
@@ -836,27 +736,30 @@
             }
         },
         "groupaccess": {
-            "Processor": {
+            "Statdev Processor": {
                 "may_update": "False",
-                "may_lodge":"True",
+                "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
                 "may_assign_customer": "False",
                 "may_assign_processor": "False",
                 "may_create_condition":"False",
                 "may_submit_approval": "False",
-                "may_recall_resend": "True",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True",
-		"may_view_action_log": "True",
-                "show_form_buttons": "False"
-
+                "show_form_buttons": "False",
+                "may_view_comm_log": "True",
+                "may_recall_resend": "True",
+                "may_referral_resend": "True",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu":"True",
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             },
-            "Assessor": {
+            "Statdev Assessor": {
                 "may_update": "True",
                 "may_lodge":"True",
-                "may_refer":"False",
+                "may_refer":"True",
                 "may_assign":"False",
                 "may_assign_customer": "False",
                 "may_assign_processor": "False",
@@ -865,12 +768,21 @@
                 "may_issue": "False",
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu" : "True",
-                "show_form_buttons": "True"
-
+                "show_form_buttons": "True",
+                "may_view_comm_log": "True",
+                "may_recall_resend": "True",
+                "may_referral_resend": "True",
+                "may_referral_delete": "True",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu":"True",
+                "allow_access_attachments": "True",
+                "may_create_condition":"True",
+                "may_update_condition": "True",
+                "may_accept_condition": "True"
             },
-            "Approver": {
+            "Statdev Approver": {
                 "may_update": "False",
-                "may_lodge":"True",
+                "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
                 "may_assign_customer": "False",
@@ -879,22 +791,59 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
             }
 
         },
         "collapse": {
             "applicant": "False",
             "title": "False",
-            "proposed_activities": "False",
+            "proposed_activities": "True",
             "certificate_commerical_acts_and_activities": "False",
             "river_reserve_lease_section_29": "False",
             "river_reserve_lease_section_32": "False",
             "details_of_proposed_development": "False",
             "publication": "True",
-            "referrals": "True",
-            "deed": "False",
-            "landowner_consent": "False"
+            "referrals": "False",
+            "conditions": "False",
+            "deed": "True",
+            "landowner_consent": "True",
+            "vessel_details": "True"
         },
         "fields": {
             "location": "hide",
@@ -902,6 +851,7 @@
             "document_final": "hide",
             "document_determination": "hide",
             "document_completion": "hide",
+            "deed": "hide",
             "assessment_start_date": "hide"
         }
     },
@@ -919,7 +869,7 @@
             "river_reserve_lease_section_29": "False",
             "river_reserve_lease_section_32": "False",
             "landowner_consent": "False",
-            "deed": "False",
+            "deed": "True",
             "publication": "True",
             "conditions": "False",
             "assessments": "False",
@@ -930,20 +880,21 @@
         },
         "actions": [
             {
-                "title": "Approve",
-                "route": "6",
-                "routegroup": "assess",
-                "state": "10"
+                "title": "Approve & Complete Application",
+                "route": "7",
+                "routegroup":"assess",
+                "state":"14"
             },
             {
                 "title": "Decline & Close Application",
                 "route": "8",
                 "routegroup": "admin",
-                "state": "8"
+                "state": "8",
+		"allow_email_attachment": "True"
             },
             {
                 "title": "Send back to Assessor",
-                "route": "3",
+                "route": "2",
                 "routegroup": "assess",
                 "state": "4"
             }
@@ -954,23 +905,94 @@
             }
         },
         "groupaccess": {
-            "Approver": {
+            "Statdev Approver": {
                 "may_update": "True",
                 "may_lodge":"True",
                 "may_refer":"False",
                 "may_assign":"False",
+                "may_create_condition":"True",
+                "may_update_condition": "True",
+                "may_accept_condition": "True",
                 "may_assign_customer": "False",
                 "may_assign_processor": "True",
-                "may_create_condition":"False",
                 "may_submit_approval": "False",
                 "may_assign_assessor": "True", 
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
+                "allow_admin_side_menu" : "True",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_access_attachments": "True"
+
             },
-            "Processor": {
-		"may_view_action_log": "True"
-	    }
+            "Statdev Assessor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True",
+                "allow_access_attachments": "True",
+  	        "may_assign_to_officer": "True"	
+            }
+
         },
         "collapse": {
             "applicant": "False",
@@ -1033,7 +1055,7 @@
         }
     },
     "6": {
-        "title": "Assessor Officer (Pending Completion)",
+        "title": "Statdev Assessor Officer (Pending Completion)",
         "hidden": {
             "applicant": "False",
             "title": "False",
@@ -1046,7 +1068,7 @@
             "river_reserve_lease_section_29": "False",
             "river_reserve_lease_section_32": "False",
             "landowner_consent": "False",
-            "deed": "False",
+            "deed": "True",
             "publication": "True",
             "conditions": "False",
             "assessments": "False",
@@ -1057,35 +1079,33 @@
             {
                 "title": "Email & Complete Application",
                 "route": "7",
-                "routegroup":"admin",
-                "state":"14"
-            },
-            {
-                "title": "Post & Complete Application",
-                "route": "7",
-                "routegroup":"admin",
+                "routegroup":"assess",
                 "state":"14"
             }
         ],
         "groupaccess": {
-            "Processor": {
+            "Statdev Assessor": {
                 "may_update": "False",
-                "may_lodge":"True",
+                "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
-                "may_assign_to_person" : "False",
                 "may_assign_customer": "False",
-                "may_assign_processor": "True",
+                "may_assign_processor": "False",
                 "may_create_condition":"False",
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu" : "True",
-		"may_view_action_log": "True"
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_assign_to_person": "True",
+                "may_assign_assessor": "True",
+                "allow_access_attachments": "True"
             },
-            "Assessor": {
-                "may_update": "True",
-                "may_lodge":"True",
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
                 "may_assign_customer": "False",
@@ -1094,11 +1114,14 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "allow_access_attachments": "True"
             },
-            "Approver": {
-                "may_update": "True",
-                "may_lodge":"True",
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
                 "may_assign_customer": "False",
@@ -1107,7 +1130,44 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True",
+                "allow_access_attachments": "True",
+		"may_assign_to_officer": "True"
             }
 
         },
@@ -1187,7 +1247,7 @@
             "river_reserve_lease_section_29": "False",
             "river_reserve_lease_section_32": "False",
             "landowner_consent": "False",
-            "deed": "False",
+            "deed": "True",
             "publication": "True",
             "conditions": "False",
             "assessments": "False",
@@ -1199,7 +1259,7 @@
         "formcomponent": {
         },
         "groupaccess": {
-            "Processor": {
+           "Statdev Assessor": {
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
@@ -1211,11 +1271,16 @@
                 "may_issue": "False",
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu" : "True",
-		"may_view_action_log": "True"
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_assign_to_person": "True",
+                "may_assign_assessor": "True",
+                "allow_access_attachments": "True"
             },
-            "Assessor": {
-                "may_update": "True",
-                "may_lodge":"True",
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
                 "may_assign_customer": "False",
@@ -1224,12 +1289,14 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
-
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "allow_access_attachments": "True"
             },
-            "Approver": {
-                "may_update": "True",
-                "may_lodge":"True",
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
                 "may_assign_customer": "False",
@@ -1238,7 +1305,43 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "True",
+                "allow_admin_side_menu" : "True",
+                "allow_access_attachments": "True"
             }
 
         },
@@ -1317,7 +1420,7 @@
             "river_reserve_lease_section_29": "False",
             "river_reserve_lease_section_32": "False",
             "landowner_consent": "False",
-            "deed": "False",
+            "deed": "True",
             "publication": "True",
             "conditions": "False",
             "assessments": "False",
@@ -1329,9 +1432,9 @@
         "formcomponent": {
         },
         "groupaccess": {
-            "Processor": {
-                "may_update": "True",
-                "may_lodge":"True",
+           "Statdev Assessor": {
+                "may_update": "False",
+                "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
                 "may_assign_customer": "False",
@@ -1341,11 +1444,16 @@
                 "may_issue": "False",
                 "may_generate_pdf": "False",
                 "allow_admin_side_menu" : "True",
-		"may_view_action_log": "True"
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_assign_to_person": "False",
+                "may_assign_assessor": "False",
+                "allow_access_attachments": "True"
             },
-            "Assessor": {
-                "may_update": "True",
-                "may_lodge":"True",
+            "Statdev Approver": {
+                "may_update": "False",
+                "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
                 "may_assign_customer": "False",
@@ -1354,12 +1462,14 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
-
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "allow_admin_side_menu" : "True",
+                "allow_access_attachments": "True"
             },
-            "Approver": {
-                "may_update": "True",
-                "may_lodge":"True",
+            "Statdev Director": {
+                "may_update": "False",
+                "may_lodge":"False",
                 "may_refer":"False",
                 "may_assign":"False",
                 "may_assign_customer": "False",
@@ -1368,7 +1478,43 @@
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
-                "allow_admin_side_menu" : "True"
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Executive": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"False",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "allow_admin_side_menu" : "True",
+                "may_view_comm_log": "True",
+                "allow_access_attachments": "True"
+            },
+            "Statdev Processor": {
+                "may_update": "False",
+                "may_lodge":"False",
+                "may_refer":"False",
+                "may_assign":"True",
+                "may_assign_customer": "False",
+                "may_assign_processor": "False",
+                "may_create_condition":"False",
+                "may_submit_approval": "False",
+                "may_issue": "False",
+                "may_generate_pdf": "False",
+                "may_view_action_log": "True",
+                "may_view_comm_log": "True",
+                "may_assign_to_person": "False",
+                "allow_admin_side_menu" : "True",
+                "allow_access_attachments": "True"
             }
 
         },
