@@ -29,3 +29,5 @@ django-cron==0.5.0
 py4j==0.10.2.1
 django_bootstrap3==10.0
 dj-static==0.0.6
+dj-database-url==0.5.0
+
