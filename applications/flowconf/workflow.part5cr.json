@@ -335,10 +335,22 @@
     "3": {
         "title": "Approved for Amendment",
         "hidden": {
+
+            "applicant": "True",
+            "title": "True",
+            "certificate_of_title" : "True",
+            "river_lease_section_29" : "True",
+            "river_lease_section_32" : "True",
+            "land_owner_consent": "True",
+            "deed" : "True",
             "holder": "False",
             "address": "False",
+            "assessments": "True",
             "emergencyworks": "False",
-            "assessments": "True"
+            "publication": "True",
+            "stakeholdercommunication": "True",
+            "referrals" : "True",
+            "conditions" : "True"
         },
         "actions": [
 
@@ -346,7 +358,6 @@
         "formcomponent": {
         },
         "groupaccess": {
-
             "Statdev Assessor": {
                 "may_update": "False",
                 "may_lodge":"False",
@@ -374,7 +385,7 @@
                 "may_view_action_log": "True",
                 "may_view_comm_log": "True",
                 "allow_admin_side_menu" : "True",
-                "show_form_buttons": "True",
+                "show_form_buttons": "False",
                 "may_assign_to_person": "False",
                 "may_create_condition":"False",
                 "may_update_condition": "False",
@@ -441,13 +452,10 @@
                 "may_generate_pdf": "False",
                 "may_view_action_log": "True",
                 "may_view_comm_log": "True",
-                "may_assign_to_person": "True",
+                "may_assign_to_person": "False",
                 "allow_admin_side_menu" : "True",
                 "allow_access_attachments": "True"
             }
-
-
-
         },
         "collapse": {
             "holder": "False",
@@ -460,9 +468,21 @@
     "4": {
         "title": "Amendment Rejected",
         "hidden": {
+            "applicant": "True",
+            "title": "True",
+            "certificate_of_title" : "True",
+            "river_lease_section_29" : "True",
+            "river_lease_section_32" : "True",
+            "land_owner_consent": "True",
+            "deed" : "True",
             "holder": "False",
             "address": "False",
-            "emergencyworks": "False"
+            "assessments": "True",
+            "emergencyworks": "False",
+            "publication": "True",
+            "stakeholdercommunication": "True",
+            "referrals" : "True",
+            "conditions" : "True"
         },
         "actions": [
             {
@@ -492,7 +512,6 @@
             "allow_access_attachments": "True"
         },
         "groupaccess": {
-
             "Statdev Assessor": {
                 "may_update": "False",
                 "may_lodge":"False",
@@ -520,7 +539,7 @@
                 "may_view_action_log": "True",
                 "may_view_comm_log": "True",
                 "allow_admin_side_menu" : "True",
-                "show_form_buttons": "True",
+                "show_form_buttons": "False",
                 "may_assign_to_person": "False",
                 "may_create_condition":"False",
                 "may_update_condition": "False",
@@ -578,7 +597,7 @@
                 "may_update": "False",
                 "may_lodge":"False",
                 "may_refer":"False",
-                "may_assign":"True",
+                "may_assign":"False",
                 "may_assign_customer": "False",
                 "may_assign_processor": "False",
                 "may_create_condition":"False",
@@ -591,9 +610,6 @@
                 "allow_admin_side_menu" : "True",
                 "allow_access_attachments": "True"
             }
-
-
-
         },
         "collapse": {
             "holder": "False",

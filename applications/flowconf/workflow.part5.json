@@ -4201,7 +4201,7 @@
 	    
             "assessments_draft_report_after_public_consultation": "False",
             "assessments_determination_and_briefing_note": "False",
-	        "publish_publication_feedback_determination": "False",
+	    "publish_publication_feedback_determination": "False",
             "publish_publication_feedback_final" : "False",
             "certificate_of_title": "False",
             "river_lease_section_29" : "False",
@@ -4211,20 +4211,19 @@
 
         },
         "actions": [
-
            {
                 "title": "Completed - Approved",
                 "route": "25",
                 "routegroup": "assess",
                 "state": "14",
                 "required" : ["approval_document_signed","document_determination_approved","publish_determination_report","assessment_start_date"]
-            },
+           },
            {
                 "title": "Completed - Not Supported",
                 "route": "26",
                 "routegroup": "assess",
                 "state": "19",
-                "required" : ["approval_document_signed","document_determination_approved","publish_determination_report","assessment_start_date"]
+		"required" : ["approval_document_signed","document_determination_approved","publish_determination_report","assessment_start_date"]
             }
 
 
