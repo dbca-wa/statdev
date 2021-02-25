@@ -96,173 +96,186 @@ class ApplicationTest(StatDevTestCase):
         resp = self.client.get(url, {'q': 'foo'})
         self.assertEquals(resp.status_code, 200)
 
-    #def test_create_application_view_get(self):
-    #    url = reverse('application_create')
-    #    resp = self.client.get(url)
-    #    self.assertEquals(resp.status_code, 200)
+    def test_create_application_view_get(self):
+        url = reverse('application_create')
+        resp = self.client.get(url)
+        self.assertEquals(resp.status_code, 200)
 
-    #def test_create_application_view_post(self):
-    #    count = Application.objects.count()
-    #    url = reverse('application_create')
-    #    self.client.post(url, {'app_type': Application.APP_TYPE_CHOICES.licence})
-    #    # Test that a new object has been created.
-    #    self.assertTrue(Application.objects.count() > count)
+    def test_create_application_view_post(self):
+        count = Application.objects.count()
+        url = reverse('application_create')
+        self.client.post(url, {'app_type': Application.APP_TYPE_CHOICES.licence})
+        # Test that a new object has been created.
+        self.assertTrue(Application.objects.count() > count)
 
-    #def test_detail_application_view_get(self):
-    #    url = reverse('application_detail', args=(self.app1.pk,))
-    #    resp = self.client.get(url)
-    #    self.assertEquals(resp.status_code, 200)
-    #    # Render different application states, for coverage.
-    #    self.app1.state = Application.APP_STATE_CHOICES.with_admin
-    #    self.app1.save()
-    #    resp = self.client.get(url)
-    #    self.assertEquals(resp.status_code, 200)
-    #    self.app1.state = Application.APP_STATE_CHOICES.with_assessor
-    #    self.app1.save()
-    #    resp = self.client.get(url)
-    #    self.assertEquals(resp.status_code, 200)
-    #    self.app1.state = Application.APP_STATE_CHOICES.with_manager
-    #    self.app1.save()
-    #    resp = self.client.get(url)
-    #    self.assertEquals(resp.status_code, 200)
+    def test_detail_application_view_get(self):
+        url = reverse('application_detail', args=(self.app1.pk,))
+        resp = self.client.get(url)
+        self.assertEquals(resp.status_code, 200)
+        # Render different application states, for coverage.
+        self.app1.state = Application.APP_STATE_CHOICES.with_admin
+        self.app1.save()
+        resp = self.client.get(url)
+        self.assertEquals(resp.status_code, 200)
+        self.app1.state = Application.APP_STATE_CHOICES.with_assessor
+        self.app1.save()
+        resp = self.client.get(url)
+        self.assertEquals(resp.status_code, 200)
+        self.app1.state = Application.APP_STATE_CHOICES.with_manager
+        self.app1.save()
+        resp = self.client.get(url)
+        self.assertEquals(resp.status_code, 200)
 
-    #def test_update_application_get(self):
-    #    self.app1.state = Application.APP_STATE_CHOICES.draft
-    #    self.app1.save()
-    #    url = reverse('application_update', args=(self.app1.pk,))
-    #    resp = self.client.get(url)
-    #    self.assertEquals(resp.status_code, 200)
+    def test_update_application_get(self):
+        self.app1.state = Application.APP_STATE_CHOICES.draft
+        self.app1.save()
+        url = reverse('application_update', args=(self.app1.pk,))
+        resp = self.client.get(url)
+        self.assertEquals(resp.status_code, 200)
 
-#   # def test_update_application_get_redirect(self):
-#   #     self.app1.state = Application.APP_STATE_CHOICES.with_admin
-#   #     self.app1.routeid = 3.1
-#   #     self.app1.assignee = None
-#   #     self.app1.save()
-#   #     url = reverse('application_update', args=(self.app1.pk,))
-#   #     resp = self.client.get(url)
-#   #     self.assertRedirects(resp, self.app1.get_absolute_url())
+#    def test_update_application_get_redirect(self):
+#        self.app1.state = Application.APP_STATE_CHOICES.with_admin
+#        self.app1.routeid = 3.1
+#        self.app1.assignee = None
+#        self.app1.save()
+#        url = reverse('application_update', args=(self.app1.pk,))
+#        resp = self.client.get(url)
+#        self.assertRedirects(resp, self.app1.get_absolute_url())
 
     #def test_update_application_post(self):
     #    self.app1.state = Application.APP_STATE_CHOICES.draft
-    #    self.app1.save()
-    #    url = reverse('application_update', args=(self.app1.pk,))
-    #    resp = self.client.post(url, {'title': 'foo','vessel_or_craft_details':'1', 'jetty_dot_approval':True, 'food': True, 'beverage': True,'byo_alcohol':True})
-    #    # Create view will redirect to the detail view.
-    #    self.assertRedirects(resp, self.app1.get_absolute_url()+"update/")
-    #    a = Application.objects.get(pk=self.app1.pk)
-    #    self.assertEquals(a.title, 'foo')
-
-    #def test_lodge_application_get(self):
-    #    self.app1.state = Application.APP_STATE_CHOICES.draft
     #    self.app1.routeid = 1
     #    self.app1.save()
+    #    url = reverse('application_update', args=(self.app1.pk,))
+    #    resp = self.client.post(url, {'title': 'foo', 'vessel_or_craft_details':'1', 'jetty_dot_approval':True, 'food': True, 'beverage': True,'byo_alcohol':True ,'2-prevstep' :'Save'})
+
+    #    print ("RESPON1")
+    #    print (resp.content)
+    #    print ("RESPONEND")
+
+    #    # Create view will redirect to the detail view.
+    #    #self.assertEquals(resp.status_code, 200)
+    #    #self.assertRedirects(resp, self.app1.get_absolute_url()+"update/")
+    #    a = Application.objects.get(pk=self.app1.pk)
+    #    print ("RESP2")
+    #    print (a.title)
+    #    print (a.jetty_dot_approval)
+    #    print (a.food)
+    #    print (a.submit_date)
+    #    self.assertEquals(a.title, 'foo')
+
+    def test_lodge_application_get(self):
+        self.app1.state = Application.APP_STATE_CHOICES.draft
+        self.app1.routeid = 1
+        self.app1.save()
+        url = reverse('application_lodge', args=(self.app1.pk,))
+        resp = self.client.get(url)
+        self.assertEquals(resp.status_code, 302)
+
+    def test_lodge_application_get_redirect(self):
+        self.app1.state = Application.APP_STATE_CHOICES.with_admin
+        self.app1.routeid = 5 
+        self.app1.save()
+        url = reverse('application_lodge', args=(self.app1.pk,))
+        resp = self.client.get(url)
+        self.assertRedirects(resp, self.app1.get_absolute_url())
+
+    #def test_lodge_application_post(self):
     #    url = reverse('application_lodge', args=(self.app1.pk,))
-    #    resp = self.client.get(url)
-    #    self.assertEquals(resp.status_code, 200)
+    #    resp = self.client.post(url)
+#        self.assertRedirects(resp, self.app1.get_absolute_url())
+    #    self.assertRedirects(resp, reverse('application_list'))
 
-    #def test_lodge_application_get_redirect(self):
-    #    self.app1.state = Application.APP_STATE_CHOICES.with_admin
-    #    self.app1.routeid = 5 
-    #    self.app1.save()
-    #    url = reverse('application_lodge', args=(self.app1.pk,))
-    #    resp = self.client.get(url)
-    #    self.assertRedirects(resp, self.app1.get_absolute_url())
+    def test_refer_application_get(self):
+        self.app1.state = Application.APP_STATE_CHOICES.with_admin
+        self.app1.routeid = 4 
+        self.app1.save()
+        url = reverse('application_refer', args=(self.app1.pk,))
+        resp = self.client.get(url)
+        self.assertEquals(resp.status_code, 200)
 
-    ##def test_lodge_application_post(self):
-    ##    url = reverse('application_lodge', args=(self.app1.pk,))
-    ##    resp = self.client.post(url)
-#   #     self.assertRedirects(resp, self.app1.get_absolute_url())
-    ##    self.assertRedirects(resp, reverse('application_list'))
+    def test_refer_application_get_redirect(self):
+        self.app1.routeid = 3.1
+        url = reverse('application_refer', args=(self.app1.pk,))
+        resp = self.client.get(url)
+        self.assertRedirects(resp, self.app1.get_absolute_url())
 
-    #def test_refer_application_get(self):
-    #    self.app1.state = Application.APP_STATE_CHOICES.with_admin
-    #    self.app1.routeid = 3.2
-    #    self.app1.save()
-    #    url = reverse('application_refer', args=(self.app1.pk,))
-    #    resp = self.client.get(url)
-    #    self.assertEquals(resp.status_code, 200)
+    def test_refer_application_post(self):
+        referee = Group.objects.get(name='Statdev Referee')
+        self.user1.groups.add(referee)  # Make user1 a referee.
+        count = Referral.objects.count()
+        self.app1.state = Application.APP_STATE_CHOICES.with_admin
+        self.app1.routeid = 4 
+       
+        self.app1.save()
+        url = reverse('application_refer', args=(self.app1.pk,))
+        resp = self.client.post(url, {'referee': self.user1.pk, 'period': 21})
+        self.assertRedirects(resp, self.app1.get_absolute_url()+'refer/')
+        #self.assertRedirects(resp, self.app1.get_success_url())
+        self.assertEquals(resp.status_code, 302)
+        # Test that a new object has been created.
+        self.assertTrue(Referral.objects.count() > count)
+        new_ref = Referral.objects.get(referee=self.user1.pk)
+        self.assertTrue(new_ref.period)  # Check that expire_date is set.
 
-    #def test_refer_application_get_redirect(self):
-    #    self.app1.routeid = 3.1
-    #    url = reverse('application_refer', args=(self.app1.pk,))
-    #    resp = self.client.get(url)
-    #    self.assertRedirects(resp, self.app1.get_absolute_url())
+#    def test_condition_create_get(self):
+#        self.app1.state = Application.APP_STATE_CHOICES.with_admin
+#        self.app1.save()
+#        url = reverse('condition_create', args=(self.app1.pk,))
+#        resp = self.client.get(url)
+#        self.assertEquals(resp.status_code, 200)
 
-    #def test_refer_application_post(self):
-    #    referee = Group.objects.get(name='Referee')
-    #    self.user1.groups.add(referee)  # Make user1 a referee.
-    #    count = Referral.objects.count()
-    #    self.app1.state = Application.APP_STATE_CHOICES.with_admin
-    #    self.app1.routeid = 3.2
-    #    self.app1.save()
-    #    url = reverse('application_refer', args=(self.app1.pk,))
-    #    resp = self.client.post(url, {'referee': self.user1.pk, 'period': 21})
-    #    self.assertRedirects(resp, self.app1.get_absolute_url()+'refer/')
-    #    #self.assertRedirects(resp, self.app1.get_success_url())
-    #    self.assertEquals(resp.status_code, 302)
-    #    # Test that a new object has been created.
-    #    self.assertTrue(Referral.objects.count() > count)
-    #    new_ref = Referral.objects.get(referee=self.user1.pk)
-    #    self.assertTrue(new_ref.expire_date)  # Check that expire_date is set.
+    def test_condition_create_get_redirect(self):
+        url = reverse('condition_create', args=(self.app1.pk,))
+        resp = self.client.get(url)
+        self.assertRedirects(resp, self.app1.get_absolute_url())
 
-#   # def test_condition_create_get(self):
-#   #     self.app1.state = Application.APP_STATE_CHOICES.with_admin
-#   #     self.app1.save()
-#   #     url = reverse('condition_create', args=(self.app1.pk,))
-#   #     resp = self.client.get(url)
-#   #     self.assertEquals(resp.status_code, 200)
+#    def test_condition_create_post(self):
+#        self.assertFalse(Condition.objects.exists())
+#        url = reverse('condition_create', args=(self.app1.pk,))
+#        resp = self.client.post(url, {'condition': 'foobar'})
+#        self.assertRedirects(resp, self.app1.get_absolute_url()+'update/')
+#        self.assertTrue(Condition.objects.exists())
 
-    #def test_condition_create_get_redirect(self):
-    #    url = reverse('condition_create', args=(self.app1.pk,))
-    #    resp = self.client.get(url)
-    #    self.assertRedirects(resp, self.app1.get_absolute_url())
+#    def test_condition_update_get(self):
+#        self.app1.state = Application.APP_STATE_CHOICES.with_assessor
+#        self.app1.save()
+#        condition = mixer.blend(Condition, application=self.app1, referral=self.ref1)
+#        url = reverse('condition_update', args=(condition.pk,))
+#        resp = self.client.get(url)
+#        self.assertEquals(resp.status_code, 200)
 
-#   # def test_condition_create_post(self):
-#   #     self.assertFalse(Condition.objects.exists())
-#   #     url = reverse('condition_create', args=(self.app1.pk,))
-#   #     resp = self.client.post(url, {'condition': 'foobar'})
-#   #     self.assertRedirects(resp, self.app1.get_absolute_url()+'update/')
-#   #     self.assertTrue(Condition.objects.exists())
+    def test_condition_update_get_redirect(self):
+        # Redirect on application status (Draft).
+        condition = mixer.blend(Condition, application=self.app1, referral=self.ref1)
+        url = reverse('condition_update', args=(condition.pk,))
+        resp = self.client.get(url)
+        self.assertRedirects(resp, self.app1.get_absolute_url())
+        # Redirect on user permission (not an Assessor).
+        self.app1.state = Application.APP_STATE_CHOICES.with_assessor
+        self.app1.save()
+        assessor = Group.objects.get(name='Statdev Assessor')
+        self.user1.groups.remove(assessor)
+        resp = self.client.get(url)
+        self.assertRedirects(resp, self.app1.get_absolute_url())
 
-#   # def test_condition_update_get(self):
-#   #     self.app1.state = Application.APP_STATE_CHOICES.with_assessor
-#   #     self.app1.save()
-#   #     condition = mixer.blend(Condition, application=self.app1, referral=self.ref1)
-#   #     url = reverse('condition_update', args=(condition.pk,))
-#   #     resp = self.client.get(url)
-#   #     self.assertEquals(resp.status_code, 200)
+#    def test_condition_update_post(self):
+#        self.app1.state = Application.APP_STATE_CHOICES.with_assessor
+#        self.app1.save()
+#        condition = mixer.blend(Condition, application=self.app1, referral=self.ref1)
+#        url = reverse('condition_update', args=(condition.pk,))
+#        resp = self.client.post(url, {'condition': 'foobar'})
+#        self.assertRedirects(resp, self.app1.get_absolute_url()+'update/')
+#        c = Condition.objects.get(pk=condition.pk)
+#        self.assertEquals(c.condition, 'foobar')
 
-    #def test_condition_update_get_redirect(self):
-    #    # Redirect on application status (Draft).
-    #    condition = mixer.blend(Condition, application=self.app1, referral=self.ref1)
-    #    url = reverse('condition_update', args=(condition.pk,))
-    #    resp = self.client.get(url)
-    #    self.assertRedirects(resp, self.app1.get_absolute_url())
-    #    # Redirect on user permission (not an Assessor).
-    #    self.app1.state = Application.APP_STATE_CHOICES.with_assessor
-    #    self.app1.save()
-    #    assessor = Group.objects.get(name='Assessor')
-    #    self.user1.groups.remove(assessor)
-    #    resp = self.client.get(url)
-    #    self.assertRedirects(resp, self.app1.get_absolute_url())
-
-#   # def test_condition_update_post(self):
-#   #     self.app1.state = Application.APP_STATE_CHOICES.with_assessor
-#   #     self.app1.save()
-#   #     condition = mixer.blend(Condition, application=self.app1, referral=self.ref1)
-#   #     url = reverse('condition_update', args=(condition.pk,))
-#   #     resp = self.client.post(url, {'condition': 'foobar'})
-#   #     self.assertRedirects(resp, self.app1.get_absolute_url()+'update/')
-#   #     c = Condition.objects.get(pk=condition.pk)
-#   #     self.assertEquals(c.condition, 'foobar')
-
-#   # def test_condition_delete_get(self):
-#   #     self.app1.state = Application.APP_STATE_CHOICES.with_assessor
-#   #     self.app1.save()
-#   #     condition = mixer.blend(Condition, application=self.app1, referral=self.ref1)
-#   #     url = reverse('condition_delete', args=(condition.pk,))
-#   #     resp = self.client.get(url)
-#   #     self.assertEquals(resp.status_code, 200)
+#    def test_condition_delete_get(self):
+#        self.app1.state = Application.APP_STATE_CHOICES.with_assessor
+#        self.app1.save()
+#        condition = mixer.blend(Condition, application=self.app1, referral=self.ref1)
+#        url = reverse('condition_delete', args=(condition.pk,))
+#        resp = self.client.get(url)
+#        self.assertEquals(resp.status_code, 200)
 
     #def test_condition_delete_get_redirect(self):
     #    # Redirect on application status (Draft).
@@ -273,7 +286,7 @@ class ApplicationTest(StatDevTestCase):
     #    # Redirect on user permission (not an Assessor).
     #    self.app1.state = Application.APP_STATE_CHOICES.with_assessor
     #    self.app1.save()
-    #    assessor = Group.objects.get(name='Assessor')
+    #    assessor = Group.objects.get(name='Statdev Assessor')
     #    self.user1.groups.remove(assessor)
     #    resp = self.client.get(url)
     #    self.assertRedirects(resp, self.app1.get_absolute_url())
