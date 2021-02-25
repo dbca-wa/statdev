@@ -16,9 +16,16 @@ branches:
         - master
 env:
     global:
+        - ALLOWED_DOMAIN="*"
         - SECRET_KEY=SecretKeyForTravis
         - DATABASE_URL="postgis://postgres@localhost:5432/travis_ci_test"
-        - ALLOWED_DOMAIN="*"
+        - PRODUCTION_EMAIL=False
+        - EMAIL_INSTANCE="TEST"
+        - NON_PROD_EMAIL="travis@dpaw.wa.gov.au"
+        - BPAY_ALLOWED=True
+        - EMAIL_FROM="no-reply@dbca.wa.gov.au"
+        - DEBUG=True
+sudo: true
 install:
     - pip install --upgrade setuptools
     - pip install six
