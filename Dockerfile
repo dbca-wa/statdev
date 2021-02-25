@@ -1,5 +1,5 @@
 # Prepare the base environment.
-FROM ubuntu:18.04 as builder_base_docker
+FROM ubuntu:20.04 as builder_base_docker
 MAINTAINER asi@dbca.wa.gov.au
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Australia/Perth

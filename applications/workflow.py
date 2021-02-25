@@ -162,19 +162,10 @@ class Flow():
               context['application_assignee_id'] = -100000
         if context['application_submitter_id'] is None:
               context['application_submitter_id'] = -100000
-
-        print ("REQIEST ID")
-        print (request.user)
-        print (request.user.id)
-        print (context['application_assignee_id'])
-        print (context['application_submitter_id'])
-
         if context['application_assignee_id'] == request.user.id:
             context = self.getAssignToAccess(context,route)
-            print ("ASSSI")
         if context['application_submitter_id'] == request.user.id:
             context = self.getSubmitterAccess(context,route)
-            print ("Submit")
         if context['application_owner'] is True:
             context = self.getOwnerAccess(context,route)
         return context
@@ -383,12 +374,9 @@ class Flow():
         json_obj = self.json_obj
         if json_obj[str(route)]:
             if json_obj[str(route)]['actions']:
-               print ("WorkFlow Actions")
-               print (len(json_obj[str(route)]['actions']))
                i =0
                while i < len(json_obj[str(route)]['actions']):
                      json_obj[str(route)]['actions'][i]['actionid'] = i
-                     print (json_obj[str(route)]['actions'][i])
                      i += 1 
                #for a in json_obj[str(route)]['actions']:
                #     print (a)
