@@ -9,7 +9,8 @@ RUN apt-get clean
 RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install --no-install-recommends -y gunicorn wget git libmagic-dev gcc binutils libproj-dev gdal-bin python3 python3-setuptools python3-dev python3-pip tzdata cron rsyslog rsyslog tzdata
-RUN apt-get install --no-install-recommends -y libpq-dev
+RUN apt-get install --no-install-recommends -y libpq-dev patch
+RUN apt-get install --no-install-recommends -y postgresql-client mtr htop vim ssh
 RUN apt-get install --no-install-recommends -y postfix syslog-ng syslog-ng-core
 RUN ln -s /usr/bin/python3 /usr/bin/python && \
     ln -s /usr/bin/pip3 /usr/bin/pip
