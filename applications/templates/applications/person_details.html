@@ -278,7 +278,7 @@
                     <ul class="nav nav-pills">
                         <li role="presentation" class="{{ nav_other_applications }}"><a href="{% url "person_other_actions" object.pk "applications" %}">Applications</a></li>
                         <li role="presentation" class="{{ nav_other_approvals }}" ><a href="{% url "person_other_actions" object.pk "approvals" %}">Approvals</a></li>
-                        <li role="presentation" class="{{ nav_other_emergency }}" ><a href="{% url "person_other_actions" object.pk "emergency" %}">Emergency Works</a></li>
+                        <li style='display:none' role="presentation" class="{{ nav_other_emergency }}" ><a href="{% url "person_other_actions" object.pk "emergency" %}">Emergency Works</a></li>
                         <li role="presentation" class="{{ nav_other_clearance }}" ><a href="{% url "person_other_actions" object.pk "clearance" %}">Clearance of Conditions</a></li>
                     </ul>
                     <br>
