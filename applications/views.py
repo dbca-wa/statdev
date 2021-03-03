@@ -9607,7 +9607,7 @@ class PersonOther(LoginRequiredMixin, DetailView):
                  APP_TYPE_CHOICES = []
                  APP_TYPE_CHOICES_IDS = []
                  for i in Application.APP_TYPE_CHOICES:
-                     if i[0] in [4,5,6,7,8,9,10,11]:
+                     if i[0] in [5,6,7,8,9,10,11]:
                          skip = 'yes'
                      else:
                          APP_TYPE_CHOICES.append(i)
@@ -9625,9 +9625,10 @@ class PersonOther(LoginRequiredMixin, DetailView):
                           end = ''
                           # search_filter &= Q(app_type__in=APP_TYPE_CHOICES_IDS)
 
-
-                      if self.request.GET['appstatus'] != '':
-                          search_filter &= Q(state=int(self.request.GET['appstatus']))
+                      if self.request.GET['appstatus_limited'] != '':
+                           search_filter &= Q(state=int(self.request.GET['appstatus_limited']))
+                      #if self.request.GET['appstatus'] != '':
+                      #    search_filter &= Q(state=int(self.request.GET['appstatus']))
 
 #                      applications = Application.objects.filter(query_obj)
                       context['query_string'] = self.request.GET['q']
