@@ -122,12 +122,12 @@ class ApprovalList(ListView):
             row['approval_url'] = app.approval_url
         #    if app.group is not None:
 
-            if app.applicant:
-                if app.applicant.id in context['app_applicants']:
-                    donothing = ''
-                else:
-                    context['app_applicants'][app.applicant.id] = app.applicant.first_name + ' ' + app.applicant.last_name
-                    context['app_applicants_list'].append({"id": app.applicant.id, "name": app.applicant.first_name + ' ' + app.applicant.last_name})
+            #if app.applicant:
+            #    if app.applicant.id in context['app_applicants']:
+            #        donothing = ''
+            #    else:
+            #        context['app_applicants'][app.applicant.id] = app.applicant.first_name + ' ' + app.applicant.last_name
+            #        context['app_applicants_list'].append({"id": app.applicant.id, "name": app.applicant.first_name + ' ' + app.applicant.last_name})
 
 
             context['app_list'].append(row)
