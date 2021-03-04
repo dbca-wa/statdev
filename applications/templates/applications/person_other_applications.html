@@ -2,6 +2,31 @@
     <div class="panel-body">
         <div class="row">
             <form action="" method="get">
+
+
+                    <div class="col-sm-12 col-lg-9">
+                        <input type='hidden' name='action' value='search'>
+                        <!-- RES -->
+                        <div class="col-sm-12 col-lg-4">
+                            <div class="col-sm-12 col-lg-12">
+                                <label>From Lodge Date:</label>
+                            </div>
+                            <div class="col-sm-12 col-lg-12">
+                                        <input class="dateinput form-control" id="id_from_date" name="from_date" value="{{ from_date }}" type="text" autocomplete='off'>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-4">
+                            <div class="col-sm-12 col-lg-12">
+                                <label>To Lodge Date:</label>
+                            </div>
+                            <div class="col-sm-12 col-lg-12">
+                                  <input class="dateinput form-control" id="id_to_date" name="to_date" value="{{ to_date }}" type="text" autocomplete='off'>
+                            </div>  
+                        </div>
+                </div>
+
+
+
                 <div class="col-sm-12 col-lg-9">
                     <input type='hidden' name='searchaction' value='search'>
                     <!-- RES -->
@@ -22,19 +47,44 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-sm-12 col-md-12 col-lg-6">
-                        <div class="col-sm-12 col-md-12 col-lg-12">
-                            <label>Status:</label>
+
+
+                        <div class="col-sm-12 col-lg-3">
+                            <div class="col-sm-12 col-lg-12">
+                                <label>Status:</label>
+                            </div>
+                            <div class="col-sm-12 col-lg-12">
+                                <select class="select form-control" id="id_appstatus" name="appstatus">
+                                    <option value="" selected="selected">All</option>
+                                    {% for at in app_appstatus %}
+                                        {% if appstatus|floatformat:"0" == at.0|floatformat:"0" %}
+                                           <option selected value="{{ at.0 }}">{{ at.1}}</option>
+                                        {% else %}
+                                           <option value="{{ at.0 }}">{{ at.1 }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-sm-12 col-lg-12">
-                            <select class="select form-control" id="id_appstatus_limited" name="appstatus_limited">
-                                <option value="" {% if appstatus_limited == '' %}selected="selected"{% endif %} >All</option>
-                                <option {% if appstatus_limited == 'draft' %}selected="selected"{% endif %} value="draft">Draft</option>
-                                <option {% if appstatus_limited == 'submitted' %}selected="selected"{% endif %} value="submitted">Submitted</option>
-                                <option {% if appstatus_limited == 'completed' %}selected="selected"{% endif %} value="completed">Completed</option>
-                            </select>
+
+                        <div class="col-sm-12 col-lg-3">
+                            <div class="col-sm-12 col-lg-12">
+                                <label>Workflow Step:</label>
+                            </div>
+                            <div class="col-sm-12 col-lg-12">
+                                <select class="select form-control" id="id_wfstatus" name="wfstatus">
+                                    <option value="" selected="selected">All</option>
+                                    {% for at in app_wfstatus %}
+                                    {% if wfstatus == at %}
+                                    <option selected value="{{ at }}">{{ at}}</option>
+                                    {% else %}
+                                    <option value="{{ at }}">{{ at }}</option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
                         </div>
-                    </div>
+
                 </div>
                 <div class="col-sm-12 col-lg-3">
                         <div class="col-sm-12 col-lg-12">
@@ -92,7 +142,7 @@
                         <tr>
                             <td><a href="{% if app_obj.app.state == 1 %}{% if app_obj.app.app_type == None %}{% url 'application_apply_form' app_obj.app.pk 'apptype' %}{% else %}{% url 'application_update' app_obj.app.pk %}{% endif %}{% else %}{% url 'application_detail' app_obj.app.pk %}{% endif %}">WO-{{ app_obj.app.pk }}</a></td>
 
-                            <td>{{ app_obj.app.get_app_type_display }}</td>
+			    <td{{ app_obj.app.get_app_type_display }}</td>
                             <td>{{ app_obj.app.title }}</td>
                             <td>{% if app_obj.app.organisation %}
                                  {{ app_obj.app.organisation }}
@@ -117,10 +167,12 @@
                                      {% endif %}
 				{% endif %}
                             </td>
+			    <td>{{ app_obj.app.get_status_display }} </td>
                             <td>{{ app_obj.app.submit_date|date:"d-M-Y" }}</td>
                             {% if staff == True %}
                             <td>{{ app_obj.app.assignee.get_full_name }}</td>
 			    {% endif %}
+
 				<td>{{ app_obj.app.submitted_by.get_full_name }}</td>
                             {% if staff == True %} 
                             <td></td>

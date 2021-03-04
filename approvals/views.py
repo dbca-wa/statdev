@@ -16,6 +16,7 @@ from statdev.context_processors import template_context
 from django.contrib import messages
 from applications.views_pdf import PDFtool
 from applications.email import sendHtmlEmail, emailGroup, emailApplicationReferrals
+from datetime import datetime, date, timedelta
 
 import os.path
 import os 
@@ -89,11 +90,25 @@ class ApprovalList(ListView):
                     context['appstatus'] = int(self.request.GET['appstatus'])
 
 
+            if 'from_date' in self.request.GET:
+                 context['from_date'] = self.request.GET['from_date']
+                 context['to_date'] = self.request.GET['to_date']
+                 if self.request.GET['from_date'] != '':
+                     from_date_db = datetime.strptime(self.request.GET['from_date'], '%d/%m/%Y').date()
+                     query_obj &= Q(issue_date__gte=from_date_db)
+                 if self.request.GET['to_date'] != '':
+                     to_date_db = datetime.strptime(self.request.GET['to_date'], '%d/%m/%Y').date()
+                     query_obj &= Q(issue_date__lte=to_date_db)
+
 #        if 'q' in self.request.GET and self.request.GET['q']:
  #           query_str = self.request.GET['q']
   #          objlist = ApprovalModel.objects.filter(Q(pk__contains=query_str) | Q(title__icontains=query_str) | Q(applicant__email__icontains=query_str))
         else:
-            objlist = ApprovalModel.objects.filter().order_by('-id')
+            to_date = datetime.today()
+            from_date = datetime.today() - timedelta(days=10)
+            context['from_date'] = from_date.strftime('%d/%m/%Y')
+            context['to_date'] = to_date.strftime('%d/%m/%Y')
+            objlist = ApprovalModel.objects.filter(issue_date__gte=from_date,issue_date__lte=to_date).order_by('-id')
         usergroups = self.request.user.groups.all()
 
         context['app_list'] = []
