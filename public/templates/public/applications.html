@@ -108,7 +108,7 @@
 
     <script>
 function loadTable() {
-    $('#application-table').dataTable({searching: false, paging: true, "pageLength": 10,
+    $('#application-table').dataTable({searching: false, paging: true, "pageLength": 10, "order": [[ 0, "desc" ]],
      columnDefs: [
        { type: 'natural-nohtml', targets: 0 }, { type: 'date-dd-mmm-yyyy', targets: 4 }, { 'bSortable': false, 'aTargets':  5 }
      ]

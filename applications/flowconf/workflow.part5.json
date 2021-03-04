@@ -4378,7 +4378,7 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-	        "document_memo_2": "hide"
+	    "document_memo_2": "hide"
 
         }
     },
