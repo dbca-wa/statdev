@@ -3146,6 +3146,7 @@ class ApplicationChange(LoginRequiredMixin, CreateView):
                                               submit_date=date.today(),
                                               state=Application.APP_STATE_CHOICES.new,
                                               approval_id=approval.id,
+                                              title=approval.title,
                                               old_approval_id = approval.id
                                              )
 

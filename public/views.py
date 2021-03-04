@@ -38,7 +38,7 @@ class PublicApplicationsList(TemplateView):
             query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=False, publish_determination_report__isnull=True,publish_final_expiry__gte=current_datetime) & Q(app_type__in=[3])
             context['home_nav_final'] = 'active'
         elif action == 'determination':
-            query_obj = Q(Q(publish_documents__isnull=False, publish_draft_report__isnull=False, publish_final_report__isnull=False,publish_determination_report__isnull=False) & Q(app_type__in=[3])) |  Q(Q(publish_determination_report__isnull=True) & Q(app_type__in=[6]))
+            query_obj = Q(Q(publish_documents__isnull=False, publish_draft_report__isnull=False, publish_final_report__isnull=False,publish_determination_report__isnull=False) & Q(app_type__in=[3])) |  Q(Q(publish_determination_report__isnull=False) & Q(app_type__in=[6]))
             context['home_nav_determination'] = 'active'
         else:
             query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=False) & Q(app_type__in=[3])
@@ -76,7 +76,7 @@ class PublicApplicationFeedback(UpdateView):
         elif action == 'final':
             query_obj = Q(publish_documents__isnull=False, publish_draft_report__isnull=False,publish_final_report__isnull=False, publish_determination_report__isnull=True,publish_final_expiry__gte=current_datetime) & Q(app_type__in=[3]) & Q(id=app_id)
         elif action == 'determination':
-            query_obj = Q(Q(publish_documents__isnull=False, publish_draft_report__isnull=False, publish_final_report__isnull=False,publish_determination_report__isnull=False) & Q(app_type__in=[3]) & Q(id=app_id)) | Q(Q(publish_determination_report__isnull=True) & Q(app_type__in=[6]) & Q(id=app_id))
+            query_obj = Q(Q(publish_documents__isnull=False, publish_draft_report__isnull=False, publish_final_report__isnull=False,publish_determination_report__isnull=False) & Q(app_type__in=[3]) & Q(id=app_id)) | Q(Q(publish_determination_report__isnull=False) & Q(app_type__in=[6]) & Q(id=app_id))
         else:
             messages.error(self.request, 'Forbidden from viewing this page.')
             return HttpResponseRedirect("/")

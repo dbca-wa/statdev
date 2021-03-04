@@ -24,7 +24,7 @@
             "river_lease_section_29" : "False",
             "river_lease_section_32" : "False",
             "land_owner_consent": "False",
-            "deed" : "False"
+            "deed" : "True"
         },
         "condition-based-actions": {
             "2-prevstep": {
@@ -149,7 +149,8 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "deed" : "hide"
         }
     },
     "27": {
@@ -176,7 +177,8 @@
             "location": "False",
             "other_information" : "False",
             "description": "False",
-            "landowner_consent": "False"
+            "landowner_consent": "False",
+	    "deed": "True"
         },
         "actions": [
             {
@@ -359,7 +361,8 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "deed" : "hide"
         }
     },
     "28": {
@@ -378,7 +381,8 @@
             "conditions": "True",
             "assessments": "True",
             "stakeholdercommunication": "True",
-            "referrals": "True"
+            "referrals": "True",
+	    "deed" : "True"
         },
         "condition-based-actions": {
             "2-prevstep": {
@@ -499,7 +503,8 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "deed" : "hide"
         }
     },
     "282": {
@@ -522,7 +527,9 @@
             "assessments": "True",
             "stakeholdercommunication": "True",
             "referrals": "True",
-            "vessels" : "False"
+            "vessels" : "False",
+	    "deed" : "True"
+
         },
         "condition-based-actions": {
             "2-prevstep": {
@@ -635,7 +642,8 @@
         "fields": {
             "assessment_start_date": "hide",
             "expire_date" : "hide",
-            "document_final" :" hide"
+            "document_final" :" hide",
+	    "deed" : "hide"
         },
         "required" : []
     },
@@ -652,7 +660,7 @@
             "landowner_consent": "False",
             "deed": "False",
             "publication": "True",
-            "conditions": "True",
+            "conditions": "False",
             "assessments": "True",
             "stakeholdercommunication": "False",
             "referrals": "False",
@@ -661,7 +669,7 @@
             "river_lease_section_29" : "False",
             "river_lease_section_32" : "False",
             "land_owner_consent": "False",
-            "deed" : "False"
+            "deed" : "True"
         },
         "actions": [
             {
@@ -702,7 +710,7 @@
                 "may_assign":"True",
                 "may_assign_customer": "False",
                 "may_assign_processor": "False",
-                "may_create_condition":"False",
+                "may_create_condition":"True",
                 "may_submit_approval": "True",
                 "may_assign_assessor": "True",
                 "may_send_for_referral": "True",
@@ -800,6 +808,7 @@
             "landowner_consent":"False",
             "publication": "False",
             "referrals": "False",
+	    "conditions" : "False",
             "deed": "False"
         },
         "fields": {
@@ -817,7 +826,8 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "deed" : "hide"
 
         },
         "required": [
@@ -846,7 +856,7 @@
             "river_lease_section_29" : "False",
             "river_lease_section_32" : "False",
             "land_owner_consent": "False",
-            "deed" : "False"
+            "deed" : "True"
 
         },
         "actions": [
@@ -867,7 +877,8 @@
                 "may_assign_to_person": "True",
                 "may_assign_customer": "False",
                 "may_assign_processor": "True",
-                "may_create_condition": "False",
+                "may_create_condition":"True",
+                "may_update_condition": "True",
                 "may_submit_approval": "False",
                 "may_issue": "False",
                 "may_generate_pdf": "False",
@@ -1004,8 +1015,8 @@
             "land_description": "hide",
             "approval_document" : "hide",
             "approval_document_signed" : "hide",
-            "document_memo_2": "hide"
-
+            "document_memo_2": "hide",
+	    "deed" : "hide"
         }
     },
     "17": {
@@ -1035,7 +1046,7 @@
             "river_lease_section_29" : "False",
             "river_lease_section_32" : "False",
             "land_owner_consent": "False",
-            "deed" : "False"
+            "deed" : "True"
 
         },
         "actions": [
@@ -1185,8 +1196,8 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
-
+            "approval_document_signed" : "hide",
+	    "deed" : "hide"
         }
     },
     "18": {
@@ -1219,9 +1230,10 @@
             "river_lease_section_29" : "False",
             "river_lease_section_32" : "False",
             "land_owner_consent": "False",
-            "deed" : "False",
+            "deed" : "True",
             "landowner_information": "False",
             "approval_document": "False"
+	    
         },
         "actions": [
             {
@@ -1368,8 +1380,8 @@
             "document_new_draft_v3": "hide",
 	    "document_memo": "hide",
             "document_determination_approved" :"hide",
-            "approval_document_signed" : "hide"
-
+            "approval_document_signed" : "hide",
+	    "deed" : "hide"
         }
     },
     "20": {
@@ -1402,7 +1414,7 @@
             "river_lease_section_29" : "False",
             "river_lease_section_32" : "False",
             "land_owner_consent": "False",
-            "deed" : "False"
+            "deed" : "True"
         },
         "actions": [
             {
@@ -1515,7 +1527,7 @@
         },
 
         "fields": {
-
+                 "deed" : "hide"
         }
     },
     "21": {
@@ -1547,7 +1559,7 @@
             "river_lease_section_29" : "False",
             "river_lease_section_32" : "False",
             "land_owner_consent": "False",
-            "deed" : "False",
+            "deed" : "True",
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
@@ -1704,7 +1716,8 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-            "approval_document_signed" : "hide"
+            "approval_document_signed" : "hide",
+	    "deed" : "hide"
 
 
         }
@@ -1739,7 +1752,7 @@
             "river_lease_section_29" : "False",
             "river_lease_section_32" : "False",
             "land_owner_consent": "False",
-            "deed" : "False",
+            "deed" : "True",
             "approval_document_signed": "False"
         },
         "actions": [
@@ -1883,8 +1896,8 @@
             "document_determination_approved" :"hide",
             "landowner": "hide",
             "land_description": "hide",
-            "approval_document" : "hide"
-
+            "approval_document" : "hide",
+            "deed" : "hide"
 
         }
     },
@@ -1921,7 +1934,7 @@
             "river_lease_section_29" : "False",
             "river_lease_section_32" : "False",
             "land_owner_consent": "False",
-            "deed" : "False",
+            "deed" : "True",
             "approval_document_signed": "False"
         },
         "actions": [
@@ -2081,7 +2094,8 @@
             "landowner": "hide",
             "land_description": "hide",
             "approval_document" : "hide",
-	    "document_final_signed" : "hide"
+	    "document_final_signed" : "hide",
+	    "deed" : "hide"
 	    
         }
     },
@@ -2116,7 +2130,7 @@
             "river_lease_section_29" : "False",
             "river_lease_section_32" : "False",
             "land_owner_consent": "False",
-            "deed" : "False"
+            "deed" : "True"
 
         },
         "actions": [
@@ -2262,8 +2276,8 @@
             "document_determination" : "hide",
             "landowner": "hide",
             "land_description": "hide",
-            "approval_document" : "hide"
-
+            "approval_document" : "hide",
+            "deed" : "hide"
 
         }
     },
@@ -2298,7 +2312,7 @@
             "river_lease_section_29" : "False",
             "river_lease_section_32" : "False",
             "land_owner_consent": "False",
-            "deed" : "False"
+            "deed" : "True"
 
         },
         "actions": [
@@ -2430,7 +2444,7 @@
             "river_lease_section_29" : "False",
             "river_lease_section_32" : "False",
             "land_owner_consent": "False",
-            "deed" : "False"
+            "deed" : "True"
 
         },
         "actions": [
