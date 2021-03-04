@@ -91,7 +91,7 @@
                         <tr>
                             <td><a href="{% url "referral_conditions" row_obj.application.id %}">WO-{{ row_obj.application.id }}</a></td>
 
-                            <td>{{ row_obj.application.get_app_type_display }} -- {{ row_obj.application.state }}</td>
+                            <td>{{ row_obj.application.get_app_type_display }}</td>
                             <td>{{ row_obj.application.title }}</td>
                             <td>{% if row_obj.application.organisation %}
                                  {{ row_obj.application.organisation }}
