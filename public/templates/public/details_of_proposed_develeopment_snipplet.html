@@ -1,4 +1,7 @@
-            <div class="panel panel-default">
+
+{% load static %}
+
+<div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="details_of_proposed_development_heading">
                     <h3 class="panel-title">
                         <a role="button" data-toggle="collapse" href="#details_of_proposed_development_collapse" aria-expanded="false" aria-controls="details_of_proposed_development_collapse">
@@ -9,14 +12,60 @@
                 </div>
                 <div class="panel-collapse collapse in {{ collapse.details_of_proposed_development }}" id="details_of_proposed_development_collapse" role="tabpanel" aria-labelledby="details_of_proposed_development_heading">
                     <div class="panel-body">
+                        {% if action == 'determination' %}
+
                         <div class="col-sm-12 col-md-12 col-lg-12">
                             <div class="col-lg-12">
-                                <label>Estimated cost of development (AU$)</Label>
+                                <label>Issue Date</Label>
                             </div>
                             <div class="col-lg-4">
-                                {{ object.cost }}
+                                {{ approval.issue_date }}
                             </div>
                         </div>
+
+                        <div class="col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-lg-12">
+                                <label>Start Date</Label>
+                            </div>
+                            <div class="col-lg-4">
+                                {{ approval.start_date }}
+                            </div>
+                        </div>
+
+			    
+                        <div class="col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-lg-12">
+                                <label>Expiry Date</Label>
+                            </div>
+                            <div class="col-lg-4">
+                                {{ approval.expiry_date }}
+                            </div>
+			</div>
+
+                        <div class="col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-lg-12">
+                                <label>Approval Document</Label>
+                            </div>
+                            <div class="col-lg-4">
+                                 {% if approval.approval_url %}<A HREF='{{ approval.approval_url }}'><img src='{% static "images/pdf.png" %}' title="Click to Download PDF">Download</A>{% endif %} 
+                            </div>
+                        </div>
+
+
+
+
+			
+		        {% else %}
+
+                        <div class="col-sm-12 col-md-12 col-lg-12">
+                             <div class="col-lg-12">
+                                <label>Estimated cost of development (AU$)</Label>
+                             </div>
+                             <div class="col-lg-4">
+                                {{ object.cost }}
+                             </div>
+                         </div>
+			
                         <div class="col-sm-12 col-md-12 col-lg-12">
                             <div class="col-lg-12">
                                 <label>Current use of land</Label>
@@ -47,6 +96,7 @@
                                 {% endif %}
                             </div>
                         </div>
+			{% endif %}
                     </div>
                 </div>
             </div>

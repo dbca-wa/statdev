@@ -98,7 +98,6 @@ class PublicApplicationFeedback(UpdateView):
         app = self.get_object()
 
         doclist = app.proposed_development_plans.all()
-        print ("AOOO")
         context['proposed_development_plans_list'] = []
 
         for doc in doclist:
@@ -136,9 +135,14 @@ class PublicApplicationFeedback(UpdateView):
             if pub_web is None:
               context['river_lease_scan_of_application'] = app.river_lease_scan_of_application
             else:
-#              print "HERE"
 #               print pub_web.published_document
               context['river_lease_scan_of_application'] = pub_web.published_document
+
+        context['approval'] = []
+        approval = Approval.objects.filter(application=app)
+        if approval.count() > 0:
+             context['approval'] = approval[0]
+
         return context
 
     def get_initial(self):
