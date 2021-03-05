@@ -1181,7 +1181,7 @@ class ApplicationList(LoginRequiredMixin,ListView):
 #       context['app_apptypes'] = list(Application.APP_TYPE_CHOICES)
         #context['app_appstatus'] = list(Application.APP_STATE_CHOICES)
         context['app_wfstatus'] = list(Application.objects.values_list('route_status',flat = True).distinct())
-        
+        context['app_appstatus'] = Application.APP_STATUS 
         usergroups = self.request.user.groups.all()
         context['app_list'] = []
         for app in applications:
@@ -1310,8 +1310,8 @@ class EmergencyWorksList(ListView):
             context['may_assign_processor'] = True
         return context
 
-class ComplianceList(ListView):
-    model = Compliance
+class ComplianceList(TemplateView):
+    #model = Compliance
     template_name = 'applications/compliance_list.html'
 
     def get(self, request, *args, **kwargs):
@@ -1324,30 +1324,31 @@ class ComplianceList(ListView):
            return HttpResponseRedirect("/")
         return super(ComplianceList, self).get(request, *args, **kwargs)
 
-    def get_queryset(self):
-        qs = super(ComplianceList, self).get_queryset()
-        # Did we pass in a search string? If so, filter the queryset and return
-        # it.
-        if 'q' in self.request.GET and self.request.GET['q']:
-            query_str = self.request.GET['q']
-            # Replace single-quotes with double-quotes
-            query_str = query_str.replace("'", r'"')
-            # Filter by pk, title, applicant__email, organisation__name,
-            # assignee__email
-            query = get_query(
-                query_str, ['pk', 'title', 'applicant__email', 'assignee__email','approval_id'])
-            qs = qs.filter(query).distinct()
-        return qs
+    #def get_queryset(self):
+    #    qs = super(ComplianceList, self).get_queryset()
+    #    # Did we pass in a search string? If so, filter the queryset and return
+    #    # it.
+    #    if 'q' in self.request.GET and self.request.GET['q']:
+    #        query_str = self.request.GET['q']
+    #        # Replace single-quotes with double-quotes
+    #        query_str = query_str.replace("'", r'"')
+    #        # Filter by pk, title, applicant__email, organisation__name,
+    #        # assignee__email
+    #        query = get_query(
+    #            query_str, ['pk', 'title', 'applicant__email', 'assignee__email','approval_id'])
+    #        qs = qs.filter(query).distinct()
+    #    return qs
 
     def get_context_data(self, **kwargs):
         context = super(ComplianceList, self).get_context_data(**kwargs)
         context['query_string'] = ''
 
-        items = ComplianceGroup.objects.filter().order_by('due_date')
+        #items = ComplianceGroup.objects.filter().order_by('due_date')
 
         context['app_applicants'] = {}
         context['app_applicants_list'] = []
-        context['app_apptypes'] = list(Application.APP_TYPE_CHOICES)
+        #context['app_apptypes'] = list(Application.APP_TYPE_CHOICES)
+        #applications = ComplianceGroup.objects.filter(query_obj)
 
         APP_STATUS_CHOICES = []
         for i in Application.APP_STATE_CHOICES:
@@ -1356,20 +1357,39 @@ class ComplianceList(ListView):
 
         context['app_appstatus'] = list(APP_STATUS_CHOICES)
 
-
+        query_obj = Q()
         if 'action' in self.request.GET and self.request.GET['action']:
-            query_str = self.request.GET['q']
-            query_obj = Q(pk__contains=query_str) | Q(title__icontains=query_str) | Q(applicant__email__icontains=query_str) | Q(assignee__email__icontains=query_str)
-            query_obj &= Q(app_type=4)
-
-            if self.request.GET['applicant'] != '':
-                query_obj &= Q(applicant=int(self.request.GET['applicant']))
-            if self.request.GET['appstatus'] != '':
-                query_obj &= Q(state=int(self.request.GET['appstatus']))
-
-
-            applications = ComplianceGroup.objects.filter(query_obj)
+            if 'q' in self.request.GET and self.request.GET['q']:
+               query_str = self.request.GET['q']
+               query_obj = Q(Q(pk__contains=query_str) | Q(title__icontains=query_str) | Q(applicant__email__icontains=query_str) | Q(assignee__email__icontains=query_str))
+               #query_obj &= Q(app_type=4)
             context['query_string'] = self.request.GET['q']
+            #if self.request.GET['applicant'] != '':
+            #    query_obj &= Q(applicant=int(self.request.GET['applicant']))
+            #if self.request.GET['appstatus'] != '':
+            #    query_obj &= Q(state=int(self.request.GET['appstatus']))
+
+            if 'from_date' in self.request.GET:
+                 context['from_date'] = self.request.GET['from_date']
+                 context['to_date'] = self.request.GET['to_date']
+                 if self.request.GET['from_date'] != '':
+                     from_date_db = datetime.strptime(self.request.GET['from_date'], '%d/%m/%Y').date()
+                     query_obj &= Q(due_date__gte=from_date_db)
+                 if self.request.GET['to_date'] != '':
+                     to_date_db = datetime.strptime(self.request.GET['to_date'], '%d/%m/%Y').date()
+                     query_obj &= Q(due_date__lte=to_date_db)
+        else:
+            to_date = datetime.today()
+            from_date = datetime.today() - timedelta(days=100)
+            context['from_date'] = from_date.strftime('%d/%m/%Y')
+            context['to_date'] = to_date.strftime('%d/%m/%Y')
+            query_obj &= Q(due_date__gte=from_date)
+            query_obj &= Q(due_date__lte=to_date)
+
+
+        items = Compliance.objects.filter(query_obj).order_by('due_date')
+        context['items'] = items
+
 
         if 'applicant' in self.request.GET:
             if self.request.GET['applicant'] != '':
@@ -9569,8 +9589,8 @@ class PersonOther(LoginRequiredMixin, DetailView):
 
         if admin_staff is True:
              return super(PersonOther, self).get(request, *args, **kwargs)
-        elif request.user == self.object:
-             return super(PersonOther, self).get(request, *args, **kwargs)
+        #elif request.user == self.object:
+        #     return super(PersonOther, self).get(request, *args, **kwargs)
         else:
                messages.error(self.request, 'You are not authorised')
         return HttpResponseRedirect(reverse('home_page'))
@@ -9615,7 +9635,8 @@ class PersonOther(LoginRequiredMixin, DetailView):
                          APP_TYPE_CHOICES_IDS.append(i[0])
                  context['app_apptypes'] = APP_TYPE_CHOICES
 
-                 context['app_appstatus'] = list(Application.APP_STATE_CHOICES)
+                 #context['app_appstatus'] = list(Application.APP_STATE_CHOICES)
+                 context['app_appstatus'] = Application.APP_STATUS
                  search_filter = Q(applicant=self.kwargs['pk']) | Q(organisation__in=delegate)
                  if 'searchaction' in self.request.GET and self.request.GET['searchaction']:
                       query_str = self.request.GET['q']
@@ -9626,8 +9647,12 @@ class PersonOther(LoginRequiredMixin, DetailView):
                           end = ''
                           # search_filter &= Q(app_type__in=APP_TYPE_CHOICES_IDS)
 
-                      if self.request.GET['appstatus_limited'] != '':
-                           search_filter &= Q(state=int(self.request.GET['appstatus_limited']))
+                      if self.request.GET['appstatus'] != '':
+                           search_filter &= Q(status=int(self.request.GET['appstatus']))
+
+                      if self.request.GET['wfstatus'] != '':
+                           search_filter &= Q(route_status=self.request.GET['wfstatus'])
+                           
                       #if self.request.GET['appstatus'] != '':
                       #    search_filter &= Q(state=int(self.request.GET['appstatus']))
 
@@ -9639,6 +9664,9 @@ class PersonOther(LoginRequiredMixin, DetailView):
                       if 'appstatus' in self.request.GET:
                           if self.request.GET['appstatus'] != '':
                               context['appstatus'] = int(self.request.GET['appstatus'])
+                      if 'wfstatus' in self.request.GET:
+                          if self.request.GET['wfstatus'] != '':
+                                context['wfstatus'] = self.request.GET['wfstatus']
 
                       if 'q' in self.request.GET and self.request.GET['q']:
                           query_str = self.request.GET['q']
@@ -9646,9 +9674,20 @@ class PersonOther(LoginRequiredMixin, DetailView):
                           for se_wo in query_str_split:
                               search_filter &= Q(pk__contains=se_wo) | Q(title__contains=se_wo)
 
+                      if 'from_date' in self.request.GET:
+                           context['from_date'] = self.request.GET['from_date']
+                           context['to_date'] = self.request.GET['to_date']
+                           if self.request.GET['from_date'] != '':
+                               from_date_db = datetime.strptime(self.request.GET['from_date'], '%d/%m/%Y').date()
+                               search_filter &= Q(submit_date__gte=from_date_db)
+                           if self.request.GET['to_date'] != '':
+                               to_date_db = datetime.strptime(self.request.GET['to_date'], '%d/%m/%Y').date()
+                               search_filter &= Q(submit_date__lte=to_date_db)
+
+
 #                 print Q(Q(state__in=APP_TYPE_CHOICES_IDS) & Q(search_filter)) 
                  applications = Application.objects.filter(Q(app_type__in=APP_TYPE_CHOICES_IDS) & Q(search_filter) )[:200]
-
+                 context['app_wfstatus'] = list(Application.objects.values_list('route_status',flat = True).distinct())
                  usergroups = self.request.user.groups.all()
                  context['app_list'] = []
 
@@ -9681,7 +9720,7 @@ class PersonOther(LoginRequiredMixin, DetailView):
                  APP_TYPE_CHOICES = []
                  APP_TYPE_CHOICES_IDS = []
                  for i in Application.APP_TYPE_CHOICES:
-                     if i[0] in [4,5,6,7,8,9,10,11]:
+                     if i[0] in [5,6,7,8,9,10,11]:
                           skip = 'yes'
                      else:
                           APP_TYPE_CHOICES.append(i)
@@ -9714,6 +9753,17 @@ class PersonOther(LoginRequiredMixin, DetailView):
                        query_str_split = query_str.split()
                        for se_wo in query_str_split:
                            search_filter= Q(pk__contains=se_wo) | Q(title__contains=se_wo)
+
+                    if 'from_date' in self.request.GET:
+                         context['from_date'] = self.request.GET['from_date']
+                         context['to_date'] = self.request.GET['to_date']
+                         if self.request.GET['from_date'] != '':
+                             from_date_db = datetime.strptime(self.request.GET['from_date'], '%d/%m/%Y').date()
+                             search_filter &= Q(issue_date__gte=from_date_db)
+                         if self.request.GET['to_date'] != '':
+                             to_date_db = datetime.strptime(self.request.GET['to_date'], '%d/%m/%Y').date()
+                             search_filter &= Q(issue_date__lte=to_date_db)
+                           
                  approval = Approval.objects.filter(search_filter)[:200]
 
                  context['app_list'] = []
@@ -9812,7 +9862,7 @@ class PersonOther(LoginRequiredMixin, DetailView):
                  delegate = Delegate.objects.filter(email_user=user).values('id')
                  search_filter = Q(applicant=self.kwargs['pk']) | Q(organisation__in=delegate)
 
-                 items = Compliance.objects.filter(applicant=self.kwargs['pk']).order_by('due_date')
+                 #items = Compliance.objects.filter(applicant=self.kwargs['pk']).order_by('due_date')
 
                  context['app_applicants'] = {}
                  context['app_applicants_list'] = []
@@ -9824,10 +9874,32 @@ class PersonOther(LoginRequiredMixin, DetailView):
                          APP_STATUS_CHOICES.append(i)
 
                  context['app_appstatus'] = list(APP_STATUS_CHOICES)
+
+                 if 'action' in self.request.GET and self.request.GET['action']:
+                      query_str = self.request.GET['q']
+
+                      if 'q' in self.request.GET and self.request.GET['q']:
+                          query_str = self.request.GET['q']
+                          query_str_split = query_str.split()
+                          for se_wo in query_str_split:
+                              search_filter &= Q(pk__contains=se_wo) | Q(title__contains=se_wo)
+                             
+                      
+                      if 'from_date' in self.request.GET:
+                           context['from_date'] = self.request.GET['from_date']
+                           context['to_date'] = self.request.GET['to_date']
+                           if self.request.GET['from_date'] != '':
+                               from_date_db = datetime.strptime(self.request.GET['from_date'], '%d/%m/%Y').date()
+                               search_filter &= Q(due_date__gte=from_date_db)
+                           if self.request.GET['to_date'] != '':
+                               to_date_db = datetime.strptime(self.request.GET['to_date'], '%d/%m/%Y').date()
+                               search_filter &= Q(due_date__lte=to_date_db) 
+                 
+
+                 items = Compliance.objects.filter(search_filter).order_by('due_date')[:100]
                  context['compliance'] = items
 
-                 #if 'action' in self.request.GET and self.request.GET['action']:
-                 #     query_str = self.request.GET['q']
+
                  #     query_obj = Q(pk__contains=query_str) | Q(title__icontains=query_str) | Q(applicant__email__icontains=query_str) | Q(assignee__email__icontains=query_str)
                  #     query_obj &= Q(app_type=4)
 

@@ -2,6 +2,29 @@
     <div class="panel-body">
         <form action="" method="get">
             <div class="row">
+                <input type='hidden' name='action' value='search'>
+
+
+                <div class="col-sm-12 col-lg-9">
+                        <!-- RES -->
+                        <div class="col-sm-12 col-lg-4">
+                            <div class="col-sm-12 col-lg-12">
+                                <label>From Due Date:</label>
+                            </div>
+                            <div class="col-sm-12 col-lg-12">
+                                        <input class="dateinput form-control" id="id_from_date" name="from_date" value="{{ from_date }}" type="text" autocomplete='off'>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-4">
+                            <div class="col-sm-12 col-lg-12">
+                                <label>To Due Date:</label>
+                            </div>
+                            <div class="col-sm-12 col-lg-12">
+                                  <input class="dateinput form-control" id="id_to_date" name="to_date" value="{{ to_date }}" type="text" autocomplete='off'>
+                            </div>
+                        </div>
+                </div>
+		    
                 <div class="col-sm-12 col-lg-12">
                     <div class="col-sm-12 col-lg-9">
                         <div class="col-sm-12 col-lg-12">
