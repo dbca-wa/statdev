@@ -1,10 +1,8 @@
 {% load crispy_forms_tags %}
 
 {% block page_content_inner %}
-
-<h1>Delete referral</h1>
-<p>Please confirm the deletion of {{ referral }}:</p>
-
+<center>
+<h4>Please confirm the deletion of {{ referral.referee }}:</h4>
 {% crispy form %}
-
+</center>
 {% endblock %}
