@@ -3,6 +3,7 @@ var django_ajax_form = {
           form_html: '',
           url: '',
 	  title: '',
+	  loading_html: '<div class="modal-body" style="overflow: auto;" id="modal-body"><center><h4>Please Wait</h4><br><img src="/static/images/rainbow-spinner.gif"><br><br></center></div>'
       },
       OpenForm: function(url,title) {
 	console.log("OpenForm");
@@ -24,18 +25,18 @@ var django_ajax_form = {
         	  django_ajax_form.var.form_html = data;
 	    }
 	});
-
+        var loader_html = '<div id="popup_loader" style="display: none;">LOADING</div>';
         var csrfmiddlewaretoken = $("input[name=csrfmiddlewaretoken]").val();
 
         var htmlvalue = "";
             htmlvalue += '<div id="vesselModal" class="modal fade" role="dialog">';
-            htmlvalue += '<div class="modal-dialog modal-lg">';
-            htmlvalue += '    <div class="modal-content">';
+            htmlvalue += '<div class="modal-dialog modal-lg" id="modal-dialog">';
+            htmlvalue += '    <div class="modal-content" id="modal-content">';
             htmlvalue += '      <div class="modal-header">';
             htmlvalue += '        <button type="button" class="close" data-dismiss="modal">&times;</button>';
             htmlvalue += '        <h4 class="modal-title" id="modal-popup-title">'+title+'</h4>';
             htmlvalue += '      </div>';
-            htmlvalue += '      <div class="modal-body" style="overflow: auto;">';
+            htmlvalue += '      <div class="modal-body" style="overflow: auto;" id="modal-body">';
             htmlvalue += django_ajax_form.var.form_html;
             htmlvalue += '<form action="/applications-uploads/" method="post" enctype="multipart/form-data" id="upload_form">';
             htmlvalue += '<input type="hidden" name="csrfmiddlewaretoken" value="'+csrfmiddlewaretoken+'" />';
@@ -53,7 +54,10 @@ var django_ajax_form = {
 
             $('html').prepend(htmlvalue);
 	    $('#vesselModal').modal({
-                 show: 'false'
+                 show: 'false',
+                 backdrop: 'static',
+		 keyboard: false
+
             });
             $( window ).resize(function() {
                              var modalbodyheight = window.innerHeight * 0.7;
@@ -96,15 +100,23 @@ $("#vesselModal").on("hidden.bs.modal", function () {
       },
       saveForm: function()  { 
 
-django_ajax_form.CloseForm()
+console.log("WAITING");
+// django_ajax_form.CloseForm()
 var form_data = new FormData($('#id_form_modals')[0]);
+//$('#vesselModal').modal('hide');
+$('#modal-content').html(django_ajax_form.var.loading_html);
+$('#modal-dialog').width('300px');	      
+//	     $('#modal-content').width('300px') 	     
+
+// django_ajax_form.CloseForm()	   
+$('#popup_loader').show();	      
 $.ajax({
 url : django_ajax_form.var.url,
 type: "POST",
 data : form_data,
 contentType: false,
 cache: false,
-async: false,
+// async: false,
 processData:false,
 xhr: function() {
 //upload Progress
@@ -116,9 +128,13 @@ mimeType:"multipart/form-data"
         django_form_checks.var.form_changed = 'changed';
 //        console.log('upload complete');
 //        var input_array =[];
-$('#vesselModal').modal('hide');
-if (res.indexOf('alert-danger') >= 0 || res.indexOf('id="error') >= 0) { 
+console.log('DONE');        
+django_ajax_form.CloseForm();
+// $('#vesselModal').show();
+//$('#vesselModal').modal('hide');
+// $('#popup_loader').hide();
 
+if (res.indexOf('alert-danger') >= 0 || res.indexOf('id="error') >= 0) { 
         console.log("ERROR Found in response");
         var csrfmiddlewaretoken = $("input[name=csrfmiddlewaretoken]").val();
 
@@ -127,13 +143,13 @@ if (res.indexOf('alert-danger') >= 0 || res.indexOf('id="error') >= 0) {
         console.log(res);
         var htmlvalue = "";
             htmlvalue += '<div id="vesselModal" class="modal fade" role="dialog">';
-            htmlvalue += '<div class="modal-dialog modal-lg">';
-            htmlvalue += '    <div class="modal-content">';
+            htmlvalue += '<div class="modal-dialog modal-lg" id="modal-dialog">';
+            htmlvalue += '    <div class="modal-content" id="modal-content">';
             htmlvalue += '      <div class="modal-header">';
             htmlvalue += '        <button type="button" class="close" data-dismiss="modal">&times;</button>';
             htmlvalue += '        <h4 class="modal-title">'+django_ajax_form.var.title+'</h4>';
             htmlvalue += '      </div>';
-            htmlvalue += '      <div class="modal-body" style="overflow: auto;">';
+            htmlvalue += '      <div class="modal-body" style="overflow: auto;" id="modal-body">';
             htmlvalue += res;
             htmlvalue += '<form action="/applications-uploads/" method="post" enctype="multipart/form-data" id="upload_form">';
             htmlvalue += '<input type="hidden" name="csrfmiddlewaretoken" value="'+csrfmiddlewaretoken+'" />';
@@ -150,7 +166,20 @@ if (res.indexOf('alert-danger') >= 0 || res.indexOf('id="error') >= 0) {
             htmlvalue += '</div>';
             console.log(htmlvalue);
             $('html').prepend(htmlvalue);
-            $('#vesselModal').modal({show: 'false'});
+
+            $('#vesselModal').modal({
+		      show: 'false',                  
+		      backdrop: 'static',
+	              keyboard: false
+	    });
+
+            $( window ).resize(function() {
+	             var modalbodyheight = window.innerHeight * 0.7;
+	           $('.modal-body').height(modalbodyheight+'px');
+	    });
+	    var modalbodyheight = window.innerHeight * 0.7;
+	    $('.modal-body').height(modalbodyheight+'px');
+
 
 if (typeof loadForm == 'function') { 
   loadForm(); 

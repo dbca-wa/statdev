@@ -36,6 +36,11 @@ class FullBaseFormHelper(FormHelper):
     label_class = 'col-xs-12 col-sm-4 col-md-3 col-lg-2'
     field_class = 'col-xs-12 col-sm-8 col-md-9 col-lg-10'
 
+class ButtonBaseFormHelper(FormHelper):
+    form_class = 'form-horizontal'
+    label_class = 'col-xs-0 col-sm-0 col-md-0 col-lg-0'
+    field_class = 'col-xs-12 col-sm-12 col-md-12 col-lg-12'
+
 
 class PopupFormHelper(FormHelper):
     form_class = 'form-horizontal'
@@ -1935,7 +1940,7 @@ class ReferralDeleteForm(Form):
     def __init__(self, *args, **kwargs):
         kwargs.pop('instance')  # Don't need this because this isn't a ModelForm.
         super(ReferralDeleteForm, self).__init__(*args, **kwargs)
-        self.helper = BaseFormHelper(self)
+        self.helper = ButtonBaseFormHelper(self)
 #       self.helper.form_id = 'id_form_referral_delete'
         self.helper.form_id = 'id_form_modals'
         self.helper.add_input(Submit('delete', 'Delete', css_class='btn-lg ajax-submit'))
