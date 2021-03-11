@@ -1,10 +1,9 @@
 {% load crispy_forms_tags %}
 
 {% block page_content_inner %}
-
-<h1>Delete vessel</h1>
-<p>Please confirm the deletion of {{ vessel }}:</p>
+<center>
+<h4>Please confirm the deletion of {{ vessel }}:</h4>
 
 {% crispy form %}
-
+</center>
 {% endblock %}
