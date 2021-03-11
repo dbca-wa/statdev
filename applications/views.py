@@ -7011,7 +7011,7 @@ class ReferralRemind(LoginRequiredMixin, UpdateView):
             content_object=ref.application, user=self.request.user,
             action='Referral to {} reminded'.format(ref.referee), category=3)
         action.save()
-        return HttpResponseRedirect(self.get_success_url(application_id))
+        return HttpResponseRedirect(self.get_success_url(ref.application.id))
         #ref.application.get_absolute_url())
 
 
