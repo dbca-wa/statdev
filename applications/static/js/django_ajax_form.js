@@ -8,24 +8,52 @@ var django_ajax_form = {
       OpenForm: function(url,title) {
 	console.log("OpenForm");
         console.log(url);
+        $('#PLvesselModal').remove();
+        $('#vesselModal').remove();
+
+        var htmlvalue = "";
+            htmlvalue += '<div id="PLvesselModal" class="modal fade" role="dialog">';
+            htmlvalue += '   <div class="modal-dialog modal-lg" id="modal-dialog">';
+            htmlvalue += '       <div class="modal-content" id="modal-content">';
+            htmlvalue += django_ajax_form.var.loading_html;
+            htmlvalue += '       </div>';
+            htmlvalue += '   </div>';
+            htmlvalue += '</div>';
+
+        $('html').prepend(htmlvalue);
+        $('#PLvesselModal').modal({
+             show: 'false',
+             backdrop: 'static',
+             keyboard: false
+
+        });
+        $('#modal-dialog').width('300px');
+
+
+
+
         $('.modal-body').height('auto');
 	django_ajax_form.var.url = url;
 	django_ajax_form.var.title = title;
 
         //  var crispy_form_load = $.get( "/applications/272/vessel/" ).responseText;
         //  alert(crispy_form_load);
-        $('#vesselModal').remove();
+        // $('#vesselModal').remove();
         if (title == null) {
 	    title="";
 	}
 	$.ajax({
 	    url: url,
-	    async: false,
+	    //async: false,
 	    success: function(data) {
         	  django_ajax_form.var.form_html = data;
-	    }
-	});
-        var loader_html = '<div id="popup_loader" style="display: none;">LOADING</div>';
+		  //  $('#vesselModal').remove();
+                  $('#PLvesselModal').modal('hide');
+		  $('.modal-backdrop').remove();
+                  django_ajax_form.CloseForm();
+		  $('#vesselModal').remove();
+                  $('#PLvesselModal').remove();
+        // var loader_html = '<div id="popup_loader" style="display: none;">LOADING</div>';
         var csrfmiddlewaretoken = $("input[name=csrfmiddlewaretoken]").val();
 
         var htmlvalue = "";
@@ -66,6 +94,8 @@ var django_ajax_form = {
             var modalbodyheight = window.innerHeight * 0.7;
             $('.modal-body').height(modalbodyheight+'px');
 
+
+
  // $('#vesselModal').modal('show');
 $('#vesselModal').show();
 
@@ -95,7 +125,10 @@ $("#vesselModal").on("hidden.bs.modal", function () {
             todayHighlight: true
         });
     });
+	// end of ajax success
 
+            }
+ });
 
       },
       saveForm: function()  { 
