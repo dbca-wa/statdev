@@ -43,7 +43,7 @@ class ButtonBaseFormHelper(FormHelper):
 
 
 class PopupFormHelper(FormHelper):
-    form_class = 'form-horizontal'
+    form_class = 'form-horizontal popup-form'
     label_class = 'col-xs-12 col-sm-4 col-md-3 col-lg-3'
     field_class = 'col-xs-12 col-sm-8 col-md-6 col-lg-6'
 
@@ -1964,7 +1964,7 @@ class VesselDeleteForm(Form):
     def __init__(self, *args, **kwargs):
         kwargs.pop('instance')  # Don't need this because this isn't a ModelForm.
         super(VesselDeleteForm, self).__init__(*args, **kwargs)
-        self.helper = BaseFormHelper(self)
+        self.helper = PopupFormHelper(self)
         #self.helper.form_id = 'id_form_vessel_delete'
         self.helper.form_id = 'id_form_modals'
         self.helper.add_input(Submit('delete', 'Delete', css_class='btn-lg ajax-submit'))
@@ -2798,7 +2798,7 @@ class VesselForm(ModelForm):
     def __init__(self, *args, **kwargs):
         # User must be passed in as a kwarg.
         super(VesselForm, self).__init__(*args, **kwargs)
-        self.helper = BaseFormHelper()
+        self.helper = PopupFormHelper()
         #self.helper.form_id = 'id_form_create_vessel'
         self.helper.form_id = 'id_form_modals'
         self.helper.attrs = {'novalidate': ''}

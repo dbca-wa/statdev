@@ -27,7 +27,7 @@ var django_ajax_form = {
              keyboard: false
 
         });
-        $('#modal-dialog').width('300px');
+       $('#modal-dialog').width('300px');
 
 
 
@@ -49,10 +49,10 @@ var django_ajax_form = {
         	  django_ajax_form.var.form_html = data;
 		  //  $('#vesselModal').remove();
                   $('#PLvesselModal').modal('hide');
+		  $('#PLvesselModal').remove();
 		  $('.modal-backdrop').remove();
                   django_ajax_form.CloseForm();
 		  $('#vesselModal').remove();
-                  $('#PLvesselModal').remove();
         // var loader_html = '<div id="popup_loader" style="display: none;">LOADING</div>';
         var csrfmiddlewaretoken = $("input[name=csrfmiddlewaretoken]").val();
 
@@ -190,9 +190,10 @@ if (res.indexOf('alert-danger') >= 0 || res.indexOf('id="error') >= 0) {
             htmlvalue += '<BR><BR>';
 
             htmlvalue += '<BR><BR>';
+            htmlvalue += '</div>';
+
             htmlvalue += '<div class="modal-footer">';
             htmlvalue += '<BR><BR><button name="close" type="button" class="btn btn-primary" value="Close" class="close" data-dismiss="modal" value="Close">Close</button>';
-            htmlvalue += '</div>';
             htmlvalue += '</div>';
             htmlvalue += '</div>';
             htmlvalue += '</div>';
@@ -310,6 +311,7 @@ $('#vesselModal').show();
 },
 CloseForm: function() {
    $('#vesselModal').modal('hide');
+  $('body').css({'padding-right':'0px'});	
 }
 
 }
