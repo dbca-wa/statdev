@@ -8332,7 +8332,6 @@ class ConditionCreate(LoginRequiredMixin, CreateView):
 
     def get(self, request, *args, **kwargs):
         app = Application.objects.get(pk=self.kwargs['pk'])
-
         flow = Flow()
         workflowtype = flow.getWorkFlowTypeFromApp(app)
         flow.get(workflowtype)
