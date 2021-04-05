@@ -20,7 +20,7 @@ fpdf==1.7.2
 reportlab==3.3.0
 
 django-tables2==1.11.0
-djangorestframework==3.5.0
+djangorestframework==3.11.2
 djangorestframework-gis==0.11
 djangorestframework-csv==2.0.0
 pycountry==17.1.8
@@ -31,3 +31,4 @@ django_bootstrap3==10.0
 dj-static==0.0.6
 dj-database-url==0.5.0
 
+pillow>=8.2.0 # not directly required, pinned by Snyk to avoid a vulnerability
