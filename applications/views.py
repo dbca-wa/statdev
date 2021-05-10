@@ -393,7 +393,20 @@ class FirstLoginInfoSteps(LoginRequiredMixin,UpdateView):
             
             base64_url = "data:"+mimetypes.types_map['.'+str(extension)]+";base64,"+data.decode()
             myobj = {'emailuser_id' :self.object.pk,'filebase64': base64_url, 'extension': extension, 'file_group_id': 1}
-            resp = requests.post(url, data = myobj)
+
+
+            try:
+                resp = requests.post(url, data = myobj)
+                # temporary until all EmailUser Updates go via api.
+                eu_obj = EmailUser.objects.get(id=self.object.pk)
+                self.object.identification2=eu_obj.identification2
+            except:
+                messages.error(self.request, 'Error Saving Indentifcation File')
+                if app_id is None:
+                   return HttpResponseRedirect(reverse('first_login_info_steps',args=(self.object.pk, step)))
+                else:
+                   return HttpResponseRedirect(reverse('first_login_info_steps_application',args=(self.object.pk, step, app_id)))
+
             # temporary until all EmailUser Updates go via api.
             eu_obj = EmailUser.objects.get(id=self.object.pk)
             self.object.identification2=eu_obj.identification2
@@ -9141,12 +9154,13 @@ class UserAccountIdentificationUpdate(LoginRequiredMixin, UpdateView):
         """
         self.obj = form.save(commit=False)
         forms_data = form.cleaned_data
-
+        id_success = "None"
         # If identification has been uploaded, then set the id_verified field to None.
         # if 'identification' in data and data['identification']:
         #    self.obj.id_verified = None
         if self.request.POST.get('identification2-clear'):
             self.obj.identification2 = None
+            id_success = "Removed"
 
         if self.request.FILES.get('identification2'):
             if Attachment_Extension_Check('single', forms_data['identification2'], None) is False:
@@ -9166,7 +9180,14 @@ class UserAccountIdentificationUpdate(LoginRequiredMixin, UpdateView):
 
             base64_url = "data:"+mimetypes.types_map['.'+str(extension)]+";base64,"+data.decode()
             myobj = {'emailuser_id' :self.object.pk,'filebase64': base64_url, 'extension': extension, 'file_group_id': 1}
-            resp = requests.post(url, data = myobj)
+
+            try:
+                resp = requests.post(url, data = myobj)
+                id_success = "Uploaded new "
+            except:
+                messages.error(self.request, 'Error Saving Indentifcation')
+                id_success = "Error uploading"
+
             # temporary until all EmailUser Updates go via api.
             eu_obj = EmailUser.objects.get(id=self.object.pk)
             self.object.identification2=eu_obj.identification2
@@ -9181,7 +9202,7 @@ class UserAccountIdentificationUpdate(LoginRequiredMixin, UpdateView):
 
         action = Action(
             content_object=self.object, category=Action.ACTION_CATEGORY_CHOICES.change, user=self.request.user,
-            action='Updated Identification')
+            action= id_success+' identification')
         action.save()
 
         return HttpResponseRedirect(reverse('person_details_actions', args=(self.obj.pk,'identification')))
