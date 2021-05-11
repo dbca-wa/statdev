@@ -30,7 +30,7 @@ from applications.email import sendHtmlEmail, emailGroup, emailApplicationReferr
 from applications.validationchecks import Attachment_Extension_Check, is_json
 from applications.utils import get_query, random_generator
 from applications import utils
-from ledger.accounts.models import EmailUser, Address, Organisation, Document, OrganisationAddress
+from ledger.accounts.models import EmailUser, Address, Organisation, Document, OrganisationAddress, PrivateDocument
 from approvals.models import Approval, CommunicationApproval
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -401,7 +401,7 @@ class FirstLoginInfoSteps(LoginRequiredMixin,UpdateView):
                 eu_obj = EmailUser.objects.get(id=self.object.pk)
                 self.object.identification2=eu_obj.identification2
             except:
-                messages.error(self.request, 'Error Saving Indentifcation File')
+                messages.error(self.request, 'Error Saving Identification File')
                 if app_id is None:
                    return HttpResponseRedirect(reverse('first_login_info_steps',args=(self.object.pk, step)))
                 else:
@@ -9139,8 +9139,6 @@ class UserAccountIdentificationUpdate(LoginRequiredMixin, UpdateView):
     def get_initial(self):
         initial = super(UserAccountIdentificationUpdate, self).get_initial()
         emailuser = self.get_object()
-        print ("EMAILUSER")
-        print (emailuser.id)
 
         if emailuser.identification2:
            url_data = setUrl()
@@ -11021,29 +11019,46 @@ def getPDFapplication(request,application_id):
 
 def getLedgerAppFile(request,file_id,extension):
   allow_access = False
+ #file_group_ref_id
+  pd = PrivateDocument.objects.filter(id=file_id)
+  if pd.count() > 0:
+       pd_object = pd[0]
+        
+       context_processor = template_context(request)
 
-  # configs
-  api_key = settings.LEDGER_API_KEY
-  url = settings.LEDGER_API_URL+'/ledgergw/remote/documents/get/'+api_key+'/'
-  myobj = {'private_document_id': file_id}
-  # send request to server to get file
-  resp = requests.post(url, data = myobj)
-  image_64_decode = base64.b64decode(resp.json()['data'])
-  extension = resp.json()['extension']
+       admin_staff = context_processor['admin_staff']
+       if admin_staff is True:
+            allow_access = True
 
-  if extension == 'msg':
-      return HttpResponse(image_64_decode, content_type="application/vnd.ms-outlook")
-  if extension == 'eml':
-      return HttpResponse(image_64_decode, content_type="application/vnd.ms-outlook")
+       if request.user.is_authenticated: 
+           if pd_object.file_group_ref_id == request.user.id:
+                  allow_access = True    
+       if request.user.is_superuser:
+           allow_access = True
+      
+       if allow_access is True:
+           # configs
+           api_key = settings.LEDGER_API_KEY
+           url = settings.LEDGER_API_URL+'/ledgergw/remote/documents/get/'+api_key+'/'
+           myobj = {'private_document_id': file_id}
+           # send request to server to get file
+           resp = requests.post(url, data = myobj)
+           image_64_decode = base64.b64decode(resp.json()['data'])
+           extension = resp.json()['extension']
+
+           if extension == 'msg':
+               return HttpResponse(image_64_decode, content_type="application/vnd.ms-outlook")
+           if extension == 'eml':
+               return HttpResponse(image_64_decode, content_type="application/vnd.ms-outlook")
 
 
-  return HttpResponse(image_64_decode, content_type=mimetypes.types_map['.'+str(extension)])
+           return HttpResponse(image_64_decode, content_type=mimetypes.types_map['.'+str(extension)])
+       else:
+           return HttpResponse("Permission Denied", content_type="plain/html")
+  else:
+           return HttpResponse("Error loading document", content_type="plain/html")
+    
   
-  #image_result = open(filename+'.'+extension, 'wb') # create a writable image and write the decoding result
-  #image_result.write(image_64_decode)
-  return HttpResponse(image_64_decode, content_type="plain/html") 
-
-
 
 def getAppFile(request,file_id,extension):
   allow_access = False
