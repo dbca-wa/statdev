@@ -29,7 +29,7 @@ env:
         - DEBUG=True
 sudo: true
 install:
-    - sudo apt-get install postgresql-12-postgis-3 -y -q
+    - sudo apt-get install postgresql-12-postgis-3 postgresql-client-12 -y -q
     - pip install pip --upgrade
     - pip install --upgrade setuptools
     - pip install six
