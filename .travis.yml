@@ -38,6 +38,7 @@ install:
 before_script:
     - touch .env
     - sudo /etc/init.d/postgresql restart
+    - psql --version
     - psql -c 'create database travis_ci_test;' -U postgres
     - psql -U postgres -c "create extension postgis"
     - python manage.py migrate --noinput
