@@ -4,15 +4,6 @@ cache: pip
 dist: focal
 python:
     - "3.8"
-addons:
-    postgresql: "12"
-    apt:
-      packages:
-         - postgis
-         - postgresql-12-postgis-3
-         - postgresql-12-postgis-3-scripts
-         - postgresql-client-12
-         - postgis
 services:
     - postgresql
 branches:
