@@ -12,6 +12,7 @@ addons:
          - postgresql-12-postgis-3
          - postgresql-12-postgis-3-scripts
          - postgresql-client-12
+         - postgis
 services:
     - postgresql
 branches:
