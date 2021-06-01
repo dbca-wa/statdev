@@ -366,6 +366,11 @@ class FirstLoginInfoSteps(LoginRequiredMixin,UpdateView):
                postal_address.save()
 
         if step == '4':
+            if self.object.mobile_number is None:
+                 self.object.mobile_number = ""
+            if self.object.phone_number is None: 
+                 self.object.phone_number = ""
+
             if len(self.object.mobile_number) == 0 and len(self.object.phone_number) == 0:
                 messages.error(self.request,"Please complete at least one phone number")
                 if app_id is None:
@@ -5072,7 +5077,7 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
         #route = flow.getNextRouteObj(action, app.routeid, workflowtype)
         route = flow.getNextRouteObjViaId(int(actionid), app.routeid, workflowtype)
         #allow_email_attachment
-        if action is "creator":
+        if action == "creator":
             if flowcontext['may_assign_to_creator'] != "True":
                 messages.error(self.request, 'This application cannot be reassigned, Unknown Error')
                 return HttpResponseRedirect(app.get_absolute_url())
