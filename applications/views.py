@@ -30,7 +30,7 @@ from applications.email import sendHtmlEmail, emailGroup, emailApplicationReferr
 from applications.validationchecks import Attachment_Extension_Check, is_json
 from applications.utils import get_query, random_generator
 from applications import utils
-from ledger.accounts.models import EmailUser, Address, Organisation, Document, OrganisationAddress
+from ledger.accounts.models import EmailUser, Address, Organisation, Document, OrganisationAddress, PrivateDocument
 from approvals.models import Approval, CommunicationApproval
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -53,6 +53,10 @@ from applications.invoice_pdf import create_invoice_pdf_bytes
 from ledger.payments.mixins import InvoiceOwnerMixin
 from django.views.generic.base import View, TemplateView
 import pathlib
+from django.core.files.base import ContentFile
+from django.utils.crypto import get_random_string
+import base64
+import requests
 
 class HomePage(TemplateView):
     # preperation to replace old homepage with screen designs..
@@ -61,7 +65,7 @@ class HomePage(TemplateView):
     def render_to_response(self, context):
        
         if self.request.user.is_authenticated:
-           if len(self.request.user.first_name) > 0:
+           if len(self.request.user.first_name) > 0 and self.request.user.identification2 is not None:
                donothing = ''
            else:
                return HttpResponseRedirect(reverse('first_login_info_steps', args=(self.request.user.id,1)))
@@ -243,6 +247,13 @@ class FirstLoginInfo(LoginRequiredMixin,CreateView):
 
         return HttpResponseRedirect(success_url)
 
+class setUrl():
+    value = ''
+    url = ''
+    path = ''
+    def __repr__(self):
+         return self.value
+
 class FirstLoginInfoSteps(LoginRequiredMixin,UpdateView):
 
     template_name = 'applications/firstlogin.html'
@@ -250,6 +261,13 @@ class FirstLoginInfoSteps(LoginRequiredMixin,UpdateView):
     form_class = apps_forms.FirstLoginInfoForm
 
     def get(self, request, *args, **kwargs):
+        pk = int(kwargs['pk'])
+        if request.user.is_staff == True or request.user.is_superuser == True or request.user.id == pk:
+           donothing =""
+        else:
+           messages.error(self.request, 'Forbidden from viewing this page.')
+           return HttpResponseRedirect("/")
+
         return super(FirstLoginInfoSteps, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -284,9 +302,14 @@ class FirstLoginInfoSteps(LoginRequiredMixin,UpdateView):
         # initial['action'] = self.kwargs['action']
         # print self.kwargs['step']
         step = self.kwargs['step']
-        if person.identification:
-            initial['identification'] = person.identification.file
-
+        if person.identification2:
+            #person.identification2.upload.url = '/jason/jhaso'
+   
+            url_data = setUrl()
+            url_data.url = "/private-ledger/view/"+str(person.identification2.id)+'-'+person.identification2.name+'.'+person.identification2.extension 
+            url_data.value = str(person.identification2.id)+'-'+person.identification2.name+'.'+person.identification2.extension
+            initial['identification2'] =  url_data
+            #initial['identification2'] = person.identification2.upload
         if step == '3':
             if self.object.postal_address is None:
                 initial['country'] = 'AU'
@@ -343,6 +366,11 @@ class FirstLoginInfoSteps(LoginRequiredMixin,UpdateView):
                postal_address.save()
 
         if step == '4':
+            if self.object.mobile_number is None:
+                 self.object.mobile_number = ""
+            if self.object.phone_number is None: 
+                 self.object.phone_number = ""
+
             if len(self.object.mobile_number) == 0 and len(self.object.phone_number) == 0:
                 messages.error(self.request,"Please complete at least one phone number")
                 if app_id is None:
@@ -351,15 +379,48 @@ class FirstLoginInfoSteps(LoginRequiredMixin,UpdateView):
                    return HttpResponseRedirect(reverse('first_login_info_steps_application',args=(self.object.pk, step, app_id))) 
 
         # Upload New Files
-        if self.request.FILES.get('identification'):  # Uploaded new file.
+        if self.request.FILES.get('identification2'):  # Uploaded new file.
             doc = Document()
-            if Attachment_Extension_Check('single', forms_data['identification'], ['.jpg','.png','.pdf']) is False:
+            if Attachment_Extension_Check('single', forms_data['identification2'], ['.jpg','.png','.pdf']) is False:
                 raise ValidationError('Identification contains and unallowed attachment extension.')
+            identification2_file = self.request.FILES['identification2']
+            data = base64.b64encode(identification2_file.read())
 
-            doc.file = forms_data['identification']
-            doc.name = forms_data['identification'].name
-            doc.save()
-            self.object.identification = doc
+            filename=forms_data['identification2'].name
+            api_key = settings.LEDGER_API_KEY
+            url = settings.LEDGER_API_URL+'/ledgergw/remote/documents/update/'+api_key+'/'
+            
+            extension =''
+            if filename[-4:][:-3] == '.':
+                extension = filename[-3:]
+            if filename[-5:][:-4] == '.':
+                extension = filename[-4:]
+            
+            base64_url = "data:"+mimetypes.types_map['.'+str(extension)]+";base64,"+data.decode()
+            myobj = {'emailuser_id' :self.object.pk,'filebase64': base64_url, 'extension': extension, 'file_group_id': 1}
+
+
+            try:
+                resp = requests.post(url, data = myobj)
+                # temporary until all EmailUser Updates go via api.
+                eu_obj = EmailUser.objects.get(id=self.object.pk)
+                self.object.identification2=eu_obj.identification2
+            except:
+                messages.error(self.request, 'Error Saving Identification File')
+                if app_id is None:
+                   return HttpResponseRedirect(reverse('first_login_info_steps',args=(self.object.pk, step)))
+                else:
+                   return HttpResponseRedirect(reverse('first_login_info_steps_application',args=(self.object.pk, step, app_id)))
+
+            # temporary until all EmailUser Updates go via api.
+            eu_obj = EmailUser.objects.get(id=self.object.pk)
+            self.object.identification2=eu_obj.identification2
+
+            #print (image_string)
+            #doc.file = forms_data['identification2']
+            #doc.name = forms_data['identification2'].name
+            #doc.save()
+            #self.object.identification2 = doc
             
         self.object.save()
         nextstep = 1
@@ -5016,7 +5077,7 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
         #route = flow.getNextRouteObj(action, app.routeid, workflowtype)
         route = flow.getNextRouteObjViaId(int(actionid), app.routeid, workflowtype)
         #allow_email_attachment
-        if action is "creator":
+        if action == "creator":
             if flowcontext['may_assign_to_creator'] != "True":
                 messages.error(self.request, 'This application cannot be reassigned, Unknown Error')
                 return HttpResponseRedirect(app.get_absolute_url())
@@ -9026,6 +9087,8 @@ class UserAccountUpdate(LoginRequiredMixin, UpdateView):
 
 class UserAccountIdentificationUpdate(LoginRequiredMixin, UpdateView):
     form_class = apps_forms.UserFormIdentificationUpdate
+    model = EmailUser
+
     #form_class = apps_forms.OrganisationCertificateForm
 
     def get(self, request, *args, **kwargs):
@@ -9058,10 +9121,15 @@ class UserAccountIdentificationUpdate(LoginRequiredMixin, UpdateView):
  
     def get_object(self, queryset=None):
         if 'pk' in self.kwargs:
+            pk = self.kwargs['pk']
             if self.request.user.groups.filter(name__in=['Statdev Processor']).exists():
                user = EmailUser.objects.get(pk=self.kwargs['pk'])
                return user
+            elif self.request.user.id == int(pk):
+               user = EmailUser.objects.get(pk=self.kwargs['pk'])
+               return user
             else:
+                print ("Forbidden Access")
                 messages.error(
                   self.request, "Forbidden Access")
                 return HttpResponseRedirect("/")
@@ -9077,8 +9145,11 @@ class UserAccountIdentificationUpdate(LoginRequiredMixin, UpdateView):
         initial = super(UserAccountIdentificationUpdate, self).get_initial()
         emailuser = self.get_object()
 
-        if emailuser.identification:
-           initial['identification'] = emailuser.identification.file
+        if emailuser.identification2:
+           url_data = setUrl()
+           url_data.url = "/private-ledger/view/"+str(emailuser.identification2.id)+'-'+emailuser.identification2.name+'.'+emailuser.identification2.extension
+           url_data.value = str(emailuser.identification2.id)+'-'+emailuser.identification2.name+'.'+emailuser.identification2.extension
+           initial['identification2'] = url_data 
         return initial
 
     def form_valid(self, form):
@@ -9086,26 +9157,55 @@ class UserAccountIdentificationUpdate(LoginRequiredMixin, UpdateView):
         """
         self.obj = form.save(commit=False)
         forms_data = form.cleaned_data
-
+        id_success = "None"
         # If identification has been uploaded, then set the id_verified field to None.
         # if 'identification' in data and data['identification']:
         #    self.obj.id_verified = None
-        if self.request.POST.get('identification-clear'):
-            self.obj.identification = None
+        if self.request.POST.get('identification2-clear'):
+            self.obj.identification2 = None
+            id_success = "Removed"
 
-        if self.request.FILES.get('identification'):
-            if Attachment_Extension_Check('single', forms_data['identification'], None) is False:
+        if self.request.FILES.get('identification2'):
+            if Attachment_Extension_Check('single', forms_data['identification2'], None) is False:
                 raise ValidationError('Identification contains and unallowed attachment extension.')
-            new_doc = Document()
-            new_doc.file = self.request.FILES['identification']
-            new_doc.save()
-            self.obj.identification = new_doc
+            identification2_file = self.request.FILES['identification2']
+            data = base64.b64encode(identification2_file.read())
+
+            filename=forms_data['identification2'].name
+            api_key = settings.LEDGER_API_KEY
+            url = settings.LEDGER_API_URL+'/ledgergw/remote/documents/update/'+api_key+'/'
+
+            extension =''
+            if filename[-4:][:-3] == '.':
+                extension = filename[-3:]
+            if filename[-5:][:-4] == '.':
+                extension = filename[-4:]
+
+            base64_url = "data:"+mimetypes.types_map['.'+str(extension)]+";base64,"+data.decode()
+            myobj = {'emailuser_id' :self.object.pk,'filebase64': base64_url, 'extension': extension, 'file_group_id': 1}
+
+            try:
+                resp = requests.post(url, data = myobj)
+                id_success = "Uploaded new "
+            except:
+                messages.error(self.request, 'Error Saving Indentifcation')
+                id_success = "Error uploading"
+
+            # temporary until all EmailUser Updates go via api.
+            eu_obj = EmailUser.objects.get(id=self.object.pk)
+            self.object.identification2=eu_obj.identification2
+
+
+            #new_doc = Document()
+            #new_doc.file = self.request.FILES['identification']
+            #new_doc.save()
+            #self.obj.identification = new_doc
 
         self.obj.save()
 
         action = Action(
             content_object=self.object, category=Action.ACTION_CATEGORY_CHOICES.change, user=self.request.user,
-            action='Updated Identification')
+            action= id_success+' identification')
         action.save()
 
         return HttpResponseRedirect(reverse('person_details_actions', args=(self.obj.pk,'identification')))
@@ -10922,6 +11022,48 @@ def getPDFapplication(request,application_id):
           pdf_file.close()
           return HttpResponse(pdf_data, content_type='application/pdf')
 
+def getLedgerAppFile(request,file_id,extension):
+  allow_access = False
+ #file_group_ref_id
+  pd = PrivateDocument.objects.filter(id=file_id)
+  if pd.count() > 0:
+       pd_object = pd[0]
+        
+       context_processor = template_context(request)
+
+       admin_staff = context_processor['admin_staff']
+       if admin_staff is True:
+            allow_access = True
+
+       if request.user.is_authenticated: 
+           if pd_object.file_group_ref_id == request.user.id:
+                  allow_access = True    
+       if request.user.is_superuser:
+           allow_access = True
+      
+       if allow_access is True:
+           # configs
+           api_key = settings.LEDGER_API_KEY
+           url = settings.LEDGER_API_URL+'/ledgergw/remote/documents/get/'+api_key+'/'
+           myobj = {'private_document_id': file_id}
+           # send request to server to get file
+           resp = requests.post(url, data = myobj)
+           image_64_decode = base64.b64decode(resp.json()['data'])
+           extension = resp.json()['extension']
+
+           if extension == 'msg':
+               return HttpResponse(image_64_decode, content_type="application/vnd.ms-outlook")
+           if extension == 'eml':
+               return HttpResponse(image_64_decode, content_type="application/vnd.ms-outlook")
+
+
+           return HttpResponse(image_64_decode, content_type=mimetypes.types_map['.'+str(extension)])
+       else:
+           return HttpResponse("Permission Denied", content_type="plain/html")
+  else:
+           return HttpResponse("Error loading document", content_type="plain/html")
+    
+  
 
 def getAppFile(request,file_id,extension):
   allow_access = False

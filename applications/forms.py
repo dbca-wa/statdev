@@ -267,11 +267,9 @@ class CreateLinkCompanyForm(ModelForm):
                 self.helper.add_input(Submit('Prev Step', 'Prev Step', css_class='btn-lg'))
             self.helper.add_input(Submit('Next Step', 'Next Step', css_class='btn-lg'))
 
-
-
 class FirstLoginInfoForm(ModelForm):
     BOOL_CHOICES = ((True, 'Yes'), (False, 'No'))
-    identification = FileField(required=False, max_length=128, widget=ClearableFileInput)
+    identification2 = FileField(required=False, max_length=128, widget=ClearableFileInput)
     line1 = CharField(required=False,max_length=255)
     line2 = CharField(required=False, max_length=255)
     line3 = CharField(required=False, max_length=255)
@@ -290,7 +288,9 @@ class FirstLoginInfoForm(ModelForm):
         # user = kwargs.pop('user')
         super(FirstLoginInfoForm, self).__init__(*args, **kwargs)
         self.helper = BaseFormHelper()
-        step = self.initial['step']
+        step = '1'
+        if 'step' in self.initial:
+            step = self.initial['step']
         self.fields['country'].required = False
         # delete internal option
         crispy_boxes = crispy_empty_box()
@@ -302,22 +302,30 @@ class FirstLoginInfoForm(ModelForm):
             self.fields['last_name'].required = True
             self.fields['dob'].required = True
 
-            del self.fields['identification']
+            del self.fields['identification2']
             del self.fields['phone_number']
             del self.fields['mobile_number']
             del self.fields['email']
 
         elif step == '2':
+            #self.initial['identification2'].initial_text = "JASON "
+            #self.initial['identification2'].attr.url = '/jason/test'
+            #print (self.fields['identification2'].widget.is_initial((self.fields['identification2'])))
+            #print (self.fields['identification2'].value = setUrl('JASON TEST URL', " DEFAULT VALUE"))
+        
+
+            #self.initial['identification2'].value = {'url' : '/jason/test'}
+
             identification_img = None
-            if  'identification' in self.initial:
-                 id_name = self.initial['identification']
+            if  'identification2' in self.initial:
+                 id_name = self.initial['identification2']
                  att_ext = str(id_name)[-4:].lower()
                  if att_ext in ['.png','.jpg']:
-                     identification_img = HTML("<label for='id_identification' class='control-label col-xs-12 col-sm-4 col-md-3 col-lg-2 requiredField'>Identification Image<span class='asteriskField'>*</span> </label><div class='controls col-xs-12 col-sm-8 col-md-6 col-lg-4'><img style='max-width: 400px;' src='/media/"+str(self.initial['identification'])+"' ></div>")
+                     identification_img = HTML("<label for='id_identification' class='control-label col-xs-12 col-sm-4 col-md-3 col-lg-2 requiredField'>Identification Image<span class='asteriskField'>*</span> </label><div class='controls col-xs-12 col-sm-8 col-md-6 col-lg-4'><img style='max-width: 400px;' src='/private-ledger/view/"+str(self.initial['identification2'])+"' ></div>")
 
 
-            crispy_boxes.append(crispy_box('identification_collapse','identification_details','Identification','identification',identification_img))
-            self.fields['identification'].required = True
+            crispy_boxes.append(crispy_box('identification_collapse','identification_details','Identification','identification2',identification_img))
+            self.fields['identification2'].required = True
             del self.fields['first_name']
             del self.fields['last_name']
             del self.fields['dob']
@@ -337,7 +345,7 @@ class FirstLoginInfoForm(ModelForm):
             del self.fields['first_name']
             del self.fields['last_name']
             del self.fields['dob']
-            del self.fields['identification']
+            del self.fields['identification2']
             del self.fields['phone_number']
             del self.fields['mobile_number']
             del self.fields['email']
@@ -351,13 +359,13 @@ class FirstLoginInfoForm(ModelForm):
             del self.fields['first_name']
             del self.fields['last_name']
             del self.fields['dob']
-            del self.fields['identification']
+            del self.fields['identification2']
         elif step == '5':
             crispy_boxes.append(crispy_box('company_details_collapse','company_details','Company Details','manage_permits'))
             del self.fields['first_name']
             del self.fields['last_name']
             del self.fields['dob']
-            del self.fields['identification']
+            del self.fields['identification2']
             del self.fields['phone_number']
             del self.fields['mobile_number']
             del self.fields['email']
@@ -365,7 +373,7 @@ class FirstLoginInfoForm(ModelForm):
             del self.fields['first_name'] 
             del self.fields['last_name']
             del self.fields['dob']
-            del self.fields['identification']
+            del self.fields['identification2']
             del self.fields['phone_number']
             del self.fields['mobile_number']
             del self.fields['email']
@@ -2962,7 +2970,7 @@ class OrganisationCertificateForm(ModelForm):
         )
 
 class UserFormIdentificationUpdate(ModelForm):
-    identification = FileField(required=False, max_length=128, widget=ClearableFileInput)
+    identification2 = FileField(required=False, max_length=128, widget=ClearableFileInput)
 
     class Meta:
         model = EmailUser
@@ -2976,7 +2984,7 @@ class UserFormIdentificationUpdate(ModelForm):
         self.helper.attrs = {'novalidate': ''}
         # Define the form layout.
         self.helper.layout = Layout(
-            'identification',
+            'identification2',
             FormActions(
                 Submit('save', 'Save', css_class='btn-lg'),
                 Submit('cancel', 'Cancel')

@@ -90,13 +90,13 @@
                             <div class="panel-collapse collapse in" id="cert_incorp_collapse" role="tabpanel" aria-labelledby="cert_incorp_heading">
                                 <div class="panel-body">
 
-                                    {% if object.identification %}
+                                    {% if object.identification2 %}
                                     <div class="col-sm-12 col-md-12 col-lg-12">
                                         <div class="col-sm-12 col-md-4 col-lg-2">
                                             <label>Current Identification</label>	
                                         </div>
                                         <div class="col-sm-12 col-md-4 col-lg-6">
-						<A HREF='{{ object.identification.file_url }}' target="new_tab_{{ object.identification.id }}">{{ object.identification }}</A>
+						<A HREF='/private-ledger/view/{{ object.identification2.id }}-{{ object.identification2.name }}.{{ object.identification2.extension }}' target="new_tab_{{ object.identification2.id }}">{{ object.identification2.name }}.{{ object.identification2.extension }}</A>
                                         </div>
                                         <div class="col-sm-12 col-md-5 col-lg-4">
                                             <A HREF='{% url "user_account_update_identification_admin" object.pk %}'><img src='{% static "images/bin_blue.png" %}'>Remove & Provide New ID</A>
