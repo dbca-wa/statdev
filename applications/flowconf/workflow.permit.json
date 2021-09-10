@@ -888,7 +888,7 @@
             "conditions": "False",
             "assessments": "False",
             "stakeholdercommunication": "True",
-            "referrals": "True",
+            "referrals": "False",
             "hide_form_buttons": "True",
             "location": "False",
             "other_information" : "False",
@@ -935,7 +935,8 @@
                 "may_assign":"False",
                 "may_assign_customer": "False",
                 "may_assign_processor": "True",
-                "may_create_condition":"False",
+                "may_create_condition":"True",
+                "may_update_condition": "True",
                 "may_submit_approval": "False",
                 "may_assign_assessor": "True", 
                 "may_issue": "False",
@@ -1025,9 +1026,10 @@
             "river_reserve_lease_section_32": "False",
             "details_of_proposed_development": "False",
             "publication": "True",
-            "referrals": "True",
+            "referrals": "False",
             "deed": "False",
-            "landowner_consent": "False"
+            "landowner_consent": "False",
+	    "conditions": "False"
         },
         "fields": {
             "applicant":"hide",

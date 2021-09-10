@@ -1,0 +1,71 @@
+            <!-- Other Documents panel -->
+                         <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="prop_details_heading">
+                    <h3 class="panel-title">
+                        <a role="button" data-toggle="collapse" href="#certificate_of_survery_collapse" aria-expanded="false" aria-controls="certificate_of_survery_collapse">
+                             Other documents
+                            <span class="glyphicon glyphicon-chevron-down collapse-glyph"></span>
+                        </a>
+                    </h3>
+                </div>
+                <div class="panel-collapse {{ collapse.certificate_of_survery }}" id="certificate_of_survery_collapse" role="tabpanel" aria-labelledby="certificate_of_survery_heading">
+                    <div class="panel-body">
+                                                <div class="fluid-container">
+
+                    <div class ="row">
+                        <div class="col-xs-12">
+                            <h4>Certificate of survey:</h4>
+
+                                        {% if object.cert_survey %}
+                                                {% for doc in object.cert_survey.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                                {% endfor %}
+                                        {% else %}
+                                                No Attachments
+                                        {% endif %}
+                            <h4>Public liability insurance certificate:</h4>
+
+                                        {% if object.cert_public_liability_insurance %}
+                                                {% for doc in object.cert_public_liability_insurance.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                                {% endfor %}
+                                        {% else %}
+                                                No Attachments
+                                        {% endif %}
+
+
+                            <h4>Risk management plan (if available):</h4>
+
+                                        {% if object.risk_mgmt_plan %}
+                                                {% for doc in object.risk_mgmt_plan.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                                {% endfor %}
+                                        {% else %}
+                                                No Attachments
+                                        {% endif %}
+                            <h4>Safety management procedures (if available):</h4>
+
+                                        {% if object.safety_mgmt_procedures %}
+                                                {% for doc in object.safety_mgmt_procedures.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                                {% endfor %}
+                                        {% else %}
+                                                No Attachments
+                                        {% endif %}
+
+                            <h4>Brochures, itineraries or advertisements (if applicable):</h4>
+
+                                        {% if object.brochures_itineries_adverts %}
+                                                {% for doc in object.brochures_itineries_adverts.all %}
+                                                <div class="col-sm-12 col-md-12 col-lg-12"><A HREF='{{ doc.file_url }}' target="new_tab_{{ doc.id }}">{{ doc }}</A></div>
+                                                {% endfor %}
+                                        {% else %}
+                                                No Attachments
+                                        {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+                </div>
+                    </div>
+            </div>

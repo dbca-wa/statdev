@@ -127,7 +127,7 @@ class HomePage(TemplateView):
                     for se_wo in query_str_split:
                          search_filter &= Q(pk__contains=se_wo) | Q(title__contains=se_wo)
 
-               context['items'] = Referral.objects.filter(referee=self.request.user).exclude(status=5)
+               context['items'] = Referral.objects.filter(referee=self.request.user).exclude(status=5).order_by('-id')
 
             else:
                donothing ='' 
@@ -1184,7 +1184,8 @@ class ApplicationList(LoginRequiredMixin,ListView):
         if 'action' in self.request.GET and self.request.GET['action']:
             query_str = self.request.GET['q']
             query_obj = Q(pk__contains=query_str) | Q(title__icontains=query_str) | Q(applicant__email__icontains=query_str) | Q(organisation__name__icontains=query_str) | Q(assignee__email__icontains=query_str) | Q(description__icontains=query_str) | Q(related_permits__icontains=query_str) | Q(jetties__icontains=query_str) | Q(drop_off_pick_up__icontains=query_str) | Q(sullage_disposal__icontains=query_str) | Q(waste_disposal__icontains=query_str) | Q(refuel_location_method__icontains=query_str) | Q(berth_location__icontains=query_str) | Q(anchorage__icontains=query_str) | Q(operating_details__icontains=query_str) | Q(proposed_development_description__icontains=query_str)
-
+            print ("APP TTPE")
+            print (self.request.GET['apptype'])
             if self.request.GET['apptype'] != '':
                 query_obj &= Q(app_type=int(self.request.GET['apptype']))
             else:
@@ -1195,7 +1196,7 @@ class ApplicationList(LoginRequiredMixin,ListView):
             if self.request.GET['wfstatus'] != '':
                 #query_obj &= Q(state=int(self.request.GET['appstatus']))
                 query_obj &= Q(route_status=self.request.GET['wfstatus'])
-            if self.request.GET['appstatus'] != '':
+            if self.request.GET['appstatus'] != '' and self.request.GET['appstatus'] != 'all':
                 query_obj &= Q(status=self.request.GET['appstatus'])
 
 
@@ -1235,7 +1236,8 @@ class ApplicationList(LoginRequiredMixin,ListView):
             from_date = datetime.today() - timedelta(days=10)
             context['from_date'] = from_date.strftime('%d/%m/%Y')
             context['to_date'] = to_date.strftime('%d/%m/%Y')
-            applications = Application.objects.filter(app_type__in=APP_TYPE_CHOICES_IDS, submit_date__gte=from_date, submit_date__lte=to_date).order_by('-id')
+            context['appstatus'] = 1
+            applications = Application.objects.filter(app_type__in=APP_TYPE_CHOICES_IDS, submit_date__gte=from_date, submit_date__lte=to_date, status=1).order_by('-id')
 
         context['app_applicants'] = {}
         context['app_applicants_list'] = []
@@ -2281,6 +2283,8 @@ class ApplicationApply(LoginRequiredMixin, CreateView):
             app = Application.objects.create(submitted_by=self.request.user
                                              ,submit_date=date.today()
                                              ,state=Application.APP_STATE_CHOICES.new
+                                             ,status=3
+
                                              #,assignee=self.request.user
                                              )
             return HttpResponseRedirect("/applications/"+str(app.id)+"/apply/apptype/")
@@ -2316,6 +2320,7 @@ class ApplicationApply(LoginRequiredMixin, CreateView):
         self.object.assignee = self.request.user
         self.object.submit_date = date.today()
         self.object.state = self.object.APP_STATE_CHOICES.draft
+        self.object.status = 3
         self.object.save()
         apply_on_behalf_of = forms_data['apply_on_behalf_of']
         if apply_on_behalf_of == '1':
@@ -3040,6 +3045,13 @@ class ReferralConditions(UpdateView):
             multifilelist.append(fileitem)
         context['records'] = multifilelist
 
+        if  Location.objects.filter(application_id=self.object.id).exists():
+              context['location'] = Location.objects.get(application_id=app.id)
+        else:
+              context['location'] = {} 
+
+
+
         context['referral']  = Referral.objects.get(application=app,referee=self.request.user)
         return context
 
@@ -3053,6 +3065,7 @@ class ReferralConditions(UpdateView):
         #print referral.feedback
 
         initial['application_id'] = self.kwargs['pk']
+        initial['application_app_type'] = app.app_type
         initial['organisation'] = app.organisation
         initial['referral_email'] = referral.referee.email
         initial['referral_name'] = referral.referee.first_name + ' ' + referral.referee.last_name
@@ -3878,7 +3891,7 @@ class ApplicationUpdate(LoginRequiredMixin, UpdateView):
            messages.error(self.request, 'Forbidden from viewing this page.')
            return HttpResponseRedirect("/")
 
-        if app.status == 1:
+        if app.status == 1 or app.status == 3:
             pass
         else:
             messages.error(self.request, 'Application is not active')
@@ -4911,6 +4924,7 @@ class ApplicationLodge(LoginRequiredMixin, UpdateView):
 
         #app.state = app.APP_STATE_CHOICES.with_admin
         app.state  = route['state']
+        app.status = 1
         self.object.submit_date = date.today()
         app.assignee = None
         app.save()
@@ -5241,7 +5255,8 @@ class ApplicationAssignNextAction(LoginRequiredMixin, UpdateView):
                 for i in json_data:
                     doc = Record.objects.get(id=i['doc_id'])
                     comms.records.add(doc)
-                    comms.save_m2m()
+                    #comms.save_m2m()
+                    comms.save()
 
 
 #        if self.request.FILES.get('records'):
@@ -11078,6 +11093,7 @@ def getAppFile(request,file_id,extension):
             flow = Flow()
             workflowtype = flow.getWorkFlowTypeFromApp(app)
             flow.get(workflowtype)
+
             flowcontext = {}
             if app.assignee:
                 flowcontext['application_assignee_id'] = app.assignee.id
@@ -11088,21 +11104,27 @@ def getAppFile(request,file_id,extension):
             if app.applicant:
                 if app.applicant.id == request.user.id:
                    flowcontext['application_owner'] = True
-
-            if Delegate.objects.filter(email_user=request.user).count() > 0:
-                flowcontext['application_owner'] = True
+            if request.user.is_authenticated:
+                if Delegate.objects.filter(email_user=request.user).count() > 0:
+                     flowcontext['application_owner'] = True
 
 
             flowcontext = flow.getAccessRights(request, flowcontext, app.routeid, workflowtype)
             if flowcontext['allow_access_attachments'] == "True":
                 allow_access = True
             if allow_access is False:
-                refcount = Referral.objects.filter(application=app,referee=request.user).exclude(status=5).count()
-                if refcount == 1:
-                   ref = Referral.objects.filter(application=app,referee=request.user).exclude(status=5)[0]
-                   for i in ref.records.all():
-                       if int(file_id) == i.id:
-                          allow_access = True
+                if request.user.is_authenticated:
+                    refcount = Referral.objects.filter(application=app,referee=request.user).exclude(status=5).count()
+                    if refcount > 0:
+                       allow_access = True
+                       ref = Referral.objects.filter(application=app,referee=request.user).exclude(status=5)[0]                  
+
+                   
+                   #for i in ref.records.all():
+                   #    if int(file_id) == i.id:
+                   #       allow_access = True
+
+            
  
 
   if file_record.file_group == 2005:

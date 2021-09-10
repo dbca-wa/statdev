@@ -147,8 +147,10 @@ class Application(models.Model):
          (5, 'internal', ('Internal'))
     )
     APP_STATUS = Choices(
+          
           (1, 'active', ('Active')),
-          (2, 'cancelled', ('Cancelled'))
+          (2, 'cancelled', ('Cancelled')),
+          (3, 'draft', ('Draft'))
     )
 
     APP_STATE_CHOICES = Choices(

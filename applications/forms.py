@@ -1853,12 +1853,40 @@ class ApplicationReferralConditionsPart5(ModelForm):
                self.initial['comments'] = ''
         if self.initial['proposed_conditions'] is None:
                self.initial['proposed_conditions'] = ''
-
+        
 
         crispy_boxes.append(crispy_box('title_collapse','form_title','Title',HTML('{% include "public/title.html" %}')))
+
+        # permit
+        if self.initial['application_app_type'] == 1:
+                crispy_boxes.append(HTML('{% include "public/location_permit_referral_feedback.html" %}'))
+        if self.initial['application_app_type'] == 1:
+                crispy_boxes.append(HTML('{% include "public/other_info_permit_referral_feedback.html" %}'))
+        if self.initial['application_app_type'] == 1:
+                crispy_boxes.append(HTML('{% include "public/description_permit_referral_feedback.html" %}'))
+        if self.initial['application_app_type'] == 1:
+                crispy_boxes.append(HTML('{% include "public/landowner_consent_permit_referral_feedback.html" %}'))
+
+        # license
+        if self.initial['application_app_type'] == 2:
+                 crispy_boxes.append(HTML('{% include "public/propsosed_commercial_activity_license_referral_feedback.html" %}'))
+        if self.initial['application_app_type'] == 2:
+                 crispy_boxes.append(HTML('{% include "public/vessel_details_license_referral_feedback.html" %}'))
+        if self.initial['application_app_type'] == 2:
+                 crispy_boxes.append(HTML('{% include "public/proposal_details_license_referral_feedback.html" %}'))
+        if self.initial['application_app_type'] == 2:
+                 crispy_boxes.append(HTML('{% include "public/other_documents_license_referral_feedback.html" %}'))
+        if self.initial['application_app_type'] == 2:
+                 crispy_boxes.append(HTML('{% include "public/landowner_consent_license_referral_feedback.html" %}'))
+
 #        crispy_boxes.append(crispy_box('river_licence_collapse','river_licence_title','River Licence',HTML('{% include "public/river_reserve_licence_snippet.html" %}')))
-        crispy_boxes.append(HTML('{% include "public/river_reserve_licence_snippet.html" %}'))
-        crispy_boxes.append(HTML('{% include "public/details_of_proposed_develeopment_snipplet.html" %}'))
+        if self.initial['application_app_type'] == 3 or self.initial['application_app_type'] == 6:
+               crispy_boxes.append(HTML('{% include "public/river_reserve_licence_snippet.html" %}'))
+        if self.initial['application_app_type'] == 3 or self.initial['application_app_type'] == 6:
+               crispy_boxes.append(HTML('{% include "public/details_of_proposed_develeopment_snipplet.html" %}'))
+
+ 
+        # submission
         if self.initial['response_date'] is None and int(self.initial['state']) == 3 and self.initial['referral_status'] == 1:
             crispy_boxes.append(crispy_box('feedback_collapse','form_feecback','Feedback',crispy_para(self.initial['referral_name'] + ' (' + self.initial['referral_email'] + ') '),'comments','proposed_conditions','records',Submit('submitfeedback', 'Submit', css_class='btn-lg')))
         else:

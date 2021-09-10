@@ -66,11 +66,8 @@
 
         <h5>Actions</h5>
         <ul>
+		
         {% if workflow_actions %}
-
-            {% if may_update == "True" %}
-	          <li><a href="{% url 'application_update' object.pk %}">{% if formcomponent.update.title %}{{ formcomponent.update.title }}{% else %} Update application{% endif %}</a></li>
-            {% endif %}
 
             {% if may_create_condition == "True-disabled" %}<li><a href="javascript:void();" onclick="django_ajax_form.OpenForm('{% url 'condition_create' object.pk %}','Create Condition');">Create a condition</a></li>{% endif %}
             {% if mode == 'update' %}{% if may_refer == "True-disabled" %}<li><a onclick="django_ajax_form.OpenForm('{% url 'application_refer' object.pk %}','Add Referral');" href="javascript:void();">Add Referral</a></li>{% endif %}{% endif %}
@@ -91,6 +88,10 @@
             {% if object.state == 14 %}
                <!-- do nothing -->
             {% else %}
+                {% if may_update == "True" %}
+                      <li><a href="{% url 'application_update' object.pk %}">{% if formcomponent.update.title %}{{ formcomponent.update.title }}{% else %} Update application{% endif %}</a></li>
+                {% endif %}
+
 
                 {% if may_assign_to_person == "True" %}
                   <li><a href="{% url 'application_assign_person' object.pk %}">{% if object.assignee != None %} Reassign{% else %}Assign Person{% endif %}</a></li>
