@@ -78,7 +78,7 @@
                             </div>
                             <div class="col-sm-12 col-lg-12">
                                 <select class="select form-control" id="id_appstatus" name="appstatus">
-                                    <option value="" selected="selected">All</option>
+                                    <option value="all" selected="selected">All</option>
                                     {% for at in app_appstatus %}
                                         {% if appstatus|floatformat:"0" == at.0|floatformat:"0" %}
                                            <option selected value="{{ at.0 }}">{{ at.1}}</option>
@@ -191,7 +191,7 @@
 							<!-- do nothing -->
 						{% else %}
                                                 {% if request.user == app_obj.app.assignee %}
-                                                <li><a href="{% url 'application_update' app_obj.app.pk %}" title="Reinstate">Process</a></li>
+                                                <li><a href="{% url 'application_update' app_obj.app.pk %}" title="Process">Process</a></li>
                                                 {% else %}
 							{% if app_obj.may_assign_to_person == "True" %}
 									{% if app_obj.app.assignee == None %}
@@ -215,6 +215,9 @@
 						        <li><a href="{% url 'application_cancel' app_obj.app.pk %}">Cancel Application</a></li>
 				                    {% endif %}
                                                 {% endif %}
+						{% if app_obj.app.status == 3 %}
+						     <li><a href="{% url 'application_update' app_obj.app.pk %}" title="Complete">Complete</a></li>
+						{% endif %}
 
                                             </ul>
                                         </li>

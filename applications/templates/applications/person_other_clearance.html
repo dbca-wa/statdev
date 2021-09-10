@@ -98,7 +98,8 @@
 </div>
 <script>
 function loadTable() {
-    $('#compliance-table').dataTable({searching: false, paging: true, "pageLength": 10,
+    $('#compliance-table').dataTable({searching: false, paging: true, "pageLength": 10, "order": [[ 0, "desc" ]],
+
 	"aoColumnDefs": [
           { 'bSortable': false, 'aTargets': [ 7 ] }
        ]

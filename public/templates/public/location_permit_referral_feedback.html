@@ -1,0 +1,77 @@
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="location_heading">
+                    <h3 class="panel-title">
+                        <a role="button" data-toggle="collapse" href="#location_collapse" aria-expanded="true" aria-controls="location_collapse">
+                           Location
+                            <span class="glyphicon glyphicon-chevron-down collapse-glyph"></span>
+                        </a>
+                    </h3>
+                </div>
+                <div class="panel-collapse {{ collapse.title }}" id="location_collapse" role="tabpanel" aria-labelledby="location_heading">
+                    <div class="panel-body">
+                      <div class='col-sm-12 col-lg-12'>
+                                <div class='col-sm-12 col-lg-6'>
+                                        <label>Street Number</label>
+                                </div>
+                                <div class='col-sm-12 col-lg-6'>
+                                        {{ location.street_number_name }}
+                                </div>
+                      </div>
+
+                      <div class='col-sm-12 col-lg-12'>
+                                <div class='col-sm-12 col-lg-6'>
+                                        <label>Lot</label>
+                                </div>
+                                <div class='col-sm-12 col-lg-6'>
+                                        {{ location.lot }}
+                                </div>
+                      </div>
+
+                      <div class='col-sm-12 col-lg-12'>
+                                <div class='col-sm-12 col-lg-6'>
+                                        <label>Reverse number</label>
+                                </div>
+                                <div class='col-sm-12 col-lg-6'>
+                                        {{ location.reserve }}
+                                </div>
+                      </div>
+
+                      <div class='col-sm-12 col-lg-12'>
+                                <div class='col-sm-12 col-lg-6'>
+                                        <label>Town / Suburb</label>
+                                </div>
+                                <div class='col-sm-12 col-lg-6'>
+                                        {{ location.suburb }}
+                                </div>
+                        </div>
+
+                      <div class='col-sm-12 col-lg-12'>
+                                <div class='col-sm-12 col-lg-6'>
+                                        <label>Nearest road intersection</label>
+                                </div>
+                                <div class='col-sm-12 col-lg-6'>
+                                        {{ location.intersection }}
+                                </div>
+                        </div>
+
+                        <div class='col-sm-12 col-lg-12'>
+                                <div class='col-sm-12 col-lg-6'>
+                                        <label>Local government authority</label>
+                                </div>
+                                <div class='col-sm-12 col-lg-6'>
+                                        {{ location.local_government_authority }}
+                                </div>
+                        </div>
+
+                        <div class='col-sm-12 col-lg-12'>
+                                <div class='col-sm-12 col-lg-6'>
+                                        <label>Are any proposed works, acts or activities in or over waters?</label>
+                                </div>
+                                <div class='col-sm-12 col-lg-6'>
+                                        {{ object.over_water }}
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+

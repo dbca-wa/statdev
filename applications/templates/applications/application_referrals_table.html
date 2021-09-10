@@ -50,7 +50,7 @@
                                     {% endif %}
                                         {% comment %}{% endcomment %}
 
-                            {% if may_referral_resend == "True" %}
+                            {% if may_referral_resend == "True" and mode == 'update' %}
                                         {% if ref.status == ref.REFERRAL_STATUS_CHOICES.recalled or ref.status == ref.REFERRAL_STATUS_CHOICES.responded %}
                                              <button class="btn btn-primary btn-sm" role="button" onclick="django_ajax_form.OpenForm('{% url 'referral_resend' ref.pk %}','Referral Resend')"  type="button">Resend</button>
                                         {% endif %}

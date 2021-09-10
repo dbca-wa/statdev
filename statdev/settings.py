@@ -274,7 +274,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': os.path.join(BASE_DIR, 'mooring', 'cache'),
+        'LOCATION': os.path.join(BASE_DIR, 'statdev', 'cache'),
     }
 }
 

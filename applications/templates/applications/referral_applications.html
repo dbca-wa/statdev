@@ -148,7 +148,8 @@
 
     <script>
 function loadTable() {
-    $('#application-table').dataTable({searching: false, paging: true, "pageLength": 10,
+    $('#application-table').dataTable({searching: false, paging: true, "pageLength": 10,"order": [[ 0, "desc" ]],
+
  "aoColumnDefs": [
           { type: 'natural-nohtml', targets: 0 }, { 'bSortable': false, 'aTargets': [ {% if staff == True %}9{% else %}7{% endif %} ] }
        ]
