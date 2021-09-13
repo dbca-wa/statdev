@@ -31,4 +31,4 @@ django_bootstrap3==10.0
 dj-static==0.0.6
 dj-database-url==0.5.0
 django-treebeard==4.3.1
-
+psycopg2==2.8.6
