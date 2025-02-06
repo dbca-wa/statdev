@@ -11,5 +11,5 @@
 		   "--hostname","statdev-dev"
 		   ],
 	"forwardPorts": [9216,9217,9218,9219,9220],
-	"initializeCommand" : ""
+	"initializeCommand" : "${localEnv:HOME}/docker-scripts-dev/windows_vbox/postgres_docker_load_2404.sh"
 }
