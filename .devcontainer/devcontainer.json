@@ -1,0 +1,15 @@
+{
+	"name": "Statdev Development",
+	"image": "dbcawa/docker_app_dev:statdev_dev_latest",
+	"remoteUser": "container",
+	"workspaceFolder": "/data/data/projects/statdev",
+	"mounts": ["type=bind,source=/data/,target=/data/",
+	           "type=bind,source=/data/data/containerhome/,target=/home/container/"
+	          ],	
+	"appPort": [ "7033:8080","9216:9216","9217:9217","9218:9218","9219:9219","9220:9220"],
+	"runArgs": ["--env-file","${localEnv:HOME}/vscode-env/statdev.env",
+		   "--hostname","statdev-dev"
+		   ],
+	"forwardPorts": [9216,9217,9218,9219,9220],
+	"initializeCommand" : ""
+}
