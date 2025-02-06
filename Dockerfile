@@ -40,7 +40,7 @@ COPY applications ./applications
 COPY approvals ./approvals
 COPY public ./public
 # Git Hash (Ammended to Javascript to force cache update)
-COPY .git/refs/heads/master /app/git_hash
+#COPY .git/refs/heads/master /app/git_hash
 # Statdev Dirs
 COPY cron /etc/cron.d/dockercron
 COPY startup.sh /
