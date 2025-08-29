@@ -2138,7 +2138,7 @@ class SearchReference(ListView):
         #context['messages'] = self.messages
         template = get_template(self.template_name)
         #context = RequestContext(self.request, context)
-        return HttpResponse(template.render(context))
+        return HttpResponse(template.render(context, request=self.request))
 
     def get_context_data(self, **kwargs):
         # def get(self, request, *args, **kwargs):
@@ -10252,6 +10252,8 @@ class OrganisationDetails(LoginRequiredMixin, DetailView):
                  context['nav_details_linkedperson'] = "active"
                  org = Organisation.objects.get(id=self.kwargs['pk'])
                  linkedpersons = Delegate.objects.filter(organisation=org)
+                 if OrganisationExtras.objects.filter(organisation=org.id).exists():
+                    context['org_extras'] = OrganisationExtras.objects.get(organisation=org.id)
 
                 # Recreate the linkedpersons list with an additional 'user' key
                  context['linkedpersons'] = []
@@ -10604,7 +10606,6 @@ class OrganisationUpdate(LoginRequiredMixin, UpdateView):
     """
     model = Organisation
     form_class = apps_forms.OrganisationForm
-    template_name = "accounts/organisation_form.html"
 
     def get(self, request, *args, **kwargs):
         # Rule: request user must be a delegate (or superuser).
