@@ -42,14 +42,14 @@ stages:
         docker build \
           --build-arg IMAGE_TAG="$(tagDate)-$(shortSha)" \
           --build-arg IMAGE_NAME="$(imageName)" \
-          -t $(imageName):latest \
+          -t $(imageName):seg_latest \
           -t $(imageName):$(tagDate)-$(shortSha) \
           -f $(Build.SourcesDirectory)/Dockerfile .
       displayName: 'Docker Build Main Image'     
 
     # 4. Push Main Image tags
     - bash: |
-        docker push $(imageName):latest
+        docker push $(imageName):seg_latest
         docker push $(imageName):$(tagDate)-$(shortSha)
       displayName: 'Push Main Image'
 
@@ -59,15 +59,15 @@ stages:
         docker build \
           --build-arg IMAGE_TAG="$(tagDate)-$(shortSha)" \
           --build-arg IMAGE_NAME="$(devImageName)" \
-          -t $(devImageName):statdev_latest \
-          -t $(devImageName):statdev_$(tagDate)-$(shortSha) \
+          -t $(devImageName):statdev_seg_latest \
+          -t $(devImageName):statdev_seg_$(tagDate)-$(shortSha) \
           -f $(Build.SourcesDirectory)/dockerdev/Dockerfile .
       displayName: 'Docker Build Dev Image'
 
     # 6. Push Dev Image tags
     - bash: |
-        docker push $(devImageName):statdev_latest
-        docker push $(devImageName):statdev_$(tagDate)-$(shortSha)
+        docker push $(devImageName):statdev_seg_latest
+        docker push $(devImageName):statdev_seg_$(tagDate)-$(shortSha)
       displayName: 'Push Dev Image'
 
     # 7. Purge images
